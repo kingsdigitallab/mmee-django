@@ -19,25 +19,10 @@
   - name: apt | install https transport for apt
     apt:
       pkg: apt-transport-https
-      state: installed
+      state: present
       update_cache: yes
     tags:
       -system
-
-  - name: apt | add elasticsearch key
-    become: yes
-    apt_key:
-      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-      state: present
-    tags:
-      - system
-
-  - name: apt | add elasticsearch sources
-    apt_repository:
-      repo: 'deb https://artifacts.elastic.co/packages/5.x/apt stable main'
-      state: present
-    tags:
-      - system
 
   - name: apt | install required system packages
     apt:
@@ -53,6 +38,44 @@
       upgrade: yes
     tags:
       - system
+
+  - name: solr | download
+    become: yes
+    get_url:
+      url: '{{ solr.url }}'
+      dest: /tmp
+    tags:
+      - system
+      - solr
+
+  - name: solr | unarchive
+    become: yes
+    unarchive:
+      src: /tmp/solr-{{ solr.version}}.tgz
+      dest: /tmp
+      remote_src: yes
+    tags:
+      - system
+      - solr
+
+
+  - name: solr | install
+    become: yes
+    command: /tmp/solr-{{ solr.version }}/bin/install_solr_service.sh /tmp/solr-{{ solr.version}}.tgz -f
+    tags:
+      - system
+      - solr
+
+  - name: solr | set up
+    become: yes
+    become_user: solr
+    command: /opt/solr/bin/solr create -c dev
+    # ignoring errors because this fails if the core already exists
+    ignore_errors: yes
+    notify: solr | restart solr
+    tags:
+      - system
+      - solr
 
   - name: zsh | clone oh-my-zsh repo
     git: repo={{ zsh.oh_my_zsh }} dest={{ user_home }}/.oh-my-zsh
@@ -86,6 +109,15 @@
     shell: 'chmod +x /etc/update-motd.d/*'
     tags:
       - system
+
+  handlers:
+  - name: solr | restart solr
+    become: yes
+    service:
+      name: solr
+      state: started
+    tags:
+      - db
 
 - hosts: all
   vars_files:
@@ -179,32 +211,12 @@
     tags:
       - db
 
-  - name: elasticsearch | change JVM Heap To start at 256M
-    become: yes
-    lineinfile:
-      path: /etc/elasticsearch/jvm.options
-      backup: yes
-      regexp: "^-Xms2g$"
-      line: "-Xms256m"
-    notify:
-      - elasticsearch | restart elasticsearch
-    tags:
-      - db
-
   handlers:
   - name: postgresql | restart postgres
     become: yes
     service:
       name: postgresql
       state: restarted
-    tags:
-      - db
-
-  - name: elasticsearch | restart elasticsearch
-    become: yes
-    service:
-      name: elasticsearch
-      state: started
     tags:
       - db
 

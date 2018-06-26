@@ -1,5 +1,10 @@
 from .base import *  # noqa
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
+)
+
 DEBUG = True
 
 CSRF_COOKIE_SECURE = False
@@ -46,5 +51,3 @@ except ImportError:
 LOGGING['loggers']['mmee'] = {}
 LOGGING['loggers']['mmee']['handlers'] = ['console']
 LOGGING['loggers']['mmee']['level'] = logging.DEBUG
-
-

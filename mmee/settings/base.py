@@ -59,7 +59,7 @@ DEBUG = False
 # -----------------------------------------------------------------------------
 
 DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
-EMAIL_HOST = 'smtp.kcl.ac.uk'
+EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
@@ -81,7 +81,6 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += [    # your project apps here
-
     'activecollab_digger',
     'django.contrib.gis',
     'kdl_ldap',
@@ -101,6 +100,8 @@ INSTALLED_APPS += [    # your project apps here
     'taggit',
     'modelcluster',
     'haystack',
+
+    'photos'
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -312,13 +313,17 @@ AUTH_LDAP_REQUIRE_GROUP = (
         LDAPGroupQuery('cn=mmee,' + LDAP_BASE_OU)
     )
 )
+
 WAGTAIL_SITE_NAME = PROJECT_TITLE
+
 ITEMS_PER_PAGE = 10
-# Change as required
+
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'mmee_haystack',
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://localhost:8983/solr/default',
+        'TIMEOUT': 60 * 5,
+        'INCLUDE_SPELLING': True,
+        'BATCH_SIZE': 100,
     },
 }
