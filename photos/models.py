@@ -1,5 +1,5 @@
+from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
-from django.db import models
 
 
 class Photographer(models.Model):
@@ -19,12 +19,24 @@ class Photographer(models.Model):
     age_range = models.PositiveSmallIntegerField(
         choices=AGE_RANGE_CHOICES, default=4)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
 
 class Photo(models.Model):
+    photographer = models.ForeignKey(Photographer, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='photos')
     number = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=256)
     date = models.DateField(auto_now_add=True)
-    description = models.TextField()
+    location = models.PointField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['photographer', 'number']
+
+    def __str__(self):
+        return self.title

@@ -1,6 +1,12 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 
-from .models import Photographer
+from .models import Photo, Photographer
+
+
+@admin.register(Photo)
+class PhotoAdmin(admin.OSMGeoAdmin):
+    list_display = ['photographer', 'number', 'title', 'date']
+    list_filter = ['photographer__age_range']
 
 
 @admin.register(Photographer)
