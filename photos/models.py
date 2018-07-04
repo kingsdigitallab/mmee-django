@@ -38,10 +38,11 @@ class MonumentType(models.Model):
 
 class Photo(models.Model):
     photographer = models.ForeignKey(Photographer, on_delete=models.CASCADE)
+    public = models.BooleanField(default=False)
     image = models.ImageField(upload_to='photos', blank=True, null=True)
     number = models.PositiveSmallIntegerField()
     title = models.CharField(max_length=256)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     monument_type = models.ManyToManyField(MonumentType, blank=True)
     location = models.PointField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
