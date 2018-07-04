@@ -15,6 +15,21 @@ class PhotoAdmin(admin.OSMGeoAdmin):
     list_display = ['photographer', 'number', 'title', 'date']
     list_filter = ['photographer__age_range', 'monument_type__title']
 
+    def get_fields(self, request, obj=None):
+        fields = super().get_fields(request, obj)
+
+        if not is_moderator(request.user):
+            fields.remove('public')
+
+        return fields
+
+
+def is_moderator(user):
+    if user.is_superuser:
+        return True
+
+    return user.groups.filter(name='Moderators').exists()
+
 
 @admin.register(Photographer)
 class PhotographerAdmin(admin.ModelAdmin):
