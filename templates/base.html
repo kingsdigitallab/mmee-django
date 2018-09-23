@@ -14,25 +14,34 @@
   {% endcompress %}
 </head>
 <body>
-  <header>
-    {% include 'includes/header.html' %}
-  </header>
 
-  <nav>
+  <div class="wrapper">
+
+    <!-- <header>
+      {% include 'includes/header.html' %}
+    </header> -->
     {% include 'includes/navigation.html' %}
-  </nav>
 
-  <main>
-    {% block title %}{% endblock %}
-    {% block main %}
+    {% block main-section %}
+    <section>
+        
+      <h1>Sensing Place</h1>
+
+    <!-- <main> -->
+      {% block title %}{% endblock %}
+      {% block main %}
+      {% endblock %}
+    <!-- </main> -->
     {% endblock %}
-  </main>
 
-  <footer>
+
+  </div>
+  
+  <!-- <footer>
     {% block footer %}
     {% include 'includes/footer.html' %}
     {% endblock %}
-  </footer>
+  </footer> -->
 
   {% compress js %}
   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>

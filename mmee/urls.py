@@ -14,9 +14,9 @@ urlpatterns = [
 
     path('digger/', include('activecollab_digger.urls')),
 
-
     path('wagtail/', include('wagtail.admin.urls')),
     path('documents/', include('wagtail.documents.urls')),
+    path('photos/', include('photos.urls')),
     path('', include('wagtail.core.urls')),
     path('search/', include('haystack.urls'))
 

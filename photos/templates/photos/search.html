@@ -1,33 +1,10 @@
-<div class="wrapper">
-  <nav>
-    <input type="checkbox" id="menu" />
-    <label aria-label="Menu" class="menu-label" for="menu">
-      =
-    </label>
-    <div class="menu-list">
-      <ul>
-        <li>
-          <a href="">Home</a>
-        </li>
-        <li>
-          <a href="">Latest News</a>
-        </li>
-        <li>
-          <a href="">What We Do</a>
-        </li>
-        <li>
-          <a href="">Another Link</a>
-        </li>
-        <li>
-          <a href="">Contact</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-  <section>
-    <h1>Sensing Place</h1>
+{% extends 'base.html' %}
+
+{% block main %}
+    
     <div id="search-geo">
-      <input> <button>Search</button>
+      <input> 
+      <button>Search</button>
       <button>My location</button>
     </div>
     <div id="filter-sort">
@@ -242,4 +219,7 @@
 
   </div> <!-- end .tabs -->
 </section>
-</div> <!-- end .wrapper -->
+
+{% endblock %}
+
+    
