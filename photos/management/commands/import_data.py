@@ -4,8 +4,17 @@ import re
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from photos.models import MonumentType, Photo, Photographer
+from photos.models import (Photo, Photographer, PhotoCategory,
+                           PhotoSubcategory)
 from django.utils.dateparse import parse_date
+import os
+from django.core.files.base import File
+
+'''
+(venv) ➜  /vagrant git:(develop) ✗ ./manage.py import_data
+--image-path="research_data/private/images"
+research_data/private/memmap-photos-batch-1.csv
+'''
 
 
 class Command(BaseCommand):
@@ -16,7 +25,16 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('spreadsheet_path', nargs=1, type=str)
 
+        parser.add_argument(
+            '--image-path',
+            action='store',
+            dest='image_path',
+            help='Path to image folder',
+        )
+
     def handle(self, *args, **options):
+        self.image_path = options.get('image_path', None)
+
         with open(options['spreadsheet_path'][0]) as f:
             reader = csv.DictReader(f)
             for row in reader:
@@ -36,6 +54,29 @@ class Command(BaseCommand):
             print('WARNING: skip row, no photographer data')
         else:
             photo = self.import_photo(row, photographer)
+
+            self.import_subcategories(row, photo)
+
+        return photo
+
+    def import_subcategories(self, row, photo):
+        terms = row.get('thesaurus_term', '')
+        # Artefact; commemorative; mural
+        terms = [t.strip() for t in terms.split(';')]
+
+        if len(terms) > 1:
+            term = terms.pop(0)
+            # TODO: improve the parsing for more advanced cases
+            cat, _ = PhotoCategory.objects.get_or_create(label=term)
+
+            subcats = []
+            while terms:
+                term = terms.pop(0)
+                subcat, _ = PhotoSubcategory.objects.get_or_create(
+                    category=cat, label=term
+                )
+                subcats.append(subcat)
+            photo.subcategories.set(subcats)
 
         return photo
 
@@ -61,7 +102,22 @@ class Command(BaseCommand):
         for field in photo:
             if photo[field]:
                 setattr(ret, field, photo[field])
+
+        coords = row['dd_co_ordinates']
+        if coords:
+            coords = coords.split()
+            ret.location = Point(float(coords[1]), float(coords[0]))
+
         ret.save()
+
+        if self.image_path and row['filename']:
+            path = os.path.join(self.image_path, row['filename'])
+            if os.path.exists(path):
+                new_name = re.sub(
+                    '[^\w\.]', '-', row['filename']).lower().strip()
+                ret.image.save(
+                    new_name, File(open(path, 'rb')))
+                ret.save()
 
         return ret
 
@@ -180,9 +236,10 @@ class Command(BaseCommand):
                 if terms:
                     terms = terms.split(';')
                     for term in terms:
-                        monument_type, _ = MonumentType.objects.get_or_create(
-                            title=term.strip().lower())
-                        photo.monument_type.add(monument_type)
+                        pass
+#                        monument_type, _ = MonumentType.objects.get_or_create(
+#                             title=term.strip().lower())
+#                         photo.monument_type.add(monument_type)
 
                 photo.save()
 

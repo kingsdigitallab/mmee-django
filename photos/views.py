@@ -11,6 +11,9 @@ class PhotoSearchView(ListView):
     template_name = 'photos/search.html'
     model = Photo
 
+    def get_queryset(self):
+        return self.model.objects.exclude(image__exact='')
+
 
 class PhotoDetailView(DetailView):
     template_name = 'photos/photo.html'

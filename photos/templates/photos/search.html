@@ -75,140 +75,26 @@
     <label for="tab3"><span>Map</span></label>
 
     <section id="content1" class="tab-content">
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 1 title</h2>
-        </div>
-      </div>
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 2 title</h2>
-        </div>
-      </div>       
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 3 very long long long long long long long long long long long title</h2>
-        </div>
-      </div>       
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 4 title</h2>
-        </div>
-      </div>
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 5 title</h2>
-        </div>
-      </div>       
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 6 title</h2>
-        </div>
-      </div>       
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 7 title</h2>
-        </div>
-      </div>   
+        {% for photo in object_list %}
+            <div class="photo">
+              <img src="{{ photo.image.url }}" alt=""/>
+              <div class="photodata">
+                <h2>{{ photo.title|truncatechars:50 }}</h2>
+              </div>
+            </div>
+        {% endfor %}
     </section>
 
     <section id="content2" class="tab-content">
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 1 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>      
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 2 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>       
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 3 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 4 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>       
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 5 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>        
-    </section>
-
-    <section id="content2" class="tab-content">
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" />
-        <div class="photodata">
-          <h2>Photograph 1 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>      
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 2 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>       
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 3 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 4 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>       
-
-      <div class="photo">
-        <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-        <div class="photodata">
-          <h2>Photograph 5 title</h2>
-          <p>Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-          </p>
-        </div>
-      </div>        
+        {% for photo in object_list %}
+            <div class="photo">
+              <img src="{{ photo.image.url }}" alt=""/>
+              <div class="photodata">
+                <h2>{{ photo.title|truncatechars:50 }}</h2>
+                <p>123</p>
+              </div>
+            </div>
+        {% endfor %}
     </section>
 
     <section id="content3" class="tab-content">

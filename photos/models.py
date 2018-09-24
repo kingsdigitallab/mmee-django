@@ -1,5 +1,8 @@
 from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
+from django.utils.safestring import mark_safe
+from django.utils.text import slugify
+# from wagtail.images.models import Image
 
 
 class Photographer(models.Model):
@@ -46,30 +49,60 @@ class Photographer(models.Model):
         return ret
 
 
-class MonumentType(models.Model):
-    title = models.CharField(max_length=128, unique=True)
-
-    class Meta:
-        ordering = ['title']
+class PhotoCategory(models.Model):
+    label = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=50)
 
     def __str__(self):
-        return self.title
+        return self.label
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.label)
+        super().save(*args, **kwargs)
+
+
+class PhotoSubcategory(models.Model):
+    category = models.ForeignKey(PhotoCategory, on_delete=models.CASCADE)
+    label = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=50)
+
+    def __str__(self):
+        return '{}: {}'.format(self.category.label, self.label)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.label)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['category__label', 'label']
+        unique_together = ['label', 'category']
 
 
 class Photo(models.Model):
     photographer = models.ForeignKey(Photographer, on_delete=models.CASCADE)
     public = models.BooleanField(default=False)
     image = models.ImageField(upload_to='photos', blank=True, null=True)
+    # image = WagtailImageField(upload_to='photos', blank=True)
     # GN: what does that number represents? What are we doing with it?
     number = models.PositiveSmallIntegerField()
     title = models.CharField(max_length=256)
     date = models.DateField()
-    monument_type = models.ManyToManyField(MonumentType, blank=True)
+    # monument_type = models.ManyToManyField(MonumentType, blank=True)
     location = models.PointField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
+
+    subcategories = models.ManyToManyField(PhotoSubcategory)
 
     class Meta:
         ordering = ['photographer', 'number']
 
     def __str__(self):
         return self.title
+
+    def image_tag(self):
+        ret = ''
+        if self.image:
+            url = self.image.url
+            ret = mark_safe(u'<img src="%s" width="50" height="50"/>' % url)
+        return ret
+    image_tag.short_description = 'Image'

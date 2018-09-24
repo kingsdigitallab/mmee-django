@@ -1,19 +1,19 @@
 from django.contrib.gis import admin
 
-from .models import MonumentType, Photo, Photographer
+from .models import Photo, Photographer, PhotoSubcategory
 
 
-@admin.register(MonumentType)
-class MonumentTypeAdmin(admin.ModelAdmin):
-    list_display = ['title']
+@admin.register(PhotoSubcategory)
+class PhotoSubcategoryAdmin(admin.ModelAdmin):
+    list_display = ['label']
 
 
 @admin.register(Photo)
 class PhotoAdmin(admin.OSMGeoAdmin):
-    filter_horizontal = ['monument_type']
+    # filter_horizontal = ['monument_type']
 
-    list_display = ['photographer', 'number', 'title', 'date']
-    list_filter = ['photographer__age_range', 'monument_type__title']
+    list_display = ['photographer', 'number', 'title', 'date', 'image_tag']
+    list_filter = ['photographer__age_range']
 
     search_fields = ['photographer__first_name',
                      'photographer__last_name', 'title']
