@@ -1,32 +1,7 @@
-<div class="wrapper">
-  <nav>
-    <input type="checkbox" id="menu" />
-    <label aria-label="Menu list" class="menu-label" for="menu">
-      =
-    </label>
-    <a aria-label="Back to previous page" class="back" href="#"><</a>
-    <div class="menu-list">
-      <ul>
-        <li>
-          <a href="">Home</a>
-        </li>
-        <li>
-          <a href="">Latest News</a>
-        </li>
-        <li>
-          <a href="">What We Do</a>
-        </li>
-        <li>
-          <a href="">Another Link</a>
-        </li>
-        <li>
-          <a href="">Contact</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-  <section>
-    <h1>Sensing Place</h1>
+{% extends 'base.html' %}
+
+{% block main %}
+
     <div id="search-geo">
       <input> <button>Search</button>
       <button>My location</button>
@@ -45,16 +20,19 @@
     <p>
       Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
     </p>
-<h3>Photograph:</h3>
-    <p>
-      Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-    </p>
-    </div>
-<div class="map">
-  <h3>Location on map</h3>
-<img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
+    
+    <h3>Photograph:</h3>
+        <p>
+          Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
+        </p>
+        </div>
+    <div class="map">
+      <h3>Location on map</h3>
+    <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
+    
+    </div> <!-- end .map -->
+        </div> <!-- end #photo-data -->
+    </section>
+    </div> <!-- end .wrapper -->
 
-</div> <!-- end .map -->
-    </div> <!-- end #photo-data -->
-</section>
-</div> <!-- end .wrapper -->
+{% endblock main %}

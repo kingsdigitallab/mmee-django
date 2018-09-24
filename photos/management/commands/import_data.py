@@ -4,8 +4,8 @@ import re
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.utils.dateparse import parse_date
 from photos.models import MonumentType, Photo, Photographer
+from django.utils.dateparse import parse_date
 
 
 class Command(BaseCommand):
@@ -17,6 +17,99 @@ class Command(BaseCommand):
         parser.add_argument('spreadsheet_path', nargs=1, type=str)
 
     def handle(self, *args, **options):
+        with open(options['spreadsheet_path'][0]) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                self.import_row(row)
+
+    def import_row(self, row):
+        # normalise the keys and values
+        row = {
+            (str(k).lower().strip().replace(' ', '_')): str(v).strip()
+            for k, v
+            in row.items()
+        }
+
+        photographer = self.import_photographer(row)
+
+        if not photographer:
+            print('WARNING: skip row, no photographer data')
+        else:
+            photo = self.import_photo(row, photographer)
+
+        return photo
+
+    def import_photo(self, row, photographer):
+        '''
+        Add or update a Photograph record from the given CSV row.
+        Uses the Photographer and the .
+        '''
+        photo = {
+            'number': row['photo_number'],
+            'date': _parse_date(row['date']),
+            'photographer': photographer,
+        }
+
+        ret, _ = Photo.objects.get_or_create(**photo)
+
+        photo.update({
+            # '_filename': row['filename'],
+            'title': (row['description'] or '')[:50],
+            'comments': row['comments'],
+        })
+
+        for field in photo:
+            if photo[field]:
+                setattr(ret, field, photo[field])
+        ret.save()
+
+        return ret
+
+    def import_photographer(self, row):
+        '''
+        Add or update a Photographer record from the given CSV row.
+        Returns None if no photographer data.
+        Uses email as ID or first name + last name if email is missing.
+        '''
+        photographer = {
+            'first_name': row['firstname'],
+            'last_name': row['surname'],
+            'email': _get_masked_email(row['email']),
+            'phone_number': _get_masked_phone(row['phone']),
+            'age_range': Photographer.get_age_range_from_str(row['age_range']),
+        }
+
+        email = photographer['email']
+        if not ''.join([
+            (photographer[k] or '')
+            for k
+            in ['first_name', 'last_name', 'email']
+        ]):
+            return None
+
+        ret = None
+        if email:
+            ret = Photographer.objects.filter(
+                email=photographer['email']).first()
+        if not ret and not email:
+            ret = Photographer.objects.filter(
+                first_name=photographer['first_name'],
+                last_name=photographer['last_name'],
+            ).first()
+        if not ret:
+            ret = Photographer(**photographer)
+        else:
+            for field in photographer:
+                if photographer[field]:
+                    setattr(ret, field, photographer[field])
+        ret.save()
+
+#         print(photographer)
+#         print(ret.first_name, ret.last_name, ret.email)
+
+        return ret
+
+    def handle_old(self, *args, **options):
         with open(options['spreadsheet_path'][0]) as f:
             reader = csv.DictReader(f)
             data = [r for r in reader]
@@ -32,7 +125,7 @@ class Command(BaseCommand):
                     continue
 
                 # Photographer
-                email = _get_email(d['contact details'])
+                email = _get_masked_email(d['contact details'])
                 if email:
                     cur_email = email
                 else:
@@ -41,7 +134,7 @@ class Command(BaseCommand):
                 photographer, _ = Photographer.objects.get_or_create(
                     email=email)
 
-                phone = _get_phone(d['contact details'])
+                phone = _get_masked_phone(d['contact details'])
                 if phone:
                     cur_phone = phone
                 else:
@@ -94,7 +187,24 @@ class Command(BaseCommand):
                 photo.save()
 
 
-def _get_email(text):
+def _parse_date(date_str):
+    # YYYY-MM-DD
+    # Apr-18
+    # 13-Apr-18
+    from dateparser import parse
+
+    # Apr-18 => 1-Apr-18
+    # otherwise dateparse convert into 18-04-CURRENT_YEAR
+    date_str = re.sub(r'(\w+-\d+)', r'01-\1', date_str)
+    ret = parse(date_str)
+
+    return ret
+
+
+# mask parts of the emails and phone numbers
+
+
+def _get_masked_email(text):
     if not text:
         return None
 
@@ -108,7 +218,7 @@ def _get_email(text):
     return items[1]
 
 
-def _get_phone(text):
+def _get_masked_phone(text):
     if not text:
         return None
 

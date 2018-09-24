@@ -63,3 +63,6 @@ local.py
 #local_*.py
 logs/
 static/
+
+# Private research data
+*private/

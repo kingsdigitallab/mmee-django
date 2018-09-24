@@ -15,6 +15,9 @@ class PhotoAdmin(admin.OSMGeoAdmin):
     list_display = ['photographer', 'number', 'title', 'date']
     list_filter = ['photographer__age_range', 'monument_type__title']
 
+    search_fields = ['photographer__first_name',
+                     'photographer__last_name', 'title']
+
     def get_fields(self, request, obj=None):
         fields = super().get_fields(request, obj)
 
@@ -33,5 +36,7 @@ def is_moderator(user):
 
 @admin.register(Photographer)
 class PhotographerAdmin(admin.ModelAdmin):
-    list_display = ['name', 'age_range']
+    list_display = ['first_name', 'last_name', 'age_range']
     list_filter = ['age_range']
+
+    search_fields = ['first_name', 'last_name', 'email', 'phone_number']

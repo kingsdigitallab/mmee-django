@@ -14,3 +14,5 @@ django-activecollab-digger
 django-haystack
 django-kdl-ldap
 wagtail
+
+dateparser
