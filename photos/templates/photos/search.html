@@ -1,110 +1,114 @@
 {% extends 'base.html' %}
 
 {% block main %}
-    
-    <div id="search-geo">
-      <input> 
-      <button>Search</button>
-      <button>My location</button>
-    </div>
-    <div id="filter-sort">
-      <div id="filter">
-       <input type="checkbox" id="filter-nav" />
-       <label aria-label="Filter list" class="filter-label" for="filter-nav">
-        Filter
-      </label>
-      <div class="filter-list">
-        <ul>
-          <li>
-            <h2>Filters</h2>
-            <form action="">
-              <h3>Photographer</h3>
-              <h4>Category 1</h4>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 1
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 2
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 3
-              </div>
+<main>
+    <section id="search">
 
-              <h4>Category 2</h4>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 1
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 2
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 3
-              </div>
-              <h4>Category 3</h4>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 1
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 2
-              </div>
-              <div>
-              <input type="checkbox" name="category1" value="">subcat 3
-              </div>
-              
-              <button aria-label="apply filter">Apply filter</button>
-            </form>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div id="sort">
-      <select aria-label="Sort by">
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-      </select>
-    </div>
-  </div> <!-- end filter sort -->
-  <div class="tabs">
-    <input id="tab1" type="radio" name="tabs" checked>
-    <label for="tab1"><span>Grid</span></label>
-
-    <input id="tab2" type="radio" name="tabs">
-    <label for="tab2"><span>List</span></label>
-
-    <input id="tab3" type="radio" name="tabs">
-    <label for="tab3"><span>Map</span></label>
-
-    <section id="content1" class="tab-content">
-        {% for photo in object_list %}
-            <div class="photo">
-              <img src="{{ photo.image.url }}" alt=""/>
-              <div class="photodata">
-                <h2>{{ photo.title|truncatechars:50 }}</h2>
-              </div>
+       <div class="search-geo">
+            <input><button>Search</button>
+            <button>My location</button>
+        </div>
+        <div class="search-filters">
+            <div class="filter">
+                <input type="checkbox" id="filter-nav" />
+                <label aria-label="Filter list" class="filter-label" for="filter-nav">
+                Filter
+                </label>
+                <ul>
+                  <li>
+                    <h2>Filters</h2>
+                    <form action="">
+                      <h3>Photographer</h3>
+                      <h4>Category 1</h4>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 1
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 2
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 3
+                      </div>
+                      <h4>Category 2</h4>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 1
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 2
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 3
+                      </div>
+                      <h4>Category 3</h4>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 1
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 2
+                      </div>
+                      <div>
+                      <input type="checkbox" name="category1" value="">subcat 3
+                      </div>
+                      <button aria-label="apply filter">Apply filter</button>
+                    </form>
+                  </li>
+                </ul>
             </div>
-        {% endfor %}
-    </section>
-
-    <section id="content2" class="tab-content">
-        {% for photo in object_list %}
-            <div class="photo">
-              <img src="{{ photo.image.url }}" alt=""/>
-              <div class="photodata">
-                <h2>{{ photo.title|truncatechars:50 }}</h2>
-                <p>123</p>
-              </div>
+            <div class="sort">
+                <select aria-label="Sort by">
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                </select>
             </div>
-        {% endfor %}
-    </section>
+        </div> <!-- end .filter-sort -->
+    </section> <!-- end #search -->
 
-    <section id="content3" class="tab-content">
-      <div id="map">
-        <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
-      </div>
-    </section>
+    <section id="results">
+        <div class="tabs">
+            <input id="tab1" type="radio" name="tabs" checked>
+            <label for="tab1"><span>Grid</span></label>
 
-  </div> <!-- end .tabs -->
-</section>
+            <input id="tab2" type="radio" name="tabs">
+            <label for="tab2"><span>List</span></label>
+
+            <input id="tab3" type="radio" name="tabs">
+            <label for="tab3"><span>Map</span></label>
+
+            <article id="photo-grid" class="tab-content">
+                {% for photo in object_list %}
+                    <div class="photo">
+                      <img src="{{ photo.image.url }}" alt=""/>
+                      <div class="photodata">
+                        <h2>{{ photo.title|truncatechars:50 }}</h2>
+                      </div>
+                    </div>
+                {% endfor %}
+            </article>
+
+            <article id="photo-list" class="tab-content">
+                {% for photo in object_list %}
+                    <div class="photo">
+                      <img src="{{ photo.image.url }}" alt=""/>
+                      <div class="photodata">
+                        <h2>{{ photo.title|truncatechars:50 }}</h2>
+                        <p>123</p>
+                      </div>
+                    </div>
+                {% endfor %}
+            </article>
+
+            <article id="photo-map" class="tab-content">
+              <div id="map">
+                <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
+              </div>
+            </article>
+
+          </div> <!-- end .tabs -->
+    </section> <!-- end #results -->
+</main>
+
+   
+  
 
 {% endblock %}
 

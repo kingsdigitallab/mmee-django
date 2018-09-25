@@ -1,38 +1,57 @@
 {% extends 'base.html' %}
 
 {% block main %}
+<main>
+    <section id="search">
+           <div id="search-geo">
+                <input><button>Search</button>
+                <button>My location</button>
+            </div>
+    </section> <!-- end .search -->
 
-    <div id="search-geo">
-      <input> <button>Search</button>
-      <button>My location</button>
-    </div>
-    <h2>Photo title</h2>
-    <div id="photo">
-      <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
-    </div> <!-- end #photo -->
-    <div id="photo-data">
-    <h3>Photo description</h3>
-    <p>
-      Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-    </p>
+    <section id="photo">
+        <h1>Photo title</h1>
+        <div class="photo-image">
+          <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
+        </div> <!-- end #photo -->
 
-      <h3>Photographer:</h3>
-    <p>
-      Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-    </p>
-    
-    <h3>Photograph:</h3>
-        <p>
-          Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
-        </p>
-        </div>
-    <div class="map">
-      <h3>Location on map</h3>
-    <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
-    
-    </div> <!-- end .map -->
-        </div> <!-- end #photo-data -->
-    </section>
-    </div> <!-- end .wrapper -->
+        <div class="photo-description">
+          <h3>Photo description</h3>
+          <p>
+            Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
+          </p>
+        </div><!-- end #photo-description -->
+
+        <div class="photo-photographer">
+          <h3>Photographer:</h3>
+              <ul>
+                <li>Age range</li>
+                <li>Ethnicity</li>
+              </ul>
+        </div><!-- end .photographer-data -->
+
+        <div class="photo-photograph">
+          <h3>Photograph:</h3>
+              <ul>
+                <li>Emotive</li>
+                <li>Task</li>
+                <li>Recreation</li>
+                <li>Memory</li>
+              </ul>
+        </div><!-- end .photograph-data -->
+
+        <div class="photo-location">
+          <h3>Location:</h3>
+              <p>Postcode</p>
+        </div><!-- end .location -->
+    </section> <!-- end .photo -->
+
+    <section id="map">
+        <h3>Location on map</h3>
+        <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
+    </section> <!-- end #map -->
+
+</main>
+
 
 {% endblock main %}
