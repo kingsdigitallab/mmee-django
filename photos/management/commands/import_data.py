@@ -70,15 +70,18 @@ class Command(BaseCommand):
         if len(terms) > 1:
             term = terms.pop(0)
             # TODO: improve the parsing for more advanced cases
-            cat, _ = PhotoCategory.objects.get_or_create(label=term)
+            cat, created = PhotoCategory.objects.get_or_create(label=term)
+
+            self._print_operation(cat, created)
 
             subcats = []
             while terms:
                 term = terms.pop(0)
-                subcat, _ = PhotoSubcategory.objects.get_or_create(
+                subcat, created = PhotoSubcategory.objects.get_or_create(
                     category=cat, label=term
                 )
                 subcats.append(subcat)
+                self._print_operation(subcat, created)
             photo.subcategories.set(subcats)
 
         return photo

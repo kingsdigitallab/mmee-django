@@ -13,7 +13,7 @@
     <section id="photo">
         <h1>{{ photo.title }}</h1>
         <div class="photo-image">
-          {% image photo.image original %}
+          {% image photo.image height-700 height="" width="" %}
         </div> <!-- end #photo -->
 
         <div class="photo-data">
@@ -27,14 +27,19 @@
           <div class="photo-photographer">
             <h3>Photographer:</h3>
                 <ul>
-                  <li>Age range: {{ photo.photographer.get_age_range_display }}</li>
-                  <li>Ethnicity</li>
+                  {% if photo.photographer.get_age_range_display %}
+                    <li>Age: {{ photo.photographer.get_age_range_display }}</li>
+                  {% endif %}
+                  {% if 0 %}
+                    <li>Ethnicity: ?</li>
+                  {% endif %}
                 </ul>
           </div><!-- end .photographer-data -->
 
           <div class="photo-photograph">
             <h3>Photograph:</h3>
                 <ul>
+                    {% if photo.date %}<li>Date taken: {{ photo.date|date:'F Y' }}</li>{% endif %}
                   {% for subcat in photo.subcategories.all %}
                       <li>{{ subcat }}</li>
                   {% endfor %}
