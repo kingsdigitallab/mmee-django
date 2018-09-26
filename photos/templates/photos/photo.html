@@ -4,7 +4,7 @@
 {% block main %}
 <main>
     <section id="search">
-       <div id="search-geo">
+       <div class="search-field">
             <input><button>Search</button>
             <button>My location</button>
         </div>
@@ -16,38 +16,38 @@
           {% image photo.image original %}
         </div> <!-- end #photo -->
 
-        <div class="photo-description">
-          <h3>Photo description</h3>
-          <p>
-            {{ photo.description }}
-          </p>
-        </div><!-- end #photo-description -->
+        <div class="photo-data">
+          <div class="photo-description">
+            <h3>Photo description</h3>
+            <p>
+              {{ photo.description }}
+            </p>
+          </div><!-- end #photo-description -->
 
-        <div class="photo-photographer">
-          <h3>Photographer:</h3>
-              <ul>
-                <li>Age range: {{ photo.photographer.get_age_range_display }}</li>
-                <li>Ethnicity</li>
-              </ul>
-        </div><!-- end .photographer-data -->
+          <div class="photo-photographer">
+            <h3>Photographer:</h3>
+                <ul>
+                  <li>Age range: {{ photo.photographer.get_age_range_display }}</li>
+                  <li>Ethnicity</li>
+                </ul>
+          </div><!-- end .photographer-data -->
 
-        <div class="photo-photograph">
-          <h3>Photograph:</h3>
-              <ul>
-                {% for subcat in photo.subcategories.all %}
-                    <li>{{ subcat }}</li>
-                {% endfor %}
-              </ul>
-        </div><!-- end .photograph-data -->
+          <div class="photo-photograph">
+            <h3>Photograph:</h3>
+                <ul>
+                  {% for subcat in photo.subcategories.all %}
+                      <li>{{ subcat }}</li>
+                  {% endfor %}
+                </ul>
+          </div><!-- end .photograph-data -->
 
-        <div class="photo-location">
-          <h3>Location:</h3>
-              <p>Postcode</p>
-        </div><!-- end .location -->
+          <div class="photo-location">
+            <h3>Location:</h3>
+                <p>Postcode</p>
+          </div><!-- end .location -->
+        </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
-
     <section id="map">
-        <h3>Location on map</h3>
         <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
     </section> <!-- end #map -->
 
