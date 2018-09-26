@@ -79,9 +79,14 @@
             <article id="photo-grid" class="tab-content">
                 {% for photo in object_list %}
                     <div class="photo">
-                      {% image photo.image height-200 %}
+                      <a href="/photos/{{ photo.pk }}/">
+                          {% image photo.image height-200 %}
+                      </a>
+                      
                       <div class="photodata">
-                        <h2>{{ photo.title|truncatechars:50 }}</h2>
+                        <a href="/photos/{{ photo.pk }}/">
+                            <h2>{{ photo.title|truncatechars:50 }}</h2>
+                        </a>
                       </div>
                     </div>
                 {% endfor %}
@@ -91,10 +96,13 @@
             <article id="photo-list" class="tab-content">
                 {% for photo in object_list %}
                     <div class="photo">
-                      <img src="{{ photo.image.url }}" alt=""/>
+                      <a href="/photos/{{ photo.pk }}/">
+                          {% image photo.image height-200 %}
+                      </a>
+                      
                       <div class="photodata">
-                        <h2>{{ photo.title|truncatechars:50 }}</h2>
-                        <p>123</p>
+                        <!-- h2>{{ photo.title|truncatechars:50 }}</h2 -->
+                        <p>{{  photo.description|truncatewords:50 }}</p>
                       </div>
                     </div>
                 {% endfor %}

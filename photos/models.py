@@ -57,6 +57,15 @@ class Photographer(index.Indexed, models.Model):
         index.SearchField('phone_number', partial_match=True),
     ]
 
+    def get_age_range_display(self):
+        ret = ''
+        for r in self.AGE_RANGE_CHOICES:
+            if r[0] == self.age_range:
+                ret = r[1]
+                break
+
+        return ret
+
     @classmethod
     def get_age_range_from_str(cls, age_range):
         '''10-19 => 2'''

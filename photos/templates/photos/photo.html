@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
+{% load wagtailimages_tags %}
 
 {% block main %}
 <main>
     <section id="search">
-           <div id="search-geo">
-                <input><button>Search</button>
-                <button>My location</button>
-            </div>
+       <div id="search-geo">
+            <input><button>Search</button>
+            <button>My location</button>
+        </div>
     </section> <!-- end .search -->
 
     <section id="photo">
-        <h1>Photo title</h1>
+        <h1>{{ photo.title }}</h1>
         <div class="photo-image">
-          <img src="http://i.huffpost.com/gen/749263/original.jpg" alt=""/>
+          {% image photo.image height-400 %}
         </div> <!-- end #photo -->
 
         <div class="photo-description">
           <h3>Photo description</h3>
           <p>
-            Lorem ipsum dolor sit amet, his errem concludaturque eu, prima adipisci id qui. Malorum persequeris dissentiunt ut est, decore cetero fastidii no eos. Ne sea prima invidunt, graece oportere cu vis. Vis in graeco audire.
+            {{ photo.description }}
           </p>
         </div><!-- end #photo-description -->
 
         <div class="photo-photographer">
           <h3>Photographer:</h3>
               <ul>
-                <li>Age range</li>
+                <li>Age range: {{ photo.photographer.get_age_range_display }}</li>
                 <li>Ethnicity</li>
               </ul>
         </div><!-- end .photographer-data -->
@@ -33,10 +34,9 @@
         <div class="photo-photograph">
           <h3>Photograph:</h3>
               <ul>
-                <li>Emotive</li>
-                <li>Task</li>
-                <li>Recreation</li>
-                <li>Memory</li>
+                {% for subcat in photo.subcategories.all %}
+                    <li>{{ subcat }}</li>
+                {% endfor %}
               </ul>
         </div><!-- end .photograph-data -->
 
