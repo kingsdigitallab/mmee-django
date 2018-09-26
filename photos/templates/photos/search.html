@@ -5,7 +5,7 @@
 <main>
     <section id="search">
 
-       <div class="search-geo">
+       <div class="search-field">
             <input><button>Search</button>
             <button>My location</button>
         </div>
@@ -15,45 +15,47 @@
                 <label aria-label="Filter list" class="filter-label" for="filter-nav">
                 Filter
                 </label>
-                <ul>
-                  <li>
-                    <h2>Filters</h2>
-                    <form action="">
-                      <h3>Photographer</h3>
-                      <h4>Category 1</h4>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 1
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 2
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 3
-                      </div>
-                      <h4>Category 2</h4>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 1
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 2
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 3
-                      </div>
-                      <h4>Category 3</h4>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 1
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 2
-                      </div>
-                      <div>
-                      <input type="checkbox" name="category1" value="">subcat 3
-                      </div>
-                      <button aria-label="apply filter">Apply filter</button>
-                    </form>
-                  </li>
-                </ul>
+                <div class="filter-list">
+                  <ul>
+                    <li>
+                      <h2>Filters</h2>
+                      <form action="">
+                        <h3>Photographer</h3>
+                        <h4>Category 1</h4>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 1
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 2
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 3
+                        </div>
+                        <h4>Category 2</h4>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 1
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 2
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 3
+                        </div>
+                        <h4>Category 3</h4>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 1
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 2
+                        </div>
+                        <div>
+                        <input type="checkbox" name="category1" value="">subcat 3
+                        </div>
+                        <button aria-label="apply filter">Apply filter</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
             </div>
             <div class="sort">
                 <select aria-label="Sort by">
@@ -65,7 +67,6 @@
     </section> <!-- end #search -->
 
     <section id="results">
-        <div class="tabs">
             <input id="tab1" type="radio" name="tabs" checked>
             <label for="tab1"><span>Grid</span></label>
 
@@ -86,6 +87,7 @@
                 {% endfor %}
             </article>
 
+
             <article id="photo-list" class="tab-content">
                 {% for photo in object_list %}
                     <div class="photo">
@@ -104,7 +106,6 @@
               </div>
             </article>
 
-          </div> <!-- end .tabs -->
     </section> <!-- end #results -->
 </main>
 
