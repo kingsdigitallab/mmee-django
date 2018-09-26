@@ -79,10 +79,11 @@
             <article id="photo-grid" class="tab-content">
                 {% for photo in object_list %}
                     <div class="photo">
-                      <a href="/photos/{{ photo.pk }}/">
-                          {% image photo.image original %}
-                      </a>
-                      
+                      <div class="photo-image">
+                        <a href="/photos/{{ photo.pk }}/">
+                            {% image photo.image original %}
+                        </a>
+                      </div>
                       <div class="photodata">
                         <a href="/photos/{{ photo.pk }}/">
                             <h2>{{ photo.title|truncatechars:50 }}</h2>
@@ -96,11 +97,12 @@
             <article id="photo-list" class="tab-content">
                 {% for photo in object_list %}
                     <div class="photo">
+                    <div class="photo-image">
                       <a href="/photos/{{ photo.pk }}/">
                           {% image photo.image original %}
                       </a>
-                      
-                      <div class="photodata">
+                    </div>
+                    <div class="photodata">
                         <!-- h2>{{ photo.title|truncatechars:50 }}</h2 -->
                         <p>{{  photo.description|truncatewords:50 }}</p>
                       </div>

@@ -30,9 +30,10 @@ html {
 }
 
 body{
-	margin:0;
-	width:100%;
+	margin:0 5%;
+	width:90%;
 }
+
 
 /**** HEADER ****/
 header{
@@ -281,29 +282,62 @@ section#results{
           position:relative;
           width:32%;
             &:nth-child(3n+1){ /* 1st,4th,7th, 10th etc. */
-              margin:0 2% 0 0 ;
+              margin:0 2% 0 0;
             }            
             &:nth-child(3n+3){ /* 3rd, 6th, 9th, 12th etc. */
               margin:0 0 0 2%; 
             }    
+          .photo-image{
+            width: 100%;
+            padding-bottom: 100%;
+            overflow: hidden;
+            position: relative;
             img{
-              width:100%;
-              display:block;
+              width: 170%;
+              height: auto;
+              margin: auto;
+              position: absolute;
+              top: -100%;
+              right: -100%;
+              bottom: -100%;
+              left: -100%;
             }
+          }
             .photodata{
-              h2{
+              a{
+                text-decoration: none;
+                h2{
+                  color: black;
+                  &:hover{
+                    opacity: 0.6;
+                  }
+                }
+
               }
             }
           } /* end .photo */
+
         } /* end #content1 Grid */
         &#photo-list{
           .photo{
-            width:100%;
+            .photo-image{
+            width:25%;
+            padding-bottom:25%;
+            margin-right:2%;
+            display:inline-block;
             margin-bottom:2%;
-            img{
-              width:25%;
-              margin-right:2%;
-              display:inline-block;
+            overflow: hidden;
+            position: relative;
+              img{
+                width: 170%;
+                height: auto;
+                margin: auto;
+                position: absolute;
+                top: -100%;
+                right: -100%;
+                bottom: -100%;
+                left: -100%;
+              }
             }
             .photodata{
               width:71%;
