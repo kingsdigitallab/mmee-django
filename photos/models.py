@@ -2,11 +2,19 @@ from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-# from wagtail.images.models import Image
+from wagtail.snippets.models import register_snippet
+from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.search import index
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+
+''' TODO:
++ .created_at and .modified
+'''
 
 
-class Photographer(models.Model):
-    # name = models.CharField(max_length=256)
+@register_snippet
+class Photographer(index.Indexed, models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
@@ -18,11 +26,10 @@ class Photographer(models.Model):
     phone_number = models.CharField(
         validators=[phone_regex], max_length=11, blank=True, null=True)
 
-    AGE_RANGE_CHOICES = [(0, 'undefined')] +\
-        [
-            (i, '{}-{}'.format(i * 10 - 10, i * 10 - 1))
-            for i
-            in range(1, 11)
+    AGE_RANGE_CHOICES = [(0, 'undefined')] + [
+        (i, '{}-{}'.format(i * 10 - 10, i * 10 - 1))
+        for i
+        in range(1, 11)
     ]
 
     age_range = models.PositiveSmallIntegerField(
@@ -31,10 +38,24 @@ class Photographer(models.Model):
 
     class Meta:
         ordering = ['last_name', 'first_name', 'email', 'phone_number']
-        unique_together = ['last_name', 'first_name', 'email']
+        unique_together = ['email', 'last_name', 'first_name']
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
+
+    panels = [
+        FieldPanel('first_name'),
+        FieldPanel('last_name'),
+        FieldPanel('email'),
+        FieldPanel('phone_number'),
+    ]
+
+    search_fields = [
+        index.SearchField('first_name', partial_match=True),
+        index.SearchField('last_name', partial_match=True),
+        index.SearchField('email', partial_match=True),
+        index.SearchField('phone_number', partial_match=True),
+    ]
 
     @classmethod
     def get_age_range_from_str(cls, age_range):
@@ -49,8 +70,9 @@ class Photographer(models.Model):
         return ret
 
 
-class PhotoCategory(models.Model):
-    label = models.CharField(max_length=100, unique=True)
+@register_snippet
+class PhotoCategory(index.Indexed, models.Model):
+    label = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50)
 
     def __str__(self):
@@ -60,11 +82,24 @@ class PhotoCategory(models.Model):
         self.slug = slugify(self.label)
         super().save(*args, **kwargs)
 
+    panels = [
+        FieldPanel('label'),
+    ]
 
-class PhotoSubcategory(models.Model):
+    search_fields = [
+        index.SearchField('label', partial_match=True),
+    ]
+
+    class Meta:
+        ordering = ['label']
+        verbose_name_plural = 'Photo Categories'
+
+
+@register_snippet
+class PhotoSubcategory(index.Indexed, models.Model):
     category = models.ForeignKey(PhotoCategory, on_delete=models.CASCADE)
-    label = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=50)
+    label = models.CharField(max_length=60)
+    slug = models.SlugField(max_length=60)
 
     def __str__(self):
         return '{}: {}'.format(self.category.label, self.label)
@@ -73,31 +108,74 @@ class PhotoSubcategory(models.Model):
         self.slug = slugify(self.label)
         super().save(*args, **kwargs)
 
+    panels = [
+        SnippetChooserPanel('category'),
+        FieldPanel('label'),
+    ]
+
+    search_fields = [
+        index.SearchField('label', partial_match=True),
+    ]
+
     class Meta:
         ordering = ['category__label', 'label']
         unique_together = ['label', 'category']
+        verbose_name_plural = 'Photo Subcategories'
 
 
-class Photo(models.Model):
-    photographer = models.ForeignKey(Photographer, on_delete=models.CASCADE)
-    public = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='photos', blank=True, null=True)
-    # image = WagtailImageField(upload_to='photos', blank=True)
+@register_snippet
+class Photo(index.Indexed, models.Model):
+    photographer = models.ForeignKey(Photographer, on_delete=models.SET_NULL,
+                                     null=True, blank=True, default=None)
     # GN: what does that number represents? What are we doing with it?
-    number = models.PositiveSmallIntegerField()
-    title = models.CharField(max_length=256)
-    date = models.DateField()
-    # monument_type = models.ManyToManyField(MonumentType, blank=True)
-    location = models.PointField(blank=True, null=True)
+    number = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
+
+    # public = models.BooleanField(default=False)
+    # image = models.ImageField(upload_to='photos', blank=True, null=True)
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+
+    description = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, null=True)
 
+    date = models.DateField(null=True, blank=True)
+    location = models.PointField(blank=True, null=True)
+
     subcategories = models.ManyToManyField(PhotoSubcategory)
+
+    panels = [
+        SnippetChooserPanel('photographer'),
+        FieldPanel('number'),
+        ImageChooserPanel('image'),
+        FieldPanel('subcategories'),
+        FieldPanel('description'),
+        FieldPanel('comments'),
+        FieldPanel('date'),
+        FieldPanel('location'),
+    ]
+
+    search_fields = [
+        index.SearchField('description', partial_match=True),
+        index.RelatedFields('photographer', [
+            index.SearchField('first_name', partial_match=True),
+            index.SearchField('last_name', partial_match=True),
+        ]),
+    ]
 
     class Meta:
         ordering = ['photographer', 'number']
 
     def __str__(self):
-        return self.title
+        return '{} ({}): {}'.format(self.photographer, self.number, self.title)
+
+    @property
+    def title(self):
+        return (self.description or '')[:50]
 
     def image_tag(self):
         ret = ''

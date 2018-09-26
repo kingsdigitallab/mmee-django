@@ -9,6 +9,9 @@ from photos.models import (Photo, Photographer, PhotoCategory,
 from django.utils.dateparse import parse_date
 import os
 from django.core.files.base import File
+import hashlib
+from wagtail.images.models import Image
+from django.core.files.images import ImageFile
 
 '''
 (venv) ➜  /vagrant git:(develop) ✗ ./manage.py import_data
@@ -91,11 +94,10 @@ class Command(BaseCommand):
             'photographer': photographer,
         }
 
-        ret, _ = Photo.objects.get_or_create(**photo)
+        ret, created = Photo.objects.get_or_create(**photo)
 
         photo.update({
-            # '_filename': row['filename'],
-            'title': (row['description'] or '')[:50],
+            'description': (row['description'] or ''),
             'comments': row['comments'],
         })
 
@@ -110,16 +112,53 @@ class Command(BaseCommand):
 
         ret.save()
 
+        self._print_operation(ret, created, 'title')
+
+        # Update or Create image file as Wagtail Image
+        # .title = slugify(FILENAME)
+        # .file = hash(FILE).jpg
         if self.image_path and row['filename']:
             path = os.path.join(self.image_path, row['filename'])
             if os.path.exists(path):
-                new_name = re.sub(
+                title = re.sub(
                     '[^\w\.]', '-', row['filename']).lower().strip()
-                ret.image.save(
-                    new_name, File(open(path, 'rb')))
-                ret.save()
+
+                hash = get_has_from_file(path)
+
+                image = Image.objects.filter(
+                    file__contains=hash
+                ).first()
+
+                if not image:
+                    new_name = re.sub(r'.*\.', hash + '.', row['filename'])
+                    image = Image(
+                        file=ImageFile(File(open(path, 'rb')), name=new_name),
+                        title=title
+                    )
+                    image.save()
+
+                    self._print_operation(image, True, 'title')
+                    ret.image = image
+                    ret.save()
 
         return ret
+
+    def _print_operation(self, record, created, display_field=None):
+        operation = 'UP'
+        if created:
+            operation = 'CR'
+
+        if display_field is None:
+            display_name = str(record)
+        else:
+            display_name = getattr(record, display_field)[:20]
+
+        print('{} {} #{} "{}"'.format(
+            operation,
+            record.__class__.__name__,
+            record.pk,
+            display_name
+        ))
 
     def import_photographer(self, row):
         '''
@@ -144,6 +183,7 @@ class Command(BaseCommand):
             return None
 
         ret = None
+        created = False
         if email:
             ret = Photographer.objects.filter(
                 email=photographer['email']).first()
@@ -153,12 +193,15 @@ class Command(BaseCommand):
                 last_name=photographer['last_name'],
             ).first()
         if not ret:
+            created = True
             ret = Photographer(**photographer)
         else:
             for field in photographer:
                 if photographer[field]:
                     setattr(ret, field, photographer[field])
         ret.save()
+
+        self._print_operation(ret, created)
 
 #         print(photographer)
 #         print(ret.first_name, ret.last_name, ret.email)
@@ -285,3 +328,12 @@ def _get_masked_phone(text):
         return phone_match.group(1)
 
     return None
+
+
+def get_has_from_file(path):
+    chunk_size = 1024 * 1024 * 10
+    hash_md5 = hashlib.md5()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(chunk_size), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
