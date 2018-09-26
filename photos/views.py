@@ -12,7 +12,7 @@ class PhotoSearchView(ListView):
     model = Photo
 
     def get_queryset(self):
-        return self.model.objects.filter(image__isnull=False)
+        return self.model.objects.filter(image__isnull=False)[:7]
 
 
 class PhotoDetailView(DetailView):

@@ -80,7 +80,7 @@
                 {% for photo in object_list %}
                     <div class="photo">
                       <a href="/photos/{{ photo.pk }}/">
-                          {% image photo.image height-200 %}
+                          {% image photo.image original %}
                       </a>
                       
                       <div class="photodata">
@@ -97,7 +97,7 @@
                 {% for photo in object_list %}
                     <div class="photo">
                       <a href="/photos/{{ photo.pk }}/">
-                          {% image photo.image height-200 %}
+                          {% image photo.image original %}
                       </a>
                       
                       <div class="photodata">
