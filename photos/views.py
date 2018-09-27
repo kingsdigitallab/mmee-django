@@ -9,6 +9,7 @@ from wagtail.images.shortcuts import get_rendition_or_not_found
 import re
 from django.http.response import JsonResponse
 from django.shortcuts import render
+from photos.models import PhotoSubcategory
 
 
 class PhotoSearchView(View):
@@ -28,7 +29,8 @@ class PhotoSearchView(View):
                     self._get_dict_from_photo(photo)
                     for photo in qs
                 ],
-                'qs': self.get_query_string(params)
+                'qs': self.get_query_string(params),
+                'facets': self.facets
             }
             ret = JsonResponse(context)
         else:
@@ -62,18 +64,51 @@ class PhotoSearchView(View):
         return ret
 
     def get_queryset(self, request, params=None):
+        self.facets = []
+
         ret = self.model.objects.filter(
             image__isnull=False
         )
 
+        query_facets = request.GET.get('facets', '')
+        for option in query_facets.split(';'):
+            pair = option.split(':')
+            if pair[0] == 'cat':
+                ret = ret.filter(subcategories__pk=pair[1])
+
         search_query = self.get_search_query_from_request(request)
 
-        if search_query['phrase']:
-            ret = ret.filter(description__icontains=search_query['phrase'])
-            # from wagtail.search.backends import get_search_backend
-            # s = get_search_backend()
-            # ret = s.search(search_query['phrase'], fields=['description'])
-            # ret = ret.search(phrase, fields=['description'])
+        if 1 or search_query['phrase']:
+            from wagtail.search.backends import get_search_backend
+            s = get_search_backend()
+            ret = s.search(search_query['phrase'] or 'a', ret)
+
+            # ret = ret.filter(description__icontains=search_query['phrase'])
+
+        if 1:
+            options = ret.facet('subcategories__pk')
+            subs = PhotoSubcategory.objects.filter(
+                pk__in=[option for option in options.keys()]).values_list(
+                    'pk', 'label', 'category__label'
+            ).order_by('category__label', 'label')
+
+            cat = None
+            ops = []
+            for sub in subs:
+                facet = sub[2]
+
+                if facet != cat:
+                    cat = facet
+                    ops = []
+                    self.facets.append([facet, ops])
+
+                ops.append(['cat', sub[0], sub[1], options[sub[0]], 0])
+
+            # print(self.facets)
+
+        # sorting (TODO: this work-around is bad, we need to use Haystack
+        # directly instead)
+        ret = self.model.objects.filter(pk__in=[r.pk for r in ret])
 
         order_fields = {
             'newest': '-date',

@@ -170,6 +170,10 @@ class Photo(index.Indexed, models.Model):
     ]
 
     search_fields = [
+        index.FilterField('subcategories__pk'),
+        index.SearchField('subcategories__pk'),
+        index.FilterField('photosubcategory_id'),
+        index.FilterField('image_id'),
         index.SearchField('description', partial_match=True),
         index.RelatedFields('photographer', [
             index.SearchField('first_name', partial_match=True),

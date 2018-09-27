@@ -24,37 +24,22 @@
                     <li>
                       <h2>Filters</h2>
                       <form action="">
-                        <h3>Photographer</h3>
-                        <h4>Category 1</h4>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 1
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 2
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 3
-                        </div>
-                        <h4>Category 2</h4>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 1
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 2
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 3
-                        </div>
-                        <h4>Category 3</h4>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 1
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 2
-                        </div>
-                        <div>
-                        <input type="checkbox" name="category1" value="">subcat 3
-                        </div>
+                        <h3>Categories</h3>
+                        
+                        <template v-for="facet in facets">
+                            <h4>{{ facet[0] }}</h4>
+                            <div v-for="option in facet[1]">
+                                <label>
+                                    <input type="checkbox" 
+                                        v-bind:name="option[0]+':'+option[1]" 
+                                        value="1" v-bind:checked="option[4]" 
+                                        v-on:click="on_change_option(option, $event)">
+                                    {{ option[2] }} ({{ option[3] }})
+                                </label>
+                            </div>
+                        
+                        </template>
+                        
                         <button aria-label="apply filter">Apply filter</button>
                       </form>
                     </li>
@@ -163,6 +148,7 @@ $(function() {
             query: query,
             qs: '',
             status: 0,
+            facets: {},
         },
         mounted: function() {
             this.$nextTick(function () {
@@ -178,6 +164,12 @@ $(function() {
             },
         },
         methods: {
+            on_change_option: function(option, event) {
+                console.log(event);
+                option[4] = event.target.checked ? 1: 0;
+                var t = 0;
+                this.call_api();
+            },
             phrase_submit: function() {
               this.call_api();  
             },
@@ -191,14 +183,25 @@ $(function() {
                 var self = this;
                 self.status = 1;
                 
+                var query_facets = [];
+                $.each(self.facets, function(i, facet) {
+                    $.each(facet[1], function(j, option) {
+                        if (option[4]) {
+                            query_facets.push(option[0]+':'+option[1]);
+                        }
+                    })
+                });
+                
                 var query = $.extend({
                     format: 'js',
+                    facets: query_facets.join(';'),
                 }, self.query)
                 
                 var req = $.getJSON('/photos', query);
                 req.done(function(data) {
                     self.photos = data.photos;
                     self.status = 0;
+                    self.facets = data.facets;
                     
                     self.qs = data.qs;
                     replace_query_string(data.qs);
