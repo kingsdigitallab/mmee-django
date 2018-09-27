@@ -7,6 +7,7 @@ from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.search import index
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
+import re
 
 ''' TODO:
 + .created_at and .modified
@@ -184,7 +185,19 @@ class Photo(index.Indexed, models.Model):
 
     @property
     def title(self):
-        return (self.description or '')[:50]
+        '''Try to be smart. We stop at the first . or ,'''
+        ret = self.description or ''
+
+        if ret:
+            ret = re.sub(r'\(.*?\)', '', ret)
+            ret = re.sub(r'( -|--).*$', '', ret)
+            ret = re.sub(r'[.,;].*$', '', ret)
+
+        max_len = 50
+        if len(ret) > max_len:
+            ret = ret[:max_len] + '...'
+
+        return ret
 
     def image_tag(self):
         ret = ''

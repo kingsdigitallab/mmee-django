@@ -12,6 +12,10 @@
   {% compress css %}
   <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
   {% endcompress %}
+  
+  {# TODO: local copies and compress #}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.css">
+    
 </head>
 <body>
 
@@ -46,14 +50,21 @@
   <script src="{% static 'js/main.js' %}"></script>
   {% endcompress %}
 
+  {# TODO: local copies and compress #}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  {% if GA_ID %}
+      {% compress js %}
+      <script src="{% static 'js/google_analytics.js' %}"></script>
+      <script>
+        ga('create', '{{ GA_ID }}', 'auto');
+        ga('send', 'pageview');
+      </script>
+      {% endcompress %}
+  {% endif %}
+  
   {% block footer_scripts %}{% endblock %}
 
-  {% compress js %}
-  <script src="{% static 'js/google_analytics.js' %}"></script>
-  <script>
-    ga('create', '{{ GA_ID }}', 'auto');
-    ga('send', 'pageview');
-  </script>
-  {% endcompress %}
 </body>
 </html>

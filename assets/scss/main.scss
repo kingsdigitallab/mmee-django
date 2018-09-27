@@ -233,7 +233,8 @@ section#search{
 
 section#results{
     margin: 0 auto;
-    padding-top: 70px;
+    // padding-top: 70px;
+    padding-top: 40px;
     position: relative;
     input, section, article {
       clear: both;
@@ -382,5 +383,14 @@ section#photo{
 
 }
 
+// Map
+#map-leaflet {
+    height: 400px;
+    margin-bottom: 2rem;
+}
 
-
+#map {
+    height: 400px;
+    width: 100%;
+    margin-bottom: 2rem;
+}

@@ -5,8 +5,10 @@
 <main>
     <section id="search">
        <div class="search-field">
-            <input><button>Search</button>
-            <button>My location</button>
+            <form action="/photos/">
+                <input name="phrase" value="{{ phrase }}">
+                <button>Search</button>
+            </form>
         </div>
     </section> <!-- end .search -->
 
@@ -52,11 +54,35 @@
           </div><!-- end .location -->
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
+    
     <section id="map">
-        <img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/>
+        <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
+        
+        <h3>Location on map</h3>
+        <!-- div instead of img -->
+        <div id="map-leaflet">
+        </div>
+        
     </section> <!-- end #map -->
 
 </main>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Create map and set view
+  var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
+  var photomap = L.map('map-leaflet').setView(photo_point, 15);
+  // Create tilelayer and add to map
+  var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
+  var sample_markers = [
+    {'latlng':photo_point, 'content':"This Photo"}
+  ];
+  for (i in sample_markers){
+    m = L.marker(sample_markers[i]['latlng']).bindPopup(
+        sample_markers[i]['content']
+    ).addTo(photomap);
+  }
+});
+</script>
 
 {% endblock main %}
