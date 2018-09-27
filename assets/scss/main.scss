@@ -6,12 +6,29 @@
 - GENERAL 
 - HEADER 
 - NAVIGATION 
+- SEARCH RESULTS
+- PHOTO PAGE
+
+
+
+
+
+
+
+
 
 
 /**** GENERAL ****/
 
 // GN: reduced from 170% is it was badly pixelated on web friendly images
-$image-crop-scale: 130%;
+// TO: Had to increase it back a bit to 160 as it wasn't cropping enough. Will change it to a better way of cropping later.
+
+$image-crop-scale: 160%;
+
+/* Colours to come */
+
+
+
 
 html {
 	-webkit-box-sizing: border-box;
@@ -348,9 +365,7 @@ section#results{
     }
     #tab1:checked ~ #photo-grid,
     #tab2:checked ~ #photo-list,
-    #tab3:checked ~ #photo-map,
-    #tab4:checked ~ #content4,
-    #tab5:checked ~ #content5 {
+    #tab3:checked ~ #photo-map{
       display: block;
       background: #fff;
       color: #999;
@@ -364,7 +379,8 @@ section#results{
       border:1px solid #eee;
       &#photo-grid{
         .photo{
-          float:left;
+          display: inline-block;
+          vertical-align: top;
           position:relative;
           width:32%;
             &:nth-child(3n+1){ /* 1st,4th,7th, 10th etc. */
@@ -378,6 +394,7 @@ section#results{
             padding-bottom: 100%;
             overflow: hidden;
             position: relative;
+            border:1px solid #f1f1f1;
             img{
               width: $image-crop-scale;
               height: auto;
@@ -414,6 +431,7 @@ section#results{
             margin-bottom:2%;
             overflow: hidden;
             position: relative;
+            border:1px solid #f1f1f1;
               img{
                 width: $image-crop-scale;
                 height: auto;
@@ -446,6 +464,7 @@ section#photo{
     width:40%;
     display: inline-block;
     margin-right:4%;
+    border:1px solid #f1f1f1;
     img{
       width:100%;
       height:auto;
