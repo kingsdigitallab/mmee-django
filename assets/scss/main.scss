@@ -25,8 +25,8 @@
 
 $image-crop-scale: 160%;
 
-/* Colours to come */
-
+/* Colours */
+// TO: Need to add
 
 
 
@@ -179,7 +179,7 @@ section#search{
     button.search-icon{
       position: absolute;
       right: 10%;
-      top: 5.5%;
+      top: 6.5em;
       border: none;
       background-image: url("http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png");
       background-size: 65px 65px;
@@ -192,7 +192,7 @@ section#search{
     button.geo-icon{
       position: absolute;
       right: 5%;
-      top: 6%;
+      top: 7.2em;
       border: none;
       background-image: url("https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_my_location_48px-512.png");
       background-size: 25px 25px;
@@ -246,6 +246,7 @@ section#search{
               padding: 0.4rem 1rem;
               cursor: pointer;
               border:1px solid #e6e6e6;
+              display: block;
               &:hover{
                 border:1px solid black;
               }
@@ -289,7 +290,23 @@ section#search{
                         font-size:1em;
                         text-align:center;
                     }/* end filter-label */
-                }/* label */
+                }/* end label */
+                button{
+                  font-size: 0.8rem;
+                  width: 100%;
+                  border: none;
+                  background-color: black;
+                  cursor: pointer;
+                  padding: 0.5rem;
+                  margin: 1rem 0;
+                  text-transform: uppercase;
+                  color: white;
+                  border: 1px solid white;                
+                  &:hover{
+                    background-color: white;
+                    color: black;
+                  }
+                }/* end button */
             }/* end .filter-list */
         }/* end #filter */
     }/* end .search-filters */
@@ -411,6 +428,7 @@ section#results{
                 text-decoration: none;
                 h2{
                   color: black;
+                  font-size: 1.3rem;
                   &:hover{
                     opacity: 0.6;
                   }
@@ -449,7 +467,8 @@ section#results{
               vertical-align:top;
               h2{
                 margin-top:0;
-                font-size:1.5rem;
+                font-size:1.3rem;
+                color: black;
               }
             } /* end .photodata */
           } /* end .photo */
