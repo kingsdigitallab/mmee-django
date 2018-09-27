@@ -27,6 +27,7 @@ html {
 body{
 	margin:0 5%;
 	width:90%;
+  font-family: "helvetica neue", helvetica;
 }
 
 section{
@@ -128,23 +129,68 @@ header{
 
 /**** SEARCH ****/
 section#search{
-    .search-field{ 
-        margin:0 auto;
-        width:100%;
-        text-align: center;
-        input{
-          width:50%;
-        } 
+  .search-field{ 
+    margin:0 auto;
+    width:100%;
 
-         /*a.geolocation{
-        background-image: url("https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_my_location_48px-512.png");
-        background-size: 25px 25px;
-        width:25px;
-        height:25px;
-        pointer:cursor;
-        display:inline-block;
-        margin-left:2%;
-        }*/
+  input{
+    margin: 0 auto;
+    width: 95%;
+    height: 45px;
+    padding: 0 20px;
+    font-size: 1rem;
+    border: 1px solid #D0CFCE;
+    outline: none;
+    &:focus{
+      border: 1px solid #008ABF;
+      transition: 0.35s ease;
+      color: #008ABF;
+      &::-webkit-input-placeholder{
+        transition: opacity 0.45s ease; 
+        opacity: 0;
+       }
+      &::-moz-placeholder {
+        transition: opacity 0.45s ease; 
+        opacity: 0;
+       }
+      &:-ms-placeholder {
+       transition: opacity 0.45s ease; 
+       opacity: 0;
+       }    
+      }
+    }
+    button.search-icon{
+      position: absolute;
+      right: 10%;
+      top: 5.5%;
+      border: none;
+      background-image: url("http://www.endlessicons.com/wp-content/uploads/2012/12/search-icon.png");
+      background-size: 65px 65px;
+      background-color: white;
+      background-position: -10px -13px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+    }
+    button.geo-icon{
+      position: absolute;
+      right: 5%;
+      top: 6%;
+      border: none;
+      background-image: url("https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_my_location_48px-512.png");
+      background-size: 25px 25px;
+      background-color: white;
+      background-position: 0 -1px;
+      width: 30px;
+      height: 30px;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      }
+      button{
+        &:hover{
+          opacity: 0.6;
+        }
+      }
     }/* end .search-field */ 
 
     .search-filters{
@@ -177,6 +223,15 @@ section#search{
               -moz-transform:translate3d(260px, 0, 0);
               -o-transform:translate3d(260px, 0, 0);
               transform:translate3d(260px, 0, 0);
+            }
+            label.filter-label{
+              background-color: #e6e6e6;
+              padding: 0.4rem 1rem;
+              cursor: pointer;
+              border:1px solid #e6e6e6;
+              &:hover{
+                border:1px solid black;
+              }
             }
             .filter-list{
                 position:fixed;
@@ -223,7 +278,44 @@ section#search{
     }/* end .search-filters */
 
     .sort{
-        display: inline-block;;
+        display: inline-block;
+        position: relative;
+        background-color: #e6e6e6;
+        width: auto;
+        max-width: 100%;
+        border-radius: 2px;
+        border:1px solid #e6e6e6;
+        &:hover{
+          border:1px solid black;
+        }
+         select {
+            max-width: 100%;
+            padding: 0.35rem 1.5rem 0.3rem 1rem;
+            border: none;
+            font-size:0.9rem;
+
+            background-color: transparent;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            &:active,
+            &:focus {
+              outline: none;
+              box-shadow: none;
+            }
+          }
+          &:after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            margin-top: -2px;
+            right: 6px;
+            width: 0; 
+            height: 0; 
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #aaa;
+          }
     }/* end #sort */
 } /* end section #search */  
     

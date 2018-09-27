@@ -10,8 +10,9 @@
 
        <div class="search-field">
             <input v-model="query.phrase" @keyup.enter="phrase_submit">
-            <button v-on:click="phrase_submit">Search</button>
-            <button>My location</button>
+            
+            <button class="search-icon" v-on:click="phrase_submit"></button>
+            <button class="geo-icon"></button>
         </div>
         <div class="search-filters">
             <div class="filter">
