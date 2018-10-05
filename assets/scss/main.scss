@@ -26,7 +26,10 @@
 $image-crop-scale: 160%;
 
 /* Colours */
-// TO: Need to add
+// TO: Need to 
+$primary-color: blue;
+$black: #000;
+$white: #fff;
 
 
 
@@ -400,11 +403,12 @@ section#results{
           vertical-align: top;
           position:relative;
           width:32%;
+          margin-bottom: 2%;
             &:nth-child(3n+1){ /* 1st,4th,7th, 10th etc. */
-              margin:0 2% 0 0;
+              margin-right:2%;
             }            
             &:nth-child(3n+3){ /* 3rd, 6th, 9th, 12th etc. */
-              margin:0 0 0 2%; 
+              margin-left:2%; 
             }    
           .photo-image{
             width: 100%;
@@ -467,8 +471,9 @@ section#results{
               vertical-align:top;
               h2{
                 margin-top:0;
-                font-size:1.3rem;
+                font-size:1rem;
                 color: black;
+                font-weight: normal;
               }
             } /* end .photodata */
           } /* end .photo */
@@ -523,4 +528,45 @@ section#photo{
     height: 400px;
     width: 100%;
     margin-bottom: 2rem;
+}
+
+// Footer
+
+footer {
+    background: $white;
+    border-top:1px solid black;
+    ul{
+        display: block;
+        width:100%;
+        margin-left: 0;
+        &.logo{
+            >li{
+                display: inline-block;
+            }
+        }
+    }
+    p{
+      font-size:0.8rem;
+    }
+    a {
+        color: $primary-color;
+        &:hover{
+            color: lighten($primary-color, 25%);
+        }
+    }
+
+    img {
+        margin: 1rem;
+        max-width: none;
+        width: auto;
+        height: 4rem;
+        &:hover{
+            opacity: 0.6;
+        }
+    }
+
+    ul {
+        list-style-type: none;
+        text-align: center;
+    }
 }

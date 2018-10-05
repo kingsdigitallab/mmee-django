@@ -27,18 +27,6 @@
             </p>
           </div><!-- end #photo-description -->
 
-          <div class="photo-photographer">
-            <h3>Photographer:</h3>
-                <ul>
-                  {% if photo.photographer.get_age_range_display %}
-                    <li>Age: {{ photo.photographer.get_age_range_display }}</li>
-                  {% endif %}
-                  {% if 0 %}
-                    <li>Ethnicity: ?</li>
-                  {% endif %}
-                </ul>
-          </div><!-- end .photographer-data -->
-
           <div class="photo-photograph">
             <h3>Photograph:</h3>
                 <ul>
@@ -51,7 +39,8 @@
 
           <div class="photo-location">
             <h3>Location:</h3>
-                <p>Postcode</p>
+            <!-- TO: GN, could you add geolocation, lat/long here please -->
+                
           </div><!-- end .location -->
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
