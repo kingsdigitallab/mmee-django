@@ -602,6 +602,97 @@ section#photo{
     margin-bottom: 2rem;
 }
 
+// Submission Form
+.submission-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding:2%;
+  border:1px solid black;
+  input[type=date], input[type=text], input[type=email], input[type=phone], input[type=number], textarea {
+    margin:10px 0;
+    width:90%;
+  }
+  
+  textarea {
+    min-height: 150px;
+  }
+
+  .button-wrapper{
+    width:100%;
+    padding-top:2rem;
+    text-align:center;
+    .back {
+      width:40%;
+      float:left;
+      padding:1% 4%;
+      border:1px solid;
+    }
+    .next {
+      width:40%;
+      float:right;
+      padding:1% 4%;
+      border:1px solid;
+    }
+  }
+  p{
+    text-align:justify;
+  }
+  /* Multi-Part CSS */
+  input[type=checkbox] {
+    position: absolute;
+    /* Position the checkbox in upper left corner */
+    
+    opacity: 0;
+  }
+  /* Override */
+    input[type=checkbox] {
+  }
+
+  /* Styling Parts */
+  #part1,
+  #part2,
+  #part3 {
+    z-index: 2;
+    display: block;
+    height: auto;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+  }
+
+  /* Hidden Parts */
+  #part2,
+  #part3 {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* Show Step 2 & Hide Step 1 */
+  #step2:checked ~ #part2 {
+    opacity: 1;
+    height: auto;
+  }
+  #step2:checked ~ #part1 {
+    opacity: 0;
+    height: 0;
+    display: none;
+  }
+
+  /* Show Step 3  & Hide Step 2 */
+  #step3:checked ~ #part3 {
+    opacity: 1;
+    height: auto;
+  }
+  #step3:checked ~ #part2 {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+
+
 // Footer
 
 footer {
