@@ -430,7 +430,6 @@ section#search{
 
 
 /**** SEARCH RESULTS ****/
-
 section#results{
     margin: 0 auto;
     // padding-top: 70px;
@@ -441,6 +440,7 @@ section#results{
       padding-top: 10px;
       display: none;
     }
+
     label {
       font-weight: 700;
       font-size: 18px;
@@ -466,6 +466,8 @@ section#results{
       background: #000;
       color:white;
     }
+
+
     article {
       border:1px solid #eee;
       &#photo-grid{
@@ -549,9 +551,8 @@ section#results{
             } /* end .photodata */
           } /* end .photo */
       } /* end #content2 List */
-    } /* end section */
+    } /* end article */
 }
-
 
 /**** PHOTO PAGE ****/
 section#photo{
@@ -643,6 +644,19 @@ footer {
 }
 
 @media screen and (min-width: 1200px) {
+
+
+section#results{
+    article#photo-map{
+      clear: both;
+      display: block;
+      position: absolute;
+      top: 6rem;
+      right: 0;
+      width: 75%;
+      margin-right: -82%;
+    }
+  }
 
   section#results{
     width:55%;
