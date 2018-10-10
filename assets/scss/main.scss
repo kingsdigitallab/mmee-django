@@ -27,7 +27,8 @@ $image-crop-scale: 160%;
 
 /* Colours */
 // TO: Need to 
-$primary-color: blue;
+$primary-color: #257478;
+$secondary-color:#FFC800;
 $black: #000;
 $white: #fff;
 
@@ -119,11 +120,75 @@ header{
   	-o-transition:all 200ms ease-in;
   	transition:all 200ms ease-in;
   	z-index:500;
+
+    &.submit-label{
+          position:fixed;
+          top:0;
+          right:81px;
+          font-size: 2em;
+          background: $primary-color;
+          padding:22px 20px;
+          border:1px solid $white;
+            span{
+            position: relative;
+            margin: 12px auto;
+            text-indent: -9999px;
+            transition: all .1s ease-in;
+            width: 40px;
+            height: 2px;
+            background-color: #fff;
+            display: block;
+            &:before{
+              content: '';
+              position: absolute;
+              top:-18px;
+              right: 19px;
+              transition: all .1s ease-in;
+              width: 2px;
+              height: 40px;
+              background-color: #fff;
+              display: block
+            }
+        }
+                &:hover{
+              background: $secondary-color;
+            }
+
+    }
+
+
+
   	&.menu-label{
-  		position:absolute;
-  		top:10px;
-  		right:10px;
+  		position:fixed;
+  		top:0;
+  		right:0;
   		font-size: 2em;
+      background: $primary-color;
+      padding:22px 20px;
+      border:1px solid $white;
+      span{
+        position: relative;
+        margin: 12px auto;
+        text-indent: -9999px;
+        transition: all .1s ease-in;
+        width: 40px;
+        height: 2px;
+        background-color: #fff;
+        display: block;
+        &:before, &:after{
+          content: '';
+          position: absolute;
+          top: -12px;
+          transition: all .1s ease-in;
+          width: 40px;
+          height: 2px;
+          background-color: #fff;
+          display: block
+        }
+        &:after{
+          top: 12px;
+        }
+       }
   	}
   }
   input#menu[type="checkbox"]{
@@ -145,6 +210,12 @@ header{
   	color: white;
   }
   }/* end nav */
+
+
+
+
+
+
 
 
 /**** SEARCH ****/
@@ -570,3 +641,39 @@ footer {
         text-align: center;
     }
 }
+
+@media screen and (min-width: 1200px) {
+
+  section#results{
+    width:55%;
+    float:left;
+    label {
+      width:50%;
+    &[for=tab3]{
+      display: none;
+    }
+    }
+  }
+
+  article#photo-map.tab-content{
+    width:40%;
+    float:right;
+    margin-top: 6rem;
+  }
+
+  #map {
+  position:absolute;
+  margin-top:-10vh;
+  height: 100vh;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  }
+
+  footer{
+    width: 100%;
+    float: left;
+  }
+
+}
+

@@ -59,24 +59,27 @@
     <section id="results">
         <p class="stats">{{ result_size() }}</p>
     
-        <input id="tab1" type="radio" name="tabs"  checked>
+        <input id="tab1" type="radio" name="tabs" >
         <label for="tab1"><span>Grid</span></label>
 
         <input id="tab2" type="radio" name="tabs">
         <label for="tab2"><span>List</span></label>
 
-        <input id="tab3" type="radio" name="tabs">
+        <input id="tab3" type="radio" name="tabs"  checked>
         <label for="tab3"><span>Map</span></label>
 
         <article id="photo-grid" class="tab-content">
-            <div v-for="photo in photos" class="photo">
+                              <div v-for="photo in photos" class="photo">
               <div class="photo-image">
                 <a v-bind:href="photo.url+'?'+qs" v-html="photo.image">
                 </a>
               </div>
             </div>
         </article>
-
+  <!--<div class="breadcrumb ">
+      <h3>Sidebar</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab maxime fugiat perspiciatis.</p>
+    </div>-->
         <article id="photo-list" class="tab-content">
             <div v-for="photo in photos" class="photo">
                 <div class="photo-image">
@@ -86,7 +89,6 @@
                 <div class="photodata">
                     <h2>{{ photo.description }}</h2>
                     <p v-if="photo.date">Date taken: {{ photo.date }}</p>
-                  </div>
                 </div>
             </div>
         </article>
