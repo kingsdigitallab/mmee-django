@@ -201,7 +201,6 @@ header{
       &:hover{
         background: $secondary-color;
         span{
-
           background-color: $black;
           &:before, &:after{
             background-color: $black;
@@ -523,18 +522,17 @@ section#results{
       float: left;
       width: 33.3%;
       padding: 1em;
-      border:1px solid $gray;
       cursor: pointer;
       text-decoration: none;
-      color: $gray;
+      color: $black;
+      background: $gray;
       -moz-transition:all 200ms ease-in;
       -webkit-transition:all 200ms ease-in;
       -o-transition:all 200ms ease-in;
       transition:all 200ms ease-in;
-      font-weight: 100;
       &:hover{
         color: $black;
-        background: $lightgray;
+        background: $secondary-color;
 
       }
     }
@@ -547,15 +545,15 @@ section#results{
       border-bottom: 2px solid #f0f0f0;
     }
     [id^="tab"]:checked + label {
-      background: $gray;
-      color:$black;
+      background: $primary-color;
+      color:$white;
       -moz-transition:all 200ms ease-in;
       -webkit-transition:all 200ms ease-in;
       -o-transition:all 200ms ease-in;
       transition:all 200ms ease-in;
       &:hover{
-        background: $lightgray;
-
+        background: $secondary-color;
+        color: $black;
       }   
     }
 
@@ -702,7 +700,7 @@ section#photo{
   max-width: 600px;
   margin: 0 auto;
   padding:2%;
-  border:1px solid black;
+  border:1px solid $gray;
   input[type=date], input[type=text], input[type=email], input[type=phone], input[type=number], textarea {
     margin:10px 0;
     width:90%;
@@ -716,17 +714,29 @@ section#photo{
     width:100%;
     padding-top:2rem;
     text-align:center;
-    .back {
+    height: 100px;
+
+    .back,.next{
       width:40%;
       float:left;
       padding:1% 4%;
-      border:1px solid;
+      background: $primary-color;
+      cursor: pointer;
+      color: $white;
+      -moz-transition:all 200ms ease-in;
+      -webkit-transition:all 200ms ease-in;
+      -o-transition:all 200ms ease-in;
+      transition:all 200ms ease-in;
+      &:hover{
+        background: $secondary-color;
+        color: $black;
+      }
+    }
+    .back {
+      float:left;
     }
     .next {
-      width:40%;
       float:right;
-      padding:1% 4%;
-      border:1px solid;
     }
   }
   p{
@@ -736,27 +746,33 @@ section#photo{
   input[type=checkbox] {
     position: absolute;
     /* Position the checkbox in upper left corner */
-    
     opacity: 0;
   }
   /* Override */
-  input[type=checkbox] {
+  input[type=checkbox].show {
+    opacity: 1;
+    position: relative;
   }
 
   /* Styling Parts */
   #part1,
   #part2,
-  #part3 {
+  #part3,
+  #part4{
     z-index: 2;
     display: block;
     height: auto;
     opacity: 1;
-    transition: opacity 1s ease-in-out;
+    -moz-transition:all 1s ease-in;
+    -webkit-transition:all 1s ease-in;
+    -o-transition:all 1s ease-in;
+    transition:all 1s ease-in;
   }
 
   /* Hidden Parts */
   #part2,
-  #part3 {
+  #part3,
+  #part4 {
     opacity: 0;
     height: 0;
     overflow: hidden;
@@ -783,6 +799,17 @@ section#photo{
     width: 0;
     height: 0;
   }
+  /* Show Step 4  & Hide Step 3 */
+  #step4:checked ~ #part4 {
+    opacity: 1;
+    height: auto;
+  }
+  #step4:checked ~ #part3 {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
 }
 
 

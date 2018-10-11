@@ -5,20 +5,23 @@
   <form action="" role="form">
     <input id='step2' type='checkbox'>
     <input id='step3' type='checkbox'>
+    <input id='step4' type='checkbox'>
 
     <div id="part1">
       <h3>Step 1: Upload your photo</h3>
-      <fieldset>
         <input aria-label="upload photo" type="file"
         id="photo" name="photo"
         accept="image/png, image/jpeg" />
-      </fieldset>
       <div class="button-wrapper">
+        <label class="back">
+        Cancel
+        </label>
         <label for='step2' id="continue-step2" class="next">
           Next
         </label>
       </div>
     </div>
+
     <div id="part2">
      <h3>Step 2: Photo Information</h3>
      <input type="date" name="bday" class="form-control" placeholder="Date">
@@ -28,19 +31,17 @@
       <label for='step2' id="back-step2" class="back">
         Back
       </label>
-
       <label for='step3' id="continue-step3" class="next">
         Next
       </label>
     </div>
-
   </div>
 
   <div id="part3">
     <h3>Step 3: Consent Information</h3>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </p>
-    <input type="checkbox" name="vehicle1" value="Bike" class="show"> I have read and accept the terms
+    <input type="checkbox" name="accept" class="show"> I have read and accept the terms
 
     <div class="button-wrapper">
       <label for='step3' id="back-step3" class="back">
@@ -50,16 +51,14 @@
        Submit
      </label>
     </div>
-   </div>
+  </div>
 
-
-   <div id="part4">
+  <div id="part4">
     <h3>Thank you for your submission</h3>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     </p>   
   </div>
-
-
+  
 </form>
 </div>
 {% endblock main %}
