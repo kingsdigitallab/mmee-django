@@ -1,0 +1,54 @@
+/** Importing Winchester's Fonts **/
+
+/** La Gioconda **/
+
+@font-face {
+  font-family: 'LaGioconda';
+  src: url('/static/fonts/LaGioconda/la-gioconda-os-tt.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'LaGioconda';
+  src: url('/static/fonts/LaGioconda/la-gioconda-os-tt.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-style: italic;
+}
+
+/** Raleway **/
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-Medium.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-MediumItalic.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-Bold.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-BoldItalic.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-Light.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('/static/fonts/Raleway/Raleway-LightItalic.ttf') format('truetype'); /* Safari, Android, iOS */
+  font-weight: 100;
+  font-style: italic;
+}
