@@ -8,26 +8,27 @@
             <form action="/photos/">
                 <input name="phrase" value="{{ phrase }}">
                 <button class="search-icon"></button>
-                <button class="location-icon"></button>
+                <button class="geo-icon"></button>
             </form>
         </div>
     </section> <!-- end .search -->
 
     <section id="photo">
+        <h1>{{ photo.title }}</h1>
         <div class="photo-image">
           {% image photo.image height-700 height="" width="" %}
         </div> <!-- end #photo -->
 
         <div class="photo-data">
           <div class="photo-description">
-            <h3>Description</h3>
+            <h3>Photo description</h3>
             <p>
               {{ photo.description }}
             </p>
           </div><!-- end #photo-description -->
 
           <div class="photo-photograph">
-            <h3>Data</h3>
+            <h3>Photograph:</h3>
                 <ul>
                     {% if photo.date %}<li>Date taken: {{ photo.date|date:'F Y' }}</li>{% endif %}
                   {% for subcat in photo.subcategories.all %}
@@ -37,8 +38,8 @@
           </div><!-- end .photograph-data -->
 
           <div class="photo-location">
-            <h3>Location</h3>
-            <p>e.g. London, United Kingdom</p> <!-- TO: GN, could you add geolocation, lat/long here please -->
+            <h3>Location:</h3>
+            <!-- TO: GN, could you add geolocation, lat/long here please -->
                 
           </div><!-- end .location -->
         </div><!-- end .photo-data -->
@@ -47,7 +48,7 @@
     <section id="map">
         <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
         
-        <h3>Map</h3>
+        <h3>Location on map</h3>
         <!-- div instead of img -->
         <div id="map-leaflet">
         </div>
