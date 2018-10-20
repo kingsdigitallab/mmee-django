@@ -7,6 +7,8 @@ from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.search import index
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.images.shortcuts import get_rendition_or_not_found
+from collections import OrderedDict
 import re
 
 ''' TODO:
@@ -184,6 +186,10 @@ class Photo(index.Indexed, models.Model):
     class Meta:
         ordering = ['photographer', 'number']
 
+#     def __init__(self, *args, **kwargs):
+#         super(Photo, self).__init__(*args, **kwargs)
+#         print(self.pk)
+
     def __str__(self):
         return '{} ({}): {}'.format(self.photographer, self.number, self.title)
 
@@ -195,7 +201,9 @@ class Photo(index.Indexed, models.Model):
         if ret:
             ret = re.sub(r'\(.*?\)', '', ret)
             ret = re.sub(r'( -|--).*$', '', ret)
-            ret = re.sub(r'[.,;].*$', '', ret)
+            ret = re.sub(r'[.,;:].*$', '', ret)
+            ret = re.sub(r'(([A-Z]\w*\b\s*){2,}).*$', r'\1', ret)
+            ret = ret.strip()
 
         max_len = 50
         if len(ret) > max_len:
@@ -210,3 +218,35 @@ class Photo(index.Indexed, models.Model):
             ret = mark_safe(u'<img src="%s" width="50" height="50"/>' % url)
         return ret
     image_tag.short_description = 'Image'
+
+    def get_json_dic(self):
+        image_tag = ''
+
+        p = self
+
+        if p.image:
+            rendition = get_rendition_or_not_found(p.image, 'height-500')
+            image_tag = rendition.img_tag({'height': '', 'width': ''})
+            image_tag = re.sub(r'(height|width)=".*?"', '', image_tag)
+
+        type_slug = 'photos'
+
+        location = None
+        if p.location:
+            location = [p.location.y, p.location.x]
+
+        ret = OrderedDict([
+            ['id', str(p.pk)],
+            ['type', type_slug],
+            ['attributes', {
+                'title': p.title,
+                'description': p.description,
+                'location': location,
+                'image': image_tag,
+                # TODO: don't hard-code this!
+                'url': '/{}/{}'.format(type_slug, p.pk),
+                'date': p.date.strftime('%B %Y'),
+            }]
+        ])
+
+        return ret

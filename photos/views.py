@@ -5,11 +5,40 @@
 from .models import Photo
 from django.views import View
 from django.views.generic.detail import DetailView
-from wagtail.images.shortcuts import get_rendition_or_not_found
-import re
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from photos.models import PhotoSubcategory
+from collections import OrderedDict
+from wagtail.search.query import MATCH_ALL
+from wagtail.search.backends import get_search_backend
+from django.conf import settings
+import math
+
+# Our API complies with JSON API standard
+# see https://jsonapi.org/format/
+JSONAPI_VERSION = '1.0'
+
+# mapping between ordering labels and the associated field used in
+# QS.order_by()
+QUERY_ORDER_NAME_FIELD = OrderedDict([
+    ['newest', '-date'],
+    ['oldest', 'date'],
+])
+for name in QUERY_ORDER_NAME_FIELD:
+    QUERY_ORDER_NAME_DEFAULT = name
+    break
+
+
+class PhotoDetailView(DetailView):
+    template_name = 'photos/photo.html'
+    model = Photo
+
+    def get(self, request, *args, **kwargs):
+        ret = super(PhotoDetailView, self).get(request, *args, **kwargs)
+        self.extra_context = {
+            'phrase': request.GET.get('phrase', '')
+        }
+        return ret
 
 
 class PhotoSearchView(View):
@@ -22,16 +51,18 @@ class PhotoSearchView(View):
         context = {}
 
         if format in ['js', 'json']:
-            params = {}
-            qs = self.get_queryset(request, params)
-            context = {
-                'photos': [
-                    self._get_dict_from_photo(photo)
+            # JSON API standard format
+            # https://jsonapi-validator.herokuapp.com/
+            # https://jsonapi.org/format/#document-meta
+            qs, meta = self.get_queryset(request)
+            context = OrderedDict([
+                ['jsonapi', JSONAPI_VERSION],
+                ['meta', meta],
+                ['data', [
+                    photo.get_json_dic()
                     for photo in qs
-                ],
-                'qs': self.get_query_string(params),
-                'facets': self.facets
-            }
+                ]],
+            ])
             ret = JsonResponse(context)
         else:
             context['search_query'] =\
@@ -40,91 +71,106 @@ class PhotoSearchView(View):
 
         return ret
 
-    def _get_dict_from_photo(self, photo):
-        image_tag = ''
+    def get_queryset(self, request):
+        search_query = self.get_search_query_from_request(request)
 
-        if photo.image:
-            rendition = get_rendition_or_not_found(photo.image, 'height-500')
-            image_tag = rendition.img_tag({'height': '', 'width': ''})
-            image_tag = re.sub(r'(height|width)=".*?"', '', image_tag)
-
-        p = photo
-
-        ret = {
-            'pk': p.pk,
-            'title': p.title,
-            'description': p.description,
-            'location': [p.location.y, p.location.x] if p.location else None,
-            'image': image_tag,
-            # TODO: don't hard-code this!
-            'url': '/photos/{}'.format(p.pk),
-            'date': p.date.strftime('%B %Y'),
-        }
-
-        return ret
-
-    def get_queryset(self, request, params=None):
-        self.facets = []
-
+        # Baseline query: get all Photos with an image attached to them
         ret = self.model.objects.filter(
             image__isnull=False
         )
 
-        query_facets = request.GET.get('facets', '')
-        for option in query_facets.split(';'):
-            pair = option.split(':')
+        # filter by selected facets
+        query_facets = search_query['facets']
+        selected_facet_option = {}
+        for facet_option in query_facets.split(';'):
+            pair = facet_option.split(':')
+            selected_facet_option[facet_option] = 1
             if pair[0] == 'cat':
                 ret = ret.filter(subcategories__pk=pair[1])
 
-        search_query = self.get_search_query_from_request(request)
+        # ordering
+        ret = ret.order_by(QUERY_ORDER_NAME_FIELD.get(
+            search_query['order'], '-date'))
 
-        if 1 or search_query['phrase']:
-            from wagtail.search.backends import get_search_backend
-            s = get_search_backend()
-            ret = s.search(search_query['phrase'] or 'a', ret)
+        # text search (wagtail or haystack as a proxy to a search engine)
+        s = get_search_backend()
+        # returns a DatabaseSearchResults or similar Wagtail result class.
+        # NOT a Django QuerySet
+        ret = s.search(search_query['phrase'] or MATCH_ALL, ret)
 
-            # ret = ret.filter(description__icontains=search_query['phrase'])
-
+        # faceting
         if 1:
+            facets = []
+            # https://docs.wagtail.io/en/latest/topics/search/searching.html
+            # #faceted-search
+            # format: [(PK, COUNT), ...]
             options = ret.facet('subcategories__pk')
+            # print(options)
             subs = PhotoSubcategory.objects.filter(
-                pk__in=[option for option in options.keys()]).values_list(
-                    'pk', 'label', 'category__label'
+                pk__in=[option for option in options.keys()]
+            ).values_list(
+                'pk', 'label', 'category__label'
             ).order_by('category__label', 'label')
 
             cat = None
             ops = []
+            facet_name = 'cat'
             for sub in subs:
                 facet = sub[2]
 
                 if facet != cat:
                     cat = facet
                     ops = []
-                    self.facets.append([facet, ops])
+                    facets.append([facet, ops])
 
-                ops.append(['cat', sub[0], sub[1], options[sub[0]], 0])
+                selected = '{}:{}'.format(
+                    facet_name, sub[0]) in selected_facet_option
+
+                ops.append([
+                    facet_name, sub[0], sub[1],
+                    options[sub[0]], selected
+                ])
 
             # print(self.facets)
 
-        # sorting (TODO: this work-around is bad, we need to use Haystack
-        # directly instead)
-        ret = self.model.objects.filter(pk__in=[r.pk for r in ret])
+        # pagination
+        per_page = settings.ITEMS_PER_PAGE
+        count = ret.count()
+        num_pages = math.ceil(1.0 * count / per_page)
 
-        order_fields = {
-            'newest': '-date',
-            'oldest': 'date'
-        }
-        ret = ret.order_by(order_fields.get(search_query['order'], '-date'))
+        page = search_query['page']
+        if page > num_pages:
+            page = num_pages
+        search_query['page'] = page
 
-        if params is not None:
-            params.update(search_query)
+        meta = OrderedDict([
+            ['pagination', {
+                'count': count,
+                'per_page': per_page,
+                'page': page,
+                'pages': num_pages,
+            }],
+            ['query', search_query],
+            ['qs', self.get_query_string(search_query)],
+            ['facets', facets],
+        ])
 
-        return ret
+        ret = ret[(page - 1) * per_page:page * per_page]
+
+        return ret, meta
 
     def get_search_query_from_request(self, request):
+        try:
+            page = int(request.GET.get('page', 1))
+        except ValueError:
+            page = 1
+        if page < 1:
+            page = 1
         ret = {
             'phrase': request.GET.get('phrase', ''),
-            'order': request.GET.get('order', 'newest')
+            'order': request.GET.get('order', QUERY_ORDER_NAME_DEFAULT),
+            'facets': request.GET.get('facets', ''),
+            'page': page
         }
 
         return ret
@@ -134,21 +180,9 @@ class PhotoSearchView(View):
         ret = '&'.join([
             ('%s=%s' % (
                 urllib.parse.quote(akey, ','),
-                urllib.parse.quote(aval, ',')
+                urllib.parse.quote(str(aval), ',')
             ))
             for akey, aval
             in params.items()
         ])
-        return ret
-
-
-class PhotoDetailView(DetailView):
-    template_name = 'photos/photo.html'
-    model = Photo
-
-    def get(self, request, *args, **kwargs):
-        ret = super(PhotoDetailView, self).get(request, *args, **kwargs)
-        self.extra_context = {
-            'phrase': request.GET.get('phrase', '')
-        }
         return ret

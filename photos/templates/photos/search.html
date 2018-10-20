@@ -9,7 +9,7 @@
     <section id="search">
 
        <div class="search-field">
-            <input v-model="query.phrase" @keyup.enter="phrase_submit">
+            <input v-model="meta.query.phrase" @keyup.enter="phrase_submit">
             
             <button class="search-icon" v-on:click="phrase_submit"></button>
             <button class="location-icon"></button>
@@ -28,7 +28,7 @@
                       <form action="">
                         <h3>Categories</h3>
                         
-                        <template v-for="facet in facets">
+                        <template v-for="facet in meta.facets">
                             <h4>{{ facet[0] }}</h4>
                             <div v-for="option in facet[1]">
                                 <label>
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="sort">
-                <select aria-label="Sort by" v-model="query.order">
+                <select aria-label="Sort by" v-model="meta.query.order">
                   <option value="newest">Newest</option>
                   <option value="oldest">Oldest</option>
                 </select>
@@ -58,7 +58,12 @@
     </section> <!-- end #search -->
 
     <section id="results">
-        <p class="stats">{{ result_size() }}</p>
+        
+        <p class="stats">
+            <a href="#" v-on:click.prevent="on_click_previous_page" class="paging page-previous">Previous page</a>
+            Found {{ meta.pagination.count }} Photo(s). Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
+            <a href="#" v-on:click.prevent="on_click_next_page" class="paging page-next">Next page</a>
+        </p>
     
         <input id="tab1" type="radio" name="tabs"  checked>
         <label for="tab1"><span>Grid</span></label>
@@ -72,10 +77,11 @@
         <article id="photo-grid" class="tab-content">
             <div v-for="photo in photos" class="photo">
               <div class="photo-image">
-                <a v-bind:href="photo.url+'?'+qs" v-html="photo.image">
+                <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                 </a>
               </div>
             </div>
+            <p><a href="#" v-on:click.prevent="on_click_load_more">Show {{ meta.pagination.per_page }} more</a></p>
         </article>
   <!--<div class="breadcrumb ">
       <h3>Sidebar</h3>
@@ -84,14 +90,15 @@
         <article id="photo-list" class="tab-content">
             <div v-for="photo in photos" class="photo">
                 <div class="photo-image">
-                  <a v-bind:href="photo.url+'?'+qs" v-html="photo.image">
+                  <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                   </a>
                 </div>
                 <div class="photodata">
-                    <h2>{{ photo.description }}</h2>
-                    <p v-if="photo.date">Date taken: {{ photo.date }}</p>
+                    <h2>{{ photo.attributes.description }}</h2>
+                    <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                 </div>
             </div>
+            <p><a href="#" v-on:click.prevent="on_click_load_more">Show {{ meta.pagination.per_page }} more</a></p>
         </article>
 
         <article id="photo-map" class="tab-content">
@@ -116,20 +123,21 @@ $(function() {
     var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
     var markers = [];
 
-    function pain_map(photos) {
+    function update_map(photos) {
       markers.map(function(marker) {
           photomap.removeLayer(marker);
       });
       markers = [];
       var points = photos.map(function(p) {
-        if (p.location) {
-            var marker = L.marker(p.location).bindPopup(
-                '<a href="'+p.url+'">'+p.title+'</a>'
+        var pa = p.attributes;
+        if (pa.location) {
+            var marker = L.marker(pa.location).bindPopup(
+                '<a href="'+pa.url+'">'+pa.title+'</a>'
             ).addTo(photomap);
             
             markers.push(marker);
             
-            return p.location;
+            return pa.location;
         }
       })
       if (points.length) {
@@ -144,10 +152,13 @@ $(function() {
         el: '#search-screen',
         data: {
             photos: photos,
-            query: query,
-            qs: '',
-            status: 0,
-            facets: {},
+            meta: {
+                query: query,
+                pagination: {},
+                qs: '',
+                status: 0,
+                facets: {},
+            },
         },
         mounted: function() {
             this.$nextTick(function () {
@@ -156,21 +167,19 @@ $(function() {
         },
         watch: {
             photos: function() {
-                pain_map(this.photos);
+                update_map(this.photos);
             },
-            'query.order': function() {
-                this.call_api();
+            'meta.query.order': function() {
+                this.call_api({page: 1});
             },
         },
         methods: {
             on_change_option: function(option, event) {
-                console.log(event);
                 option[4] = event.target.checked ? 1: 0;
-                var t = 0;
-                this.call_api();
+                this.call_api({page: 1});
             },
             phrase_submit: function() {
-              this.call_api();  
+                this.call_api({page: 1});
             },
             result_size: function() {
                 if (this.status === 1) {
@@ -178,12 +187,24 @@ $(function() {
                 }
                 return '' + this.photos.length + ' photo(s)';  
             },
-            call_api: function() {
+            on_click_previous_page: function() {
+                this.call_api({page: this.meta.query.page-1}); 
+            },
+            on_click_next_page: function() {
+                this.call_api({page: this.meta.query.page+1});  
+            },
+            on_click_load_more: function() {
+                this.call_api({
+                    page: this.meta.query.page+1,
+                    add: 1,
+                });
+            },
+            call_api: function(aquery) {
                 var self = this;
                 self.status = 1;
                 
                 var query_facets = [];
-                $.each(self.facets, function(i, facet) {
+                $.each(self.meta.facets, function(i, facet) {
                     $.each(facet[1], function(j, option) {
                         if (option[4]) {
                             query_facets.push(option[0]+':'+option[1]);
@@ -191,19 +212,24 @@ $(function() {
                     })
                 });
                 
-                var query = $.extend({
-                    format: 'js',
-                    facets: query_facets.join(';'),
-                }, self.query)
+                var query = $.extend(
+                    {format: 'js',}, 
+                    self.meta.query,
+                    {facets: query_facets.join(';')},
+                    aquery
+                )
                 
                 var req = $.getJSON('/photos', query);
                 req.done(function(data) {
-                    self.photos = data.photos;
-                    self.status = 0;
-                    self.facets = data.facets;
+                    if (!query.add) {
+                        Vue.set(self, 'photos', []);
+                    } 
+                    Array.prototype.push.apply(self.photos, data.data);
+                    self.updating_from_response = 1;
+                    Vue.set(self, 'meta', data.meta);
+                    self.updating_from_response = 0;
                     
-                    self.qs = data.qs;
-                    replace_query_string(data.qs);
+                    replace_query_string(data.meta.qs);
                 });
             },
         }
