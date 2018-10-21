@@ -138,11 +138,13 @@ class PhotoSubcategory(index.Indexed, models.Model):
 @register_snippet
 class Photo(index.Indexed, models.Model):
 
+    REVIEW_STATUS_SUBMITTED = 0
     REVIEW_STATUS_PUBLIC = 1
+    REVIEW_STATUS_ARCHIVED = 2
     REVIEW_STATUSES = (
-        (0, 'Submitted'),
+        (REVIEW_STATUS_SUBMITTED, 'Submitted'),
         (REVIEW_STATUS_PUBLIC, 'Public'),
-        (2, 'Archived'),
+        (REVIEW_STATUS_ARCHIVED, 'Archived'),
     )
 
     photographer = models.ForeignKey(Photographer, on_delete=models.SET_NULL,
