@@ -60,9 +60,13 @@
     <section id="results">
         
         <p class="stats">
-            <a href="#" v-on:click.prevent="on_click_previous_page" class="paging page-previous">Previous page</a>
-            Found {{ meta.pagination.count }} Photo(s). Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
-            <a href="#" v-on:click.prevent="on_click_next_page" class="paging page-next">Next page</a>
+            <template v-if="searching">Searching...</template>
+            <template v-else>Found {{ meta.pagination.count }} Photo(s).</template> 
+            <span class="pagination">
+                <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
+                Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
+                <a :href="link_next" v-on:click.prevent="on_click_link" class="button page-next">&gt;</a>
+            </span>
         </p>
     
         <input id="tab1" type="radio" name="tabs"  checked>
@@ -81,7 +85,12 @@
                 </a>
               </div>
             </div>
-            <p><a href="#" v-on:click.prevent="on_click_load_more">Show {{ meta.pagination.per_page }} more</a></p>
+            <p class="page-more-wrapper" v-if="link_next">
+                <a :href="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">
+                    <template v-if="searching">Loading...</template>
+                    <template v-else>Show {{ meta.pagination.per_page }} more</template>
+                </a>
+            </p>
         </article>
   <!--<div class="breadcrumb ">
       <h3>Sidebar</h3>
@@ -98,7 +107,11 @@
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                 </div>
             </div>
-            <p><a href="#" v-on:click.prevent="on_click_load_more">Show {{ meta.pagination.per_page }} more</a></p>
+            <p class="page-more-wrapper">
+                <a :href="link_next" v-if="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">
+                    Show {{ meta.pagination.per_page }} more
+                </a>
+            </p>
         </article>
 
         <article id="photo-map" class="tab-content">
@@ -156,9 +169,10 @@ $(function() {
                 query: query,
                 pagination: {},
                 qs: '',
-                status: 0,
                 facets: {},
             },
+            links: {},
+            searching: 1,
         },
         mounted: function() {
             this.$nextTick(function () {
@@ -173,63 +187,81 @@ $(function() {
                 this.call_api({page: 1});
             },
         },
+        computed: {
+            link_first: function() {
+                return this.get_html_link_from_api_link(this.links.first);
+            },
+            link_last: function() {
+                return this.get_html_link_from_api_link(this.links.last);                
+            },
+            link_next: function() {
+                return this.get_html_link_from_api_link(this.links.next);                
+            },
+            link_prev: function() {
+                return this.get_html_link_from_api_link(this.links.prev);
+            },
+        },
         methods: {
             on_change_option: function(option, event) {
                 option[4] = event.target.checked ? 1: 0;
                 this.call_api({page: 1});
             },
             phrase_submit: function() {
-                this.call_api({page: 1});
+                this.call_api({page: 1, facets: ''});
             },
-            result_size: function() {
-                if (this.status === 1) {
-                    return 'Searching...';
-                }
-                return '' + this.photos.length + ' photo(s)';  
+            on_click_link: function(event, load_more) {
+                this.call_api({}, event.target.getAttribute('href'), load_more); 
             },
-            on_click_previous_page: function() {
-                this.call_api({page: this.meta.query.page-1}); 
+            get_html_link_from_api_link: function(link) {
+                return link ? link.replace(/[^?]+[?]?/, '?') : '';
             },
-            on_click_next_page: function() {
-                this.call_api({page: this.meta.query.page+1});  
-            },
-            on_click_load_more: function() {
-                this.call_api({
-                    page: this.meta.query.page+1,
-                    add: 1,
-                });
-            },
-            call_api: function(aquery) {
+            call_api: function(aquery, query_string, load_more) {
+                /*
+                Calls the API with parameters found in this.data.query.
+                
+                If aquery is provided, its parameters will override 
+                this.data.query.
+                
+                If query_string is provided (?page=1), it will be used instead
+                of this.data.query and aquery.
+                
+                Update this.data when we receive a response from the API.
+                */
                 var self = this;
-                self.status = 1;
+                self.searching = 1;
                 
-                var query_facets = [];
-                $.each(self.meta.facets, function(i, facet) {
-                    $.each(facet[1], function(j, option) {
-                        if (option[4]) {
-                            query_facets.push(option[0]+':'+option[1]);
-                        }
-                    })
-                });
-                
-                var query = $.extend(
-                    {format: 'js',}, 
-                    self.meta.query,
-                    {facets: query_facets.join(';')},
-                    aquery
-                )
-                
-                var req = $.getJSON('/photos', query);
+                if (!query_string) {
+                    query_string = '';
+                    
+                    var query_facets = [];
+                    $.each(self.meta.facets, function(i, facet) {
+                        $.each(facet[1], function(j, option) {
+                            if (option[4]) {
+                                query_facets.push(option[0]+':'+option[1]);
+                            }
+                        })
+                    });
+                    
+                    var query = $.extend(
+                        self.meta.query,
+                        {facets: query_facets.join(';')},
+                        aquery
+                    )
+                }
+                                
+                var req = $.getJSON('/api/1.0/photos/' + query_string, query);
                 req.done(function(data) {
-                    if (!query.add) {
+                    if (!load_more) {
                         Vue.set(self, 'photos', []);
                     } 
                     Array.prototype.push.apply(self.photos, data.data);
                     self.updating_from_response = 1;
                     Vue.set(self, 'meta', data.meta);
+                    Vue.set(self, 'links', data.links);
                     self.updating_from_response = 0;
                     
                     replace_query_string(data.meta.qs);
+                    self.searching = 0;
                 });
             },
         }

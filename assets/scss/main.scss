@@ -22,6 +22,29 @@
 
 /**** GENERAL ****/
 
+// GN: pagination
+.button {
+    background-color: #e6e6e6;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    border: 1px solid #e6e6e6;
+    text-decoration: none;
+    
+    &:hover {
+        border:1px solid black;
+    }
+
+    &[href=''] {
+        opacity: 0.4;  
+    }
+}
+.pagination {
+    float: right;
+}
+.page-more-wrapper {
+    text-align: center;
+}
+
 // GN: reduced from 170% is it was badly pixelated on web friendly images
 // TO: Had to increase it back a bit to 160 as it wasn't cropping enough. Will change it to a better way of cropping later.
 

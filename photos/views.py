@@ -1,5 +1,3 @@
-# Create your views here.
-
 # from django.http import Http404
 # from django.shortcuts import render
 from .models import Photo
@@ -12,7 +10,7 @@ from collections import OrderedDict
 from wagtail.search.query import MATCH_ALL
 from wagtail.search.backends import get_search_backend
 from django.conf import settings
-import math
+from django.core.paginator import Paginator
 
 # Our API complies with JSON API standard
 # see https://jsonapi.org/format/
@@ -27,6 +25,23 @@ QUERY_ORDER_NAME_FIELD = OrderedDict([
 for name in QUERY_ORDER_NAME_FIELD:
     QUERY_ORDER_NAME_DEFAULT = name
     break
+
+
+def get_search_query_from_request(request):
+    try:
+        page = int(request.GET.get('page', 1))
+    except ValueError:
+        page = 1
+    if page < 1:
+        page = 1
+    ret = {
+        'phrase': request.GET.get('phrase', ''),
+        'order': request.GET.get('order', QUERY_ORDER_NAME_DEFAULT),
+        'facets': request.GET.get('facets', ''),
+        'page': page
+    }
+
+    return ret
 
 
 class PhotoDetailView(DetailView):
@@ -54,28 +69,31 @@ class PhotoSearchView(View):
             # JSON API standard format
             # https://jsonapi-validator.herokuapp.com/
             # https://jsonapi.org/format/#document-meta
-            qs, meta = self.get_queryset(request)
-            context = OrderedDict([
-                ['jsonapi', JSONAPI_VERSION],
-                ['meta', meta],
-                ['data', [
-                    photo.get_json_dic()
-                    for photo in qs
-                ]],
-            ])
-            ret = JsonResponse(context)
+            dict_response = self.get_queryset(request)
+            ret = JsonResponse(dict_response)
         else:
             context['search_query'] =\
-                self.get_search_query_from_request(request)
+                get_search_query_from_request(request)
             ret = render(request, self.template_name, context)
 
         return ret
 
+
+class ApiPhotoSearchView(View):
+    template_name = 'photos/search.html'
+    model = Photo
+
+    def get(self, request):
+        # JSON API standard format
+        # https://jsonapi-validator.herokuapp.com/
+        # https://jsonapi.org/format/#document-meta
+        return JsonResponse(self.get_queryset(request))
+
     def get_queryset(self, request):
-        search_query = self.get_search_query_from_request(request)
+        search_query = get_search_query_from_request(request)
 
         # Baseline query: get all Photos with an image attached to them
-        ret = self.model.objects.filter(
+        items = self.model.objects.filter(
             image__isnull=False
         )
 
@@ -86,17 +104,17 @@ class PhotoSearchView(View):
             pair = facet_option.split(':')
             selected_facet_option[facet_option] = 1
             if pair[0] == 'cat':
-                ret = ret.filter(subcategories__pk=pair[1])
+                items = items.filter(subcategories__pk=pair[1])
 
         # ordering
-        ret = ret.order_by(QUERY_ORDER_NAME_FIELD.get(
+        items = items.order_by(QUERY_ORDER_NAME_FIELD.get(
             search_query['order'], '-date'))
 
         # text search (wagtail or haystack as a proxy to a search engine)
         s = get_search_backend()
         # returns a DatabaseSearchResults or similar Wagtail result class.
         # NOT a Django QuerySet
-        ret = s.search(search_query['phrase'] or MATCH_ALL, ret)
+        items = s.search(search_query['phrase'] or MATCH_ALL, items)
 
         # faceting
         if 1:
@@ -104,7 +122,7 @@ class PhotoSearchView(View):
             # https://docs.wagtail.io/en/latest/topics/search/searching.html
             # #faceted-search
             # format: [(PK, COUNT), ...]
-            options = ret.facet('subcategories__pk')
+            options = items.facet('subcategories__pk')
             # print(options)
             subs = PhotoSubcategory.objects.filter(
                 pk__in=[option for option in options.keys()]
@@ -133,47 +151,60 @@ class PhotoSearchView(View):
 
             # print(self.facets)
 
-        # pagination
-        per_page = settings.ITEMS_PER_PAGE
-        count = ret.count()
-        num_pages = math.ceil(1.0 * count / per_page)
-
-        page = search_query['page']
-        if page > num_pages:
-            page = num_pages
-        search_query['page'] = page
-
         meta = OrderedDict([
-            ['pagination', {
-                'count': count,
-                'per_page': per_page,
-                'page': page,
-                'pages': num_pages,
-            }],
+            ['pagination', {}],
             ['query', search_query],
             ['qs', self.get_query_string(search_query)],
             ['facets', facets],
         ])
 
-        ret = ret[(page - 1) * per_page:page * per_page]
+        ret = OrderedDict([
+            ['jsonapi', {'version': JSONAPI_VERSION}],
+            ['meta', meta],
+            ['data', items],
+        ])
 
-        return ret, meta
+        self.paginate_response(ret, items, search_query, request)
 
-    def get_search_query_from_request(self, request):
-        try:
-            page = int(request.GET.get('page', 1))
-        except ValueError:
-            page = 1
-        if page < 1:
-            page = 1
-        ret = {
-            'phrase': request.GET.get('phrase', ''),
-            'order': request.GET.get('order', QUERY_ORDER_NAME_DEFAULT),
-            'facets': request.GET.get('facets', ''),
-            'page': page
-        }
+        ret['data'] = [
+            item.get_json_dic()
+            for item in ret['data']
+        ]
 
         return ret
+
+    def paginate_response(self, res, items, search_query, request):
+        per_page = settings.ITEMS_PER_PAGE
+        paginator = Paginator(items, per_page)
+        page = paginator.page(search_query['page'])
+
+        if 'links' not in res:
+            res['links'] = {}
+        links = [
+            ['first', 1],
+            ['last', paginator.num_pages],
+            ['prev', page.number - 1],
+            ['next', page.number + 1],
+        ]
+        link_query = {}
+        link_query.update(search_query)
+        base_url = request.path
+        for k, link in links:
+            if link < 1 or link > paginator.num_pages:
+                link = None
+            else:
+                link_query.update({'page': link})
+                link = base_url + '?' + self.get_query_string(link_query)
+            res['links'][k] = link
+
+        res['meta']['pagination'] = {
+            'count': paginator.count,
+            'per_page': per_page,
+            'page': page.number,
+            'pages': paginator.num_pages,
+        }
+
+        res['data'] = page.object_list
 
     def get_query_string(self, params):
         import urllib
@@ -184,5 +215,6 @@ class PhotoSearchView(View):
             ))
             for akey, aval
             in params.items()
+            if aval
         ])
         return ret

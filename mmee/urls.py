@@ -17,7 +17,7 @@ urlpatterns = [
 
     path('wagtail/', include('wagtail.admin.urls')),
     path('documents/', include('wagtail.documents.urls')),
-    path('photos/', include('photos.urls')),
+    path('', include('photos.urls')),
     path('search/', include('haystack.urls')),
     # we temporarily by pass wagtail to show search interface on home page
     # nest increment we can implement search with proper wagtail page
