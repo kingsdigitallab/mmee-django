@@ -29,7 +29,12 @@
           <div class="photo-photograph">
             <h3>Data</h3>
                 <ul>
-                    {% if photo.date %}<li>Date taken: {{ photo.date|date:'F Y' }}</li>{% endif %}
+                    {% if photo.taken_year %}
+                        <li>Date taken: 
+                            {{ photo.taken_month_name }}
+                            {{ photo.taken_year }}
+                        </li>
+                    {% endif %}
                   {% for subcat in photo.subcategories.all %}
                       <li>{{ subcat }}</li>
                   {% endfor %}

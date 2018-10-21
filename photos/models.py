@@ -165,7 +165,13 @@ class Photo(index.Indexed, models.Model):
     description = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, null=True)
 
-    date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    taken_year = models.IntegerField(blank=True, null=True, default=None)
+    taken_month = models.IntegerField(blank=True, null=True, default=None)
+    taken_day = models.IntegerField(blank=True, null=True, default=None)
+
     location = models.PointField(blank=True, null=True)
 
     review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
@@ -198,7 +204,7 @@ class Photo(index.Indexed, models.Model):
     ]
 
     class Meta:
-        ordering = ['photographer', 'number']
+        ordering = ['-created_at']
 
 #     def __init__(self, *args, **kwargs):
 #         super(Photo, self).__init__(*args, **kwargs)
@@ -212,6 +218,12 @@ class Photo(index.Indexed, models.Model):
             self.photographer, self.title,
             self.get_image_tag('height-50')
         ))
+
+    @property
+    def taken_month_name(self):
+        from calendar import month_name
+        ret = month_name[self.taken_month] if self.taken_month else ''
+        return ret
 
     @property
     def review_status_label(self):
@@ -271,7 +283,11 @@ class Photo(index.Indexed, models.Model):
                 'image': self.get_image_tag(imgspecs),
                 # TODO: don't hard-code this!
                 'url': '/{}/{}'.format(type_slug, p.pk),
-                'date': p.date.strftime('%B %Y'),
+                'taken_year': p.taken_year,
+                'taken_month': p.taken_month,
+                'taken_month_name': p.taken_month_name,
+                'taken_day': p.taken_day,
+                'created_at': p.created_at,
             }]
         ])
 

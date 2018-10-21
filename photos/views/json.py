@@ -17,8 +17,8 @@ JSONAPI_VERSION = '1.0'
 # mapping between ordering labels and the associated field used in
 # QS.order_by()
 QUERY_ORDER_NAME_FIELD = OrderedDict([
-    ['newest', '-date'],
-    ['oldest', 'date'],
+    ['newest', '-created_at'],
+    ['oldest', 'created_at'],
 ])
 for name in QUERY_ORDER_NAME_FIELD:
     QUERY_ORDER_NAME_DEFAULT = name
@@ -77,7 +77,7 @@ class ApiPhotoSearchView(View):
 
         # ordering
         items = items.order_by(QUERY_ORDER_NAME_FIELD.get(
-            search_query['order'], '-date'))
+            search_query['order'], '-created_at'))
 
         # text search (wagtail or haystack as a proxy to a search engine)
         s = get_search_backend()

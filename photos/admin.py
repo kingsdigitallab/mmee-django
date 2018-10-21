@@ -30,7 +30,7 @@ class ImageFilter(SimpleListFilter):
 @admin.register(Photo)
 class PhotoAdmin(admin.OSMGeoAdmin):
     list_display = ['photographer', 'title',
-                    'review_status', 'admin_thumbnail']
+                    'review_status', 'created_at', 'admin_thumbnail']
     list_filter = ['review_status', ImageFilter]
 
     search_fields = ['photographer__first_name',
