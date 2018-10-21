@@ -137,6 +137,14 @@ class PhotoSubcategory(index.Indexed, models.Model):
 
 @register_snippet
 class Photo(index.Indexed, models.Model):
+
+    REVIEW_STATUS_PUBLIC = 1
+    REVIEW_STATUSES = (
+        (0, 'Submitted'),
+        (REVIEW_STATUS_PUBLIC, 'Public'),
+        (2, 'Archived'),
+    )
+
     photographer = models.ForeignKey(Photographer, on_delete=models.SET_NULL,
                                      null=True, blank=True, default=None)
     # GN: what does that number represents? What are we doing with it?
@@ -158,13 +166,13 @@ class Photo(index.Indexed, models.Model):
     date = models.DateField(null=True, blank=True)
     location = models.PointField(blank=True, null=True)
 
-    live = models.BooleanField(default=False)
+    review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
 
     subcategories = models.ManyToManyField(PhotoSubcategory)
 
     panels = [
         SnippetChooserPanel('photographer'),
-        FieldPanel('live'),
+        FieldPanel('review_status'),
         FieldPanel('number'),
         ImageChooserPanel('image'),
         FieldPanel('subcategories'),
@@ -175,7 +183,7 @@ class Photo(index.Indexed, models.Model):
     ]
 
     search_fields = [
-        index.FilterField('live'),
+        index.FilterField('review_status'),
         index.FilterField('subcategories__pk'),
         index.SearchField('subcategories__pk'),
         index.FilterField('photosubcategory_id'),
@@ -195,7 +203,18 @@ class Photo(index.Indexed, models.Model):
 #         print(self.pk)
 
     def __str__(self):
-        return '{} ({}): {}'.format(self.photographer, self.number, self.title)
+        # TODO: find a better way to show pictures on the snippet list page
+        # than embedding html tag here.
+        return mark_safe('[{}] {}: {}<br>{}'.format(
+            self.review_status_label,
+            self.photographer, self.title,
+            self.get_image_tag('height-50')
+        ))
+
+    @property
+    def review_status_label(self):
+        ret = dict(self.REVIEW_STATUSES)[self.review_status]
+        return ret
 
     @property
     def title(self):
@@ -215,24 +234,25 @@ class Photo(index.Indexed, models.Model):
 
         return ret
 
-    def image_tag(self):
+    def get_image_tag(self, specs='height-500'):
+        '''
+        Returns an html <image> tag for the related image.
+        See Wagtail get_rendition_or_not_found() for valid specs.
+        '''
         ret = ''
+
         if self.image:
-            url = self.image.url
-            ret = mark_safe(u'<img src="%s" width="50" height="50"/>' % url)
+            rendition = get_rendition_or_not_found(self.image, specs)
+            # Remove height and width to keep things responsive.
+            # they will be set by CSS.
+            ret = re.sub(r'(?i)(height|width)=".*?"', '', rendition.img_tag())
+
         return ret
-    image_tag.short_description = 'Image'
 
     def get_json_dic(self):
-        image_tag = ''
-
         p = self
 
-        if p.image:
-            rendition = get_rendition_or_not_found(p.image, 'height-500')
-            image_tag = rendition.img_tag({'height': '', 'width': ''})
-            image_tag = re.sub(r'(height|width)=".*?"', '', image_tag)
-
+        # TODO: should be dynamic, based on client (smaller for mobile devices)
         type_slug = 'photos'
 
         location = None
@@ -246,7 +266,7 @@ class Photo(index.Indexed, models.Model):
                 'title': p.title,
                 'description': p.description,
                 'location': location,
-                'image': image_tag,
+                'image': self.get_image_tag('height-500'),
                 # TODO: don't hard-code this!
                 'url': '/{}/{}'.format(type_slug, p.pk),
                 'date': p.date.strftime('%B %Y'),

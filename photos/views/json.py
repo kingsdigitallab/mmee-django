@@ -63,7 +63,7 @@ class ApiPhotoSearchView(View):
         # Baseline query: get all live Photos with an image attached to them
         items = self.model.objects.filter(
             image__isnull=False,
-            live=True
+            review_status=self.model.REVIEW_STATUS_PUBLIC
         )
 
         # filter by selected facets
@@ -131,7 +131,8 @@ class ApiPhotoSearchView(View):
         ]
         link_query = {}
         link_query.update(search_query)
-        base_url = request.path
+        import re
+        base_url = re.sub(r'[?#].*$', '', request.build_absolute_uri())
         for k, link in links:
             if link < 1 or link > paginator.num_pages:
                 link = None
