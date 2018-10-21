@@ -74,7 +74,7 @@
 
         <p class="stats">
             <template v-if="searching">Searching...</template>
-            <template v-else>Found {{ meta.pagination.count }} Photo(s).</template> 
+            <template v-else>{{ meta.pagination.count }} Photo(s).</template> 
             <span class="pagination">
                 <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
                 Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
@@ -240,8 +240,21 @@ $(function() {
                 
                 Update this.data when we receive a response from the API.
                 */
+                
                 var self = this;
                 self.searching = 1;
+                
+                // dynamic image size so it's optimal for mobile or desktop.
+                var image_per_row = 3;
+                // size_step helps to avoid all possible client width
+                // creating their own thumbnails on the server side.
+                // It helps reusing existing thumbs.
+                var size_step = 75;
+                var image_height = Math.ceil(($('#results').width()) / image_per_row / size_step) * size_step;
+                if (image_height > 500) {
+                    image_height = 500;
+                }
+                var imgspecs = 'height-' + image_height;
                 
                 if (!query_string) {
                     query_string = '';
@@ -258,8 +271,11 @@ $(function() {
                     var query = $.extend(
                         self.meta.query,
                         {facets: query_facets.join(';')},
+                        {imgspecs: imgspecs},
                         aquery
                     )
+                } else {
+                    query_string += '&imgspecs='+imgspecs;
                 }
                                 
                 var req = $.getJSON('/api/1.0/photos/' + query_string, query);

@@ -251,7 +251,7 @@ class Photo(index.Indexed, models.Model):
 
         return ret
 
-    def get_json_dic(self):
+    def get_json_dic(self, imgspecs=None):
         p = self
 
         # TODO: should be dynamic, based on client (smaller for mobile devices)
@@ -268,7 +268,7 @@ class Photo(index.Indexed, models.Model):
                 'title': p.title,
                 'description': p.description,
                 'location': location,
-                'image': self.get_image_tag('height-500'),
+                'image': self.get_image_tag(imgspecs),
                 # TODO: don't hard-code this!
                 'url': '/{}/{}'.format(type_slug, p.pk),
                 'date': p.date.strftime('%B %Y'),

@@ -106,8 +106,9 @@ class ApiPhotoSearchView(View):
         self.paginate_response(ret, items, search_query, request)
 
         # serialise Photos into JSON-like dictionaries
+        imgspecs = request.GET.get('imgspecs', 'height-500')
         ret['data'] = [
-            item.get_json_dic()
+            item.get_json_dic(imgspecs=imgspecs)
             for item in ret['data']
         ]
 
