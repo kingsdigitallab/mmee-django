@@ -1,16 +1,14 @@
 # from django.http import Http404
 # from django.shortcuts import render
-from .models import Photo
+from ..models import Photo
 from django.views import View
-from django.views.generic.detail import DetailView
 from django.http.response import JsonResponse
-from django.shortcuts import render
 from photos.models import PhotoSubcategory
 from collections import OrderedDict
 from wagtail.search.query import MATCH_ALL
 from wagtail.search.backends import get_search_backend
 from django.conf import settings
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 # Our API complies with JSON API standard
 # see https://jsonapi.org/format/
@@ -44,65 +42,36 @@ def get_search_query_from_request(request):
     return ret
 
 
-class PhotoDetailView(DetailView):
-    template_name = 'photos/photo.html'
-    model = Photo
-
-    def get(self, request, *args, **kwargs):
-        ret = super(PhotoDetailView, self).get(request, *args, **kwargs)
-        self.extra_context = {
-            'phrase': request.GET.get('phrase', '')
-        }
-        return ret
-
-
-class PhotoSearchView(View):
-    template_name = 'photos/search.html'
-    model = Photo
-
-    def get(self, request):
-        format = request.GET.get('format', 'html').lower()
-
-        context = {}
-
-        if format in ['js', 'json']:
-            # JSON API standard format
-            # https://jsonapi-validator.herokuapp.com/
-            # https://jsonapi.org/format/#document-meta
-            dict_response = self.get_queryset(request)
-            ret = JsonResponse(dict_response)
-        else:
-            context['search_query'] =\
-                get_search_query_from_request(request)
-            ret = render(request, self.template_name, context)
-
-        return ret
-
-
 class ApiPhotoSearchView(View):
     template_name = 'photos/search.html'
     model = Photo
 
     def get(self, request):
-        # JSON API standard format
-        # https://jsonapi-validator.herokuapp.com/
-        # https://jsonapi.org/format/#document-meta
-        return JsonResponse(self.get_queryset(request))
+        return JsonResponse(self.search(request))
 
-    def get_queryset(self, request):
+    def search(self, request):
+        '''
+        Search for Photos based on the request's query string.
+        Returns a dictionary with results and metadata.
+        Dictionary format follows JSON API standard.
+
+        https://jsonapi-validator.herokuapp.com/
+        https://jsonapi.org/format/#document-meta
+        '''
         search_query = get_search_query_from_request(request)
 
-        # Baseline query: get all Photos with an image attached to them
+        # Baseline query: get all live Photos with an image attached to them
         items = self.model.objects.filter(
-            image__isnull=False
+            image__isnull=False,
+            live=True
         )
 
         # filter by selected facets
         query_facets = search_query['facets']
-        selected_facet_option = {}
+        selected_facet_options = {}
         for facet_option in query_facets.split(';'):
             pair = facet_option.split(':')
-            selected_facet_option[facet_option] = 1
+            selected_facet_options[facet_option] = 1
             if pair[0] == 'cat':
                 items = items.filter(subcategories__pk=pair[1])
 
@@ -116,41 +85,10 @@ class ApiPhotoSearchView(View):
         # NOT a Django QuerySet
         items = s.search(search_query['phrase'] or MATCH_ALL, items)
 
-        # faceting
-        if 1:
-            facets = []
-            # https://docs.wagtail.io/en/latest/topics/search/searching.html
-            # #faceted-search
-            # format: [(PK, COUNT), ...]
-            options = items.facet('subcategories__pk')
-            # print(options)
-            subs = PhotoSubcategory.objects.filter(
-                pk__in=[option for option in options.keys()]
-            ).values_list(
-                'pk', 'label', 'category__label'
-            ).order_by('category__label', 'label')
+        facets = self.get_facets_from_items(items, selected_facet_options)
 
-            cat = None
-            ops = []
-            facet_name = 'cat'
-            for sub in subs:
-                facet = sub[2]
-
-                if facet != cat:
-                    cat = facet
-                    ops = []
-                    facets.append([facet, ops])
-
-                selected = '{}:{}'.format(
-                    facet_name, sub[0]) in selected_facet_option
-
-                ops.append([
-                    facet_name, sub[0], sub[1],
-                    options[sub[0]], selected
-                ])
-
-            # print(self.facets)
-
+        # Create response dictionary
+        # PLEASE keep this compatible with JSON API format!
         meta = OrderedDict([
             ['pagination', {}],
             ['query', search_query],
@@ -164,8 +102,10 @@ class ApiPhotoSearchView(View):
             ['data', items],
         ])
 
+        # paginate the result and response
         self.paginate_response(ret, items, search_query, request)
 
+        # serialise Photos into JSON-like dictionaries
         ret['data'] = [
             item.get_json_dic()
             for item in ret['data']
@@ -176,7 +116,10 @@ class ApiPhotoSearchView(View):
     def paginate_response(self, res, items, search_query, request):
         per_page = settings.ITEMS_PER_PAGE
         paginator = Paginator(items, per_page)
-        page = paginator.page(search_query['page'])
+        try:
+            page = paginator.page(search_query['page'])
+        except EmptyPage:
+            page = paginator.page(1)
 
         if 'links' not in res:
             res['links'] = {}
@@ -218,3 +161,43 @@ class ApiPhotoSearchView(View):
             if aval
         ])
         return ret
+
+    def get_facets_from_items(self, items, selected_facet_options):
+        '''
+        Returns a dictionary of facet and options from search results.
+
+        items: result object returned by wagtail search()
+        selected_facet_options: selected options
+        '''
+        facets = []
+        # https://docs.wagtail.io/en/latest/topics/search/searching.html
+        # #faceted-search
+        # format: [(PK, COUNT), ...]
+        options = items.facet('subcategories__pk')
+        # print(options)
+        subs = PhotoSubcategory.objects.filter(
+            pk__in=[option for option in options.keys()]
+        ).values_list(
+            'pk', 'label', 'category__label'
+        ).order_by('category__label', 'label')
+
+        cat = None
+        ops = []
+        facet_name = 'cat'
+        for sub in subs:
+            facet = sub[2]
+
+            if facet != cat:
+                cat = facet
+                ops = []
+                facets.append([facet, ops])
+
+            selected = '{}:{}'.format(
+                facet_name, sub[0]) in selected_facet_options
+
+            ops.append([
+                facet_name, sub[0], sub[1],
+                options[sub[0]], selected
+            ])
+
+        return facets

@@ -1,7 +1,8 @@
 # from django.conf import settings
 from django.contrib import admin
 from django.urls import path   # include, re_path
-from .views import PhotoSearchView, PhotoDetailView, ApiPhotoSearchView
+from photos.views.html import PhotoSearchView, PhotoDetailView
+from photos.views.json import ApiPhotoSearchView
 
 admin.autodiscover()
 

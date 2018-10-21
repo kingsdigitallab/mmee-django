@@ -57,8 +57,21 @@
         </div> <!-- end .filter-sort -->
     </section> <!-- end #search -->
 
-    <section id="results">
+    <section id="results" v-if="meta.pagination.count < 1">
+        <p>No results were found for your search. 
+            <a href="?" v-on:click.prevent="on_click_link">Show all Photos</a>.
+        </p>
         
+        <p>Search tips:</p>
+        <ul>
+            <li>Check your spelling and try searching again</li>
+            <li>Try a similar but different search term (like street instead of road)</li>
+            <li>Keep your search term simple and short (1 or 2 words) as our search facility works best with fewer words</li>
+            <li>Try using our filters to find your product</li>
+        </ul>        
+    </section>
+    <section id="results" v-else>
+
         <p class="stats">
             <template v-if="searching">Searching...</template>
             <template v-else>Found {{ meta.pagination.count }} Photo(s).</template> 

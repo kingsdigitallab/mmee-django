@@ -158,10 +158,13 @@ class Photo(index.Indexed, models.Model):
     date = models.DateField(null=True, blank=True)
     location = models.PointField(blank=True, null=True)
 
+    live = models.BooleanField(default=False)
+
     subcategories = models.ManyToManyField(PhotoSubcategory)
 
     panels = [
         SnippetChooserPanel('photographer'),
+        FieldPanel('live'),
         FieldPanel('number'),
         ImageChooserPanel('image'),
         FieldPanel('subcategories'),
@@ -172,6 +175,7 @@ class Photo(index.Indexed, models.Model):
     ]
 
     search_fields = [
+        index.FilterField('live'),
         index.FilterField('subcategories__pk'),
         index.SearchField('subcategories__pk'),
         index.FilterField('photosubcategory_id'),
