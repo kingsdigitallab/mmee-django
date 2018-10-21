@@ -138,10 +138,12 @@ class PhotoSubcategory(index.Indexed, models.Model):
 @register_snippet
 class Photo(index.Indexed, models.Model):
 
+    REVIEW_STATUS_SUBMITTING = -1
     REVIEW_STATUS_SUBMITTED = 0
     REVIEW_STATUS_PUBLIC = 1
     REVIEW_STATUS_ARCHIVED = 2
     REVIEW_STATUSES = (
+        (REVIEW_STATUS_SUBMITTING, 'Submission incomplete'),
         (REVIEW_STATUS_SUBMITTED, 'Submitted'),
         (REVIEW_STATUS_PUBLIC, 'Public'),
         (REVIEW_STATUS_ARCHIVED, 'Archived'),

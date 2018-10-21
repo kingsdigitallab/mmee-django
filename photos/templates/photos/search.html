@@ -82,13 +82,13 @@
             </span>
         </p>
     
-        <input id="tab1" type="radio" name="tabs"  checked>
+        <input id="tab1" type="radio" name="tabs" checked>
         <label for="tab1"><span>Grid</span></label>
 
         <input id="tab2" type="radio" name="tabs">
         <label for="tab2"><span>List</span></label>
 
-        <input id="tab3" type="radio" name="tabs" >
+        <input id="tab3" type="radio" name="tabs" v-on:change="resize_map">
         <label for="tab3"><span>Map</span></label>
 
         <article id="photo-grid" class="tab-content">
@@ -128,14 +128,17 @@
         </article>
 
         <article id="photo-map" class="tab-content">
-          <div id="map">
-          </div>
         </article>
 
     </section> <!-- end #results -->
 
 </main>
 {% endverbatim %}
+
+{# this will be attached under #photo-map with JS #}
+{# but needs to place it outside Vue.js root element #}
+<div id="map-leaflet">
+</div>
 
 {% endblock %}
 
@@ -144,12 +147,17 @@
 
 $(function() {
     // Create map and set view
-    var photomap = L.map('map').setView([51.52, -0.03], 12);
+    var photomap = L.map('map-leaflet').setView([51.52, -0.03], 12);
     // Create tilelayer and add to map
     var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
     var markers = [];
+    var $map = null;
+    
+    function resize_map() {
+      photomap.invalidateSize();
+    }
 
-    function update_map(photos) {
+    function update_map(photos) {    
       markers.map(function(marker) {
           photomap.removeLayer(marker);
       });
@@ -169,6 +177,11 @@ $(function() {
       if (points.length) {
         photomap.fitBounds(points);
       }
+      if ($map === null) {
+        $map = $('#map-leaflet').detach();
+        $('#photo-map').append($map);
+      }
+      resize_map();
     }
     
     var photos = window.photos = [];
@@ -227,6 +240,9 @@ $(function() {
             },
             get_html_link_from_api_link: function(link) {
                 return link ? link.replace(/[^?]+[?]?/, '?') : '';
+            },
+            resize_map: function() {
+              resize_map();
             },
             call_api: function(aquery, query_string, load_more) {
                 /*

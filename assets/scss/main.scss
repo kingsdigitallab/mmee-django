@@ -8,14 +8,6 @@
 - PHOTO PAGE
 
 
-
-
-
-
-
-
-
-
 /**** GENERAL ****/
 
 // GN: pagination
@@ -703,8 +695,8 @@ section#photo{
 
 }
 
-// Map
-section#map{
+// Map on the Photo page
+section#photo-map{
   h3{
     color:$primary-color;
       font-size: 0.7rem;
@@ -712,17 +704,16 @@ section#map{
       margin:0 0 0.2rem 0;
       font-weight: 100;
   }
-  #map-leaflet {
-    height: 400px;
-    margin-bottom: 2rem;
-  }
-
-  #map {
-    height: 400px;
-    width: 100%;
-    margin-bottom: 2rem;
-  }
+  
 }
+
+#map-leaflet {
+  height: 400px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+
 // Submission Form
 .submission-form {
   width: 100%;
@@ -888,7 +879,8 @@ footer {
 
 
   section#results{
-    article#photo-map{
+    
+    #photo-map{
       clear: both;
       display: block;
       position: absolute;
@@ -896,10 +888,20 @@ footer {
       right: 0;
       width: 75%;
       margin-right: -82%;
-    }
-  }
+      margin-top: 6rem;
+      
+      #map-leaflet {
+        position:absolute;
+        margin-top:-10vh;
+        /* height: 100vh; */
+        height: 90vh;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+      }
 
-  section#results{
+    }
+
     width:55%;
     float:left;
     label {
@@ -908,21 +910,7 @@ footer {
         display: none;
       }
     }
-  }
-
-  article#photo-map.tab-content{
-    width:40%;
-    float:right;
-    margin-top: 6rem;
-  }
-
-  #map {
-    position:absolute;
-    margin-top:-10vh;
-    height: 100vh;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
+  
   }
 
   footer{
