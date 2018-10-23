@@ -36,3 +36,19 @@ def json(obj):
         obj,
         separators=(',', ':'),
     ))
+
+
+@register.simple_tag(takes_context=True)
+def form_field(context, field, *args, **kwargs):
+    '''
+    Render a form field with the given attribute values.
+    {% form_field FORM.FIELD ATTR="VALUE" ... %}
+    e.g.
+    {% form_field my_form.first_name class="form-control" placeholder="Bob" %}
+
+    Note, _ are replaced with - in the attribute names.
+    '''
+    kwargs = kwargs or {}
+    ret = field.as_widget(
+        attrs={k.replace('_', '-'): v for k, v in kwargs.items()})
+    return ret

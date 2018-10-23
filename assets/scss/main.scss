@@ -33,6 +33,10 @@
     text-align: center;
 }
 
+.hidden {
+  display: none;
+}
+
 // GN: reduced from 170% is it was badly pixelated on web friendly images
 // TO: Had to increase it back a bit to 160 as it wasn't cropping enough. Will change it to a better way of cropping later.
 
@@ -103,7 +107,9 @@ header{
      -webkit-transition:all 200ms ease-in;
      -o-transition:all 200ms ease-in;
      transition:all 200ms ease-in;
-     z-index:1;
+     // z-index:1;
+     // GN: above leaflet map (default is 400)
+     z-index:450;
      ul{
       width:300px;
       height:100%;

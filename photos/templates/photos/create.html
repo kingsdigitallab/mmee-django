@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load mmee_wagtail_tags %}
+
+{% block meta_title %}Upload a Photo{% endblock %}
+
+{% block main %}
+<div class="submission-form">
+  <form action="" method="POST" role="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {% if form.has_errors %}
+        <div class="form-general-errors">
+            Some fieds are invalid, please correct the errors and resubmit.
+          {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+    
+    <input id='step2' type='checkbox'>
+    <input id='step3' type='checkbox'>
+    <input id='step4' type='checkbox'>
+
+    <div id="part1" class="step">
+      <h3>Step 1: Upload your photo</h3>
+        <!-- <input aria-label="upload photo" type="file"
+        id="image" name="image"
+        accept="image/png, image/jpeg" /> -->
+        
+        {{ form.image_file.errors }}
+        {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
+
+      <div class="button-wrapper">
+        <label class="back">
+          Cancel
+        </label>
+        <label for='step2' id="continue-step2" class="next">
+          Next
+        </label>
+      </div>
+    </div>
+
+    <div id="part2" class="step">
+     <h3>Step 2: Photo Information</h3>
+     <!-- <input type="integer" name="taken_year" class="form-control" placeholder="Date"> -->
+     <!-- <input type="integer" name="taken_month" class="form-control" placeholder="/"> -->
+     <!-- <input type="text" id="city" class="form-control" placeholder="City, Country"> -->
+     <!-- <textarea name="description" id="message" class="form-control" placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took"></textarea> -->
+     {{ form.taken_year.errors }}
+     {% form_field form.taken_year class="form-control" autocomplete="off" placeholder="Year taken" %}
+     
+     {{ form.taken_month.errors }}
+     {% form_field form.taken_month class="form-control" autocomplete="off" placeholder="Month taken" %}
+     
+     {{ form.description.errors }}
+     {% form_field form.description class="form-control" autocomplete="off" placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took" %}
+     
+     <div class="button-wrapper">
+      <label for='step2' id="back-step2" class="back">
+        Back
+      </label>
+      <label for='step3' id="continue-step3" class="next">
+        Next
+      </label>
+     </div>
+    </div>
+
+  <div id="part3" class="step">
+    <h3>Step 3: Consent Information</h3>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+
+    {{ form.consent.errors }}
+    <label>
+        {% form_field form.consent class="show" autocomplete="off" %}
+        I have read and accept the terms
+    </label>
+
+    <div class="button-wrapper">
+      <label for='step3' id="back-step3" class="back">
+        Back
+      </label>
+      <label id="continue-step4" class="next last" >
+        Submit
+        <input type="submit" value="Submit" name="Submit" class="hidden submit">
+      </label>
+    </div>
+  </div>
+  
+</form>
+</div>
+
+{% endblock main %}
+
+{% block footer_scripts %}
+    {{ block.super }}
+    <script>
+    $(function() {
+        var $form = $('.submission-form > form'); 
+        if (1) {
+            $(document).on('click', '.next:not(:has(.submit))', function(e) {
+                // Don't let user go to next step if invalid inputs in current
+                // one
+                var is_step_valid = 1;
+                $(this).parents('.step').find(':input').each(function() {
+                    is_step_valid &= this.checkValidity();
+                });
+                if (!is_step_valid) {
+                    // this forces the browser to show the error messages
+                    $form.find('.submit').click();
+                    // we don't go to next step
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    })
+    </script>
+{% endblock %}

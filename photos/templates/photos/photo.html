@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load wagtailimages_tags %}
 
+{% block meta_title %}Photo: "{{photo.title}}"{% endblock %}
+
 {% block main %}
 <main>
     <section id="search">
@@ -54,7 +56,11 @@
         
         <h3>Map</h3>
         <!-- div instead of img -->
-        <div id="map-leaflet">
+        {% if photo.location %}
+          <div id="map-leaflet">
+        {% else %}
+          <p>No exact coordinates for this photo</p>
+        {% endif %}
         </div>
         
     </section> <!-- end #map -->

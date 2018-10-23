@@ -234,19 +234,22 @@ class Photo(index.Indexed, models.Model):
 
     @property
     def title(self):
-        '''Try to be smart. We stop at the first . or ,'''
+        '''Derives a title from self.description'''
         ret = self.description or ''
 
-        if ret:
+        max_len = 50
+
+        if len(ret) > max_len:
+            # heuristics to keep smallest meaningful beginning of the desc.
             ret = re.sub(r'\(.*?\)', '', ret)
             ret = re.sub(r'( -|--).*$', '', ret)
             ret = re.sub(r'[.,;:].*$', '', ret)
             ret = re.sub(r'(([A-Z]\w*\b\s*){2,}).*$', r'\1', ret)
             ret = ret.strip()
 
-        max_len = 50
-        if len(ret) > max_len:
-            ret = ret[:max_len] + '...'
+            if len(ret) > max_len:
+                # still too long, truncate and add the ellipsis
+                ret = ret[:max_len] + '...'
 
         return ret
 
