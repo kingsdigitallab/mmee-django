@@ -46,10 +46,6 @@ class PhotoForm(ModelForm):
 
 
 class PhotoCreateView(CreateView):
-    '''We don't inherit from CreateView because the front-end form
-    is a bit special: it create first an Image then a Photo (linked to it)
-    in a multi-step web form.
-    '''
     template_name = 'photos/create.html'
     form_class = PhotoForm
     success_url = '/photos/created/'
