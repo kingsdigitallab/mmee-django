@@ -26,6 +26,11 @@
         <li>
           <a href="">Contact</a>
         </li>
+        {% if request.user.is_staff %}
+          <li>
+            <a class="staff-link" href="{% url 'admin:photos_photo_changelist' %}">Manage Photos</a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   {% endblock %}

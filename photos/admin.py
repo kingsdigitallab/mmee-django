@@ -1,8 +1,9 @@
 from django.contrib.gis import admin
-
 from .models import Photographer, PhotoSubcategory, Photo
 from django.utils.safestring import mark_safe
 from django.contrib.admin import SimpleListFilter
+from django.contrib.gis.db import models
+from mapwidgets.widgets import GooglePointFieldWidget
 
 
 @admin.register(PhotoSubcategory)
@@ -10,8 +11,8 @@ class PhotoSubcategoryAdmin(admin.ModelAdmin):
     list_display = ['label']
 
 
-class ImageFilter(SimpleListFilter):
-    title = 'image'  # or use _('country') for translated title
+class PhotoImageFilter(SimpleListFilter):
+    title = 'Image'  # or use _('country') for translated title
     parameter_name = 'image'
 
     def lookups(self, request, model_admin):
@@ -27,14 +28,78 @@ class ImageFilter(SimpleListFilter):
             return queryset.filter(image__isnull=False)
 
 
+class PhotoSubcategoriesFilter(SimpleListFilter):
+    title = 'Subcategories'  # or use _('country') for translated title
+    parameter_name = 'subcat'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('missing', 'uncategorised'),
+            ('exist', 'categorised'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'missing':
+            return queryset.filter(subcategories__isnull=True)
+        if self.value() == 'exist':
+            return queryset.filter(subcategories__isnull=False)
+
+
+class PhotoLocationFilter(SimpleListFilter):
+    title = 'Location'  # or use _('country') for translated title
+    parameter_name = 'location'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('missing', 'location unspeficied'),
+            ('exist', 'geolocated'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'missing':
+            return queryset.filter(location__isnull=True)
+        if self.value() == 'exist':
+            return queryset.filter(location__isnull=False)
+
+
 @admin.register(Photo)
-class PhotoAdmin(admin.OSMGeoAdmin):
-    list_display = ['photographer', 'title',
+# class PhotoAdmin(admin.OSMGeoAdmin):
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ['id', 'photographer', 'title',
                     'review_status', 'created_at', 'admin_thumbnail']
-    list_filter = ['review_status', ImageFilter]
+    list_display_links = list_display
+
+    list_filter = ['review_status', PhotoLocationFilter,
+                   PhotoSubcategoriesFilter, PhotoImageFilter, ]
 
     search_fields = ['photographer__first_name',
                      'photographer__last_name', 'description']
+
+    fieldsets = (
+        ('Admin', {
+            'fields': ('review_status', 'subcategories', 'comments')
+        }),
+        ('Related records', {
+            # 'classes': ('collapse',),
+            'fields': ('image', 'photographer',),
+        }),
+        ('Photo Properties', {
+            # 'classes': ('collapse',),
+            'fields': ('taken_year', 'taken_month', 'taken_day',
+                       'description',
+                       ),
+        }),
+        ('Location', {
+            # 'classes': ('collapse',),
+            'fields': ('location',),
+        }),
+    )
+
+    filter_horizontal = ('subcategories',)
+
+    formfield_overrides = {
+        models.PointField: {"widget": GooglePointFieldWidget},
+    }
 
     def admin_thumbnail(self, photo):
         return mark_safe(photo.get_image_tag('height-100'))

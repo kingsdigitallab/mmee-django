@@ -16,3 +16,6 @@ django-kdl-ldap
 wagtail
 
 dateparser
+# admin geo-location widget
+django-map-widgets
+

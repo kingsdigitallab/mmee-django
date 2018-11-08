@@ -100,8 +100,8 @@ INSTALLED_APPS += [    # your project apps here
     'taggit',
     'modelcluster',
     'haystack',
-
-    'photos'
+    'photos',
+    'mapwidgets',
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -175,13 +175,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-
-
-
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-
 ]
 
 ROOT_URLCONF = PROJECT_NAME + '.urls'
@@ -202,12 +197,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-
                 'activecollab_digger.context_processors.activecollab_digger',
-
-
-
-
             ],
         },
     },

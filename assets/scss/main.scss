@@ -36,6 +36,9 @@
 .hidden {
   display: none;
 }
+.staff-link {
+    font-style: italic;
+}
 
 // GN: reduced from 170% is it was badly pixelated on web friendly images
 // TO: Had to increase it back a bit to 160 as it wasn't cropping enough. Will change it to a better way of cropping later.

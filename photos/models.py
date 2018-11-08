@@ -178,7 +178,8 @@ class Photo(index.Indexed, models.Model):
 
     review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
 
-    subcategories = models.ManyToManyField(PhotoSubcategory)
+    subcategories = models.ManyToManyField(
+        PhotoSubcategory, null=True, blank=True)
 
     panels = [
         SnippetChooserPanel('photographer'),
