@@ -8,7 +8,9 @@ from mapwidgets.widgets import GooglePointFieldWidget
 
 @admin.register(PhotoSubcategory)
 class PhotoSubcategoryAdmin(admin.ModelAdmin):
-    list_display = ['label']
+    list_display = ['category', 'label']
+    list_display_links = ['label']
+    search_fields = ['category__label', 'label']
 
 
 class PhotoImageFilter(SimpleListFilter):
