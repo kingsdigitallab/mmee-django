@@ -153,10 +153,10 @@ header{
     &.submit-label{
       position:fixed;
       top:0;
-      right:81px;
+      right:57px;
       font-size: 2em;
       background: $primary-color;
-      padding:22px 20px;
+      padding:22px 12px;
       border:1px solid $white;
       span{ /* plus icon */
         position: relative;
@@ -193,7 +193,7 @@ header{
       right:0;
       font-size: 2em;
       background: $primary-color;
-      padding:22px 20px;
+      padding:22px 8px;
       border:1px solid $white;
       span{ /* hamburger icon */
         position: relative;
@@ -397,7 +397,7 @@ section#search{
           top: 10px;
           left: 220px;
           color:white;
-          z-index:3;
+          z-index:501;
         }
         input#filter-nav[type="checkbox"]:checked ~ label.filter-label{
           background:black;
@@ -430,7 +430,7 @@ section#search{
           -webkit-transition:all 200ms ease-in;
           -o-transition:all 200ms ease-in;
           transition:all 200ms ease-in;
-          z-index:2;
+          z-index:500;
           ul{
             width:250px;
             height:100%;
@@ -544,6 +544,7 @@ section#results{
       padding: 1em;
       cursor: pointer;
       text-decoration: none;
+      border-right:1px solid $white;
       color: $black;
       background: $gray;
       -moz-transition:all 200ms ease-in;
@@ -886,9 +887,21 @@ footer {
 
 @media screen and (min-width: 1200px) {
 
+  /*nav*/
+  nav{
+    label {
+      &.submit-label{
+        right:73px;
+        padding:22px 20px!important;
+      }
+      &.menu-label{
+        padding:22px 16px;
+      }
+    }
+  }
+  /* end nav */
 
   section#results{
-    
     #photo-map{
       clear: both;
       display: block;
@@ -908,7 +921,6 @@ footer {
         position: sticky;
         top: 0;
       }
-
     }
 
     width:55%;
@@ -927,5 +939,24 @@ footer {
     float: left;
   }
 
+}
+
+@media screen and (max-width: 350px) {
+  /**** HEADER ****/
+  header{
+    a{
+      font-size: 1.5rem;
+    }
+  }
+
+  /**** SEARCH ****/
+  section#search{
+    .search-field{ 
+      text-align: left;
+      input{
+        width: 82%;
+       }
+     }
+  } /* end section #search */  
 }
 
