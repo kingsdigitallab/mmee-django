@@ -10,35 +10,7 @@
 
 /**** GENERAL ****/
 
-// GN: pagination
-.button {
-    background-color: #e6e6e6;
-    padding: 0.4rem 1rem;
-    cursor: pointer;
-    border: 1px solid #e6e6e6;
-    text-decoration: none;
-    
-    &:hover {
-        border:1px solid black;
-    }
 
-    &[href=''] {
-        opacity: 0.4;  
-    }
-}
-.pagination {
-    float: right;
-}
-.page-more-wrapper {
-    text-align: center;
-}
-
-.hidden {
-  display: none;
-}
-.staff-link {
-    font-style: italic;
-}
 
 // GN: reduced from 170% is it was badly pixelated on web friendly images
 // TO: Had to increase it back a bit to 160 as it wasn't cropping enough. Will change it to a better way of cropping later.
@@ -400,8 +372,8 @@ section#search{
           z-index:501;
         }
         input#filter-nav[type="checkbox"]:checked ~ label.filter-label{
-          background:black;
-          color:white;
+          background:$primary-color;
+          color:$white;
         }
         input#filter-nav[type="checkbox"]:checked ~ section{
           -webkit-transform:translate3d(260px, 0, 0);
@@ -410,13 +382,14 @@ section#search{
           transform:translate3d(260px, 0, 0);
         }
         label.filter-label{
-          background-color: #e6e6e6;
+          background-color: $black;
           padding: 0.4rem 1rem;
           cursor: pointer;
-          border:1px solid #e6e6e6;
           display: block;
+          color: $white;
           &:hover{
-            border:1px solid black;
+            background:$secondary-color;
+            color: $black;
           }
         }
         .filter-list{
@@ -435,7 +408,7 @@ section#search{
             width:250px;
             height:100%;
             padding:1em;
-            background:black;
+            background:$primary-color;
             color:white;
             margin:0;
             list-style:none;
@@ -463,62 +436,22 @@ section#search{
                   font-size: 0.8rem;
                   width: 100%;
                   border: none;
-                  background-color: black;
+                  background-color: $white;
                   cursor: pointer;
                   padding: 0.5rem;
                   margin: 1rem 0;
                   text-transform: uppercase;
-                  color: white;
-                  border: 1px solid white;                
+                  color: $primary-color;
+                  border: 1px solid $white;                
                   &:hover{
-                    background-color: white;
-                    color: black;
+                    background-color: $primary-color;
+                    border: 1px solid $white;
+                    color: $white;
                   }
                 }/* end button */
             }/* end .filter-list */
         }/* end #filter */
     }/* end .search-filters */
-
-    .sort{
-      display: inline-block;
-      position: relative;
-      background-color: #e6e6e6;
-      width: auto;
-      max-width: 100%;
-      border-radius: 2px;
-      border:1px solid #e6e6e6;
-      &:hover{
-        border:1px solid black;
-      }
-      select {
-        max-width: 100%;
-        padding: 0.35rem 1.5rem 0.3rem 1rem;
-        border: none;
-        font-size:0.9rem;
-
-        background-color: transparent;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        &:active,
-        &:focus {
-          outline: none;
-          box-shadow: none;
-        }
-      }
-      &:after {
-        content: " ";
-        position: absolute;
-        top: 50%;
-        margin-top: -2px;
-        right: 6px;
-        width: 0; 
-        height: 0; 
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid #aaa;
-      }
-    }/* end #sort */
 } /* end section #search */  
 
 
@@ -536,45 +469,97 @@ section#results{
     }
 
     label {
-      font-weight: 700;
       font-size: 18px;
       display: block;
-      float: left;
-      width: 33.3%;
+      display: inline-block;
       padding: 1em;
       cursor: pointer;
       text-decoration: none;
       border-right:1px solid $white;
-      color: $black;
-      background: $gray;
+      color: $gray;
       -moz-transition:all 200ms ease-in;
       -webkit-transition:all 200ms ease-in;
       -o-transition:all 200ms ease-in;
       transition:all 200ms ease-in;
       &:hover{
         color: $black;
-        background: $secondary-color;
-
       }
     }
+
+    .view{
+      width: 33.333%;
+      display: inline-block;
+    }/* end .view */
+    .sort{
+      width: 31%;
+      display: inline-block;
+      position: relative;
+      text-align: right;
+      /*select {
+        max-width: 100%;
+        padding: 0.05rem 1.5rem 0.075rem 1rem;
+        border: none;
+        font-size:1rem;
+        border-radius: 0;
+        background-color: transparent;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        line-height: 1.7;
+        &:active,
+        &:focus {
+          outline: none;
+          box-shadow: none;
+          border-radius: 0;
+        }
+        &:hover{
+          color:$black;
+        }
+      }
+      &:after {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 50%;
+        margin-top: -2px;
+        right: 6px;
+        width: 0; 
+        height: 0; 
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid $black; 
+      }*/
+    }/* end .sort */
+    .itemsperpage{
+      width: 31%;
+      display: inline-block;
+      text-align: right;
+    }/* end .itemsperpage */
+
+
+
+
+
+
+
     #tab1:checked ~ #photo-grid,
     #tab2:checked ~ #photo-list,
     #tab3:checked ~ #photo-map{
       display: block;
       background: #fff;
-      color: #999;
+      color: $primary-color;
       border-bottom: 2px solid #f0f0f0;
     }
+
+
     [id^="tab"]:checked + label {
-      background: $primary-color;
-      color:$white;
+      color:$primary-color;
       -moz-transition:all 200ms ease-in;
       -webkit-transition:all 200ms ease-in;
       -o-transition:all 200ms ease-in;
       transition:all 200ms ease-in;
       &:hover{
-        background: $secondary-color;
-        color: $black;
+        color: $secondary-color;
       }   
     }
 
@@ -611,6 +596,9 @@ section#results{
                 right: -100%;
                 bottom: -100%;
                 left: -100%;
+                &:hover{
+                  opacity: 0.5;
+                }
               }
             }
             .photodata{
@@ -666,6 +654,38 @@ section#results{
       } /* end #content2 List */
     } /* end article */
   }
+
+  // GN: pagination
+.button {
+    cursor: pointer;
+    text-decoration: none;
+    color: $black;
+    &:hover {
+        color: $primary-color;
+    }
+
+    &[href=''] {
+        opacity: 0.4;  
+    }
+}
+.pagination {
+width:100%;
+text-align: center;
+background: $lightgray;
+padding: 0.5rem 0;
+}
+.page-more-wrapper {
+    text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+.staff-link {
+    font-style: italic;
+}
+
+
 
 /**** PHOTO PAGE ****/
 section#photo{
@@ -926,7 +946,6 @@ footer {
     width:55%;
     float:left;
     label {
-      width:50%;
       &[for=tab3]{
         display: none;
       }

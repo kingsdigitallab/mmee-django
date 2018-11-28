@@ -21,7 +21,7 @@
             <div class="filter">
                 <input type="checkbox" id="filter-nav" />
                 <label aria-label="Filter list" class="filter-label" for="filter-nav">
-                    Filter
+                    All Filters
                 </label>
                 <div class="filter-list">
                   <ul>
@@ -44,18 +44,13 @@
                         
                         </template>
                         
-                        <button aria-label="apply filter">Apply filter</button>
+                        <button aria-label="clear filters">Clear filters</button>
                       </form>
                     </li>
                   </ul>
                 </div>
             </div>
-            <div class="sort">
-                <select aria-label="Sort by" v-model="meta.query.order">
-                  <option value="newest">Newest</option>
-                  <option value="oldest">Oldest</option>
-                </select>
-            </div>
+           
         </div> <!-- end .filter-sort -->
     </section> <!-- end #search -->
 
@@ -77,21 +72,44 @@
         <p class="stats">
             <template v-if="searching">Searching...</template>
             <template v-else>{{ meta.pagination.count }} Photo(s).</template> 
-            <span class="pagination">
-                <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
-                Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
-                <a :href="link_next" v-on:click.prevent="on_click_link" class="button page-next">&gt;</a>
-            </span>
+
         </p>
-    
+
+
+        View:
         <input id="tab1" type="radio" name="tabs" checked>
-        <label for="tab1"><span>Grid</span></label>
+        <label for="tab1"><i class="fas fa-th"></i> <span>Grid</span></label>
 
         <input id="tab2" type="radio" name="tabs">
-        <label for="tab2"><span>List</span></label>
+        <label for="tab2"><i class="fas fa-list"></i> <span>List</span></label>
 
         <input id="tab3" type="radio" name="tabs" v-on:change="resize_map">
-        <label for="tab3"><span>Map</span></label>
+        <label for="tab3"><i class="fas fa-map-marker-alt"></i> <span>Map</span></label>
+
+
+        <div class="sort">
+        Sort by:
+            <select aria-label="Sort by" v-model="meta.query.order">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+        </div>
+
+        <div class="itemsperpage">
+        Items per page:
+            <select aria-label="Items per page">
+              <option value="newest">12</option>
+              <option value="oldest">36</option>
+              <option value="oldest">60</option>
+            </select>
+        </div>
+
+
+        <div class="pagination">
+            <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
+            Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
+            <a :href="link_next" v-on:click.prevent="on_click_link" class="button page-next">&gt;</a>
+        </div>
 
         <article id="photo-grid" class="tab-content">
             <div v-for="photo in photos" class="photo">
