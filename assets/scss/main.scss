@@ -697,7 +697,15 @@ padding: 0.5rem 0;
     font-style: italic;
 }
 
-
+.sticky {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: $secondary-color;
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+}
 
 /**** PHOTO PAGE ****/
 section#photo{
@@ -964,6 +972,9 @@ footer {
           padding: 0;
           width:25%;
           display: inline-block;
+          &:hover{
+            background: $secondary-color;
+          }
         }
         .multi-select input[type=checkbox],
         .multi-select input[type=radio] {
@@ -972,6 +983,9 @@ footer {
         .multi-select label {
           margin: 0;
           padding: 0;
+          &:checked{
+          background: red;
+        }
         }
         .multi-select .toggle-open {
           display: block;
@@ -1028,7 +1042,7 @@ footer {
           z-index: 99;
         }
         .multi-select-options > li span:hover {
-          background: #d7d7d7;
+          background: $gray;
         }
         .multi-select-options > li input[type=checkbox]:checked + span {
           background: $secondary-color;
@@ -1041,13 +1055,20 @@ footer {
         #toggle-open:checked, ~ .multi-select-options, #filter-a:checked, ~ .multi-select-options  {
           height: 200px;
         }
+
+                .multi-select label:checked ,
+        .multi-select:checked ~ .multi-select-options span,
+        .multi-select:checked ~ label, {
+          background: red;
+        }
+
+
         #filter-a:checked ~ .multi-select-options label,
         #filter-a:checked ~ .multi-select-options span,
         #filter-b:checked ~ .multi-select-options label,
         #filter-b:checked ~ .multi-select-options span,
         #filter-c:checked ~ .multi-select-options label,
-        #filter-c:checked ~ .multi-select-options span 
-         {
+        #filter-c:checked ~ .multi-select-options span {
           display: block;
         }
         #filter-a:not(:checked) ~ .multi-select-options, 
@@ -1063,7 +1084,7 @@ footer {
         #filter-c:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span {
           display: inline-block;
           float: left;
-          margin: 0 10px 10px 0;
+          margin: 0 5px 5px 0;
           padding: 0px 10px;
           width: auto;
           position: inherit;
@@ -1146,4 +1167,7 @@ footer {
 
 
 }
+
+
+
 
