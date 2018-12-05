@@ -4,6 +4,8 @@ from django.utils.safestring import mark_safe
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.db import models
 from mapwidgets.widgets import GooglePointFieldWidget
+from django.urls.base import reverse
+from django.utils.html import escape
 
 
 @admin.register(PhotoSubcategory)
@@ -64,15 +66,35 @@ class PhotoLocationFilter(SimpleListFilter):
             return queryset.filter(location__isnull=False)
 
 
+class PhotographerInline(admin.TabularInline):
+    model = Photographer
+
+
+def get_photographer_link(photo, link_text):
+    ret = '<a href="{}">{}</a>'.format(
+        reverse(
+            "admin:photos_photographer_change",
+            args=(photo.photographer.pk,)
+        ),
+        escape(link_text)
+    )
+    return mark_safe(ret)
+
+
 @admin.register(Photo)
 # class PhotoAdmin(admin.OSMGeoAdmin):
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ['id', 'photographer', 'title',
-                    'review_status', 'created_at', 'admin_thumbnail']
-    list_display_links = list_display
+    list_display = ['id', 'admin_photographer_age_range',
+                    'admin_photographer_gender',
+                    'title',
+                    'review_status', 'created_at', 'admin_thumbnail',
+                    ]
+    list_display_links = [f for f in list_display if 'pher' not in f]
 
     list_filter = ['review_status', PhotoLocationFilter,
-                   PhotoSubcategoriesFilter, PhotoImageFilter, ]
+                   PhotoSubcategoriesFilter, PhotoImageFilter,
+                   'photographer__gender', 'photographer__age_range'
+                   ]
 
     search_fields = ['photographer__first_name',
                      'photographer__last_name', 'description']
@@ -87,7 +109,7 @@ class PhotoAdmin(admin.ModelAdmin):
         }),
         ('Photo Properties', {
             # 'classes': ('collapse',),
-            'fields': ('taken_year', 'taken_month', 'taken_day',
+            'fields': ('taken_year', 'taken_month',  # 'taken_day',
                        'description',
                        ),
         }),
@@ -100,8 +122,24 @@ class PhotoAdmin(admin.ModelAdmin):
     filter_horizontal = ('subcategories',)
 
     formfield_overrides = {
-        models.PointField: {"widget": GooglePointFieldWidget},
+        models.PointField: {'widget': GooglePointFieldWidget},
     }
+
+    def admin_photographer_age_range(self, photo):
+        ret = ''
+        if photo.photographer:
+            ret = photo.photographer.get_str_from_age_range()
+            ret = get_photographer_link(photo, ret)
+        return ret
+    admin_photographer_age_range.short_description = 'Age'
+
+    def admin_photographer_gender(self, photo):
+        ret = ''
+        if photo.photographer:
+            ret = photo.photographer.get_str_from_gender()
+            ret = get_photographer_link(photo, ret)
+        return ret
+    admin_photographer_gender.short_description = 'Gender'
 
     def admin_thumbnail(self, photo):
         return mark_safe(photo.get_image_tag('height-100'))
@@ -143,7 +181,8 @@ def is_moderator(user):
 
 @admin.register(Photographer)
 class PhotographerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'age_range']
-    list_filter = ['age_range']
+    # list_display = ['first_name', 'last_name', 'age_range']
+    list_display = ['pk', 'first_name', 'last_name', 'age_range']
+    list_filter = ['age_range', 'gender']
 
-    search_fields = ['first_name', 'last_name', 'email', 'phone_number']
+    search_fields = ['first_name', 'last_name', 'email', 'phone_number', 'pk']

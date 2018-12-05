@@ -111,24 +111,17 @@
 
         <p class="stats">
             <template v-if="searching">Searching...</template>
-            <template v-else>{{ meta.pagination.count }} Photo(s).</template> 
-
+            <template v-else>{{ meta.pagination.count }} Photo<template v-if="meta.pagination.count > 1">s</template></template> 
         </p>
 
-
         View:
-        <input id="tab1" type="radio" name="tabs" checked>
-        <label for="tab1"><i class="fas fa-th"></i> <span>Grid</span></label>
-
-        <input id="tab2" type="radio" name="tabs">
-        <label for="tab2"><i class="fas fa-list"></i> <span>List</span></label>
-
-        <input id="tab3" type="radio" name="tabs" v-on:change="resize_map">
-        <label for="tab3"><i class="fas fa-map-marker-alt"></i> <span>Map</span></label>
-
+        <template v-for="view in views">
+            <input :id="view.id" type="radio" v-model="meta.query.view" :value="view.key" @change.prevent="on_update_view">
+            <label :for="view.id"><i :class="view.class"></i> <span>{{ view.label }}</span></label>
+        </template>
 
         <div class="sort">
-        Sort by:
+            Sort by:
             <select aria-label="Sort by" v-model="meta.query.order">
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -136,11 +129,11 @@
         </div>
 
         <div class="itemsperpage">
-        Items per page:
-            <select aria-label="Items per page">
-              <option value="newest">12</option>
-              <option value="oldest">36</option>
-              <option value="oldest">60</option>
+            Items per page:
+            <select aria-label="Items per page" v-model="meta.query.perpage">
+              <option value="12">12</option>
+              <option value="36">36</option>
+              <option value="60">60</option>
             </select>
         </div>
 
@@ -264,6 +257,26 @@ $(function() {
             },
             links: {},
             searching: 1,
+            views: [
+                {
+                    id: 'tab1',
+                    label: 'Grid',
+                    key: 'grid',
+                    class: 'fas fa-th',
+                },
+                {
+                    id: 'tab2',
+                    label: 'List',
+                    key: 'list',
+                    class: 'fas fa-list',
+                },
+                {
+                    id: 'tab3',
+                    label: 'Map',
+                    key: 'map',
+                    class: 'fas fa-map-marker-alt',
+                },
+            ]
         },
         mounted: function() {
             this.$nextTick(function () {
@@ -275,6 +288,9 @@ $(function() {
                 update_map(this.photos);
             },
             'meta.query.order': function() {
+                this.call_api({page: 1});
+            },
+            'meta.query.perpage': function() {
                 this.call_api({page: 1});
             },
         },
@@ -293,6 +309,12 @@ $(function() {
             },
         },
         methods: {
+            on_update_view: function(event) {
+                if (this.meta.query.view == 'map') {
+                    resize_map();                    
+                }
+                this.call_api();
+            },
             on_change_option: function(option, event) {
                 option[4] = event.target.checked ? 1: 0;
                 this.call_api({page: 1});
@@ -311,10 +333,10 @@ $(function() {
             },
             call_api: function(aquery, query_string, load_more) {
                 /*
-                Calls the API with parameters found in this.data.query.
+                Calls the API with parameters found in this.meta.query.
                 
                 If aquery is provided, its parameters will override 
-                this.data.query.
+                this.meta.query.
                 
                 If query_string is provided (?page=1), it will be used instead
                 of this.data.query and aquery.

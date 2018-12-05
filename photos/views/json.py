@@ -17,8 +17,8 @@ JSONAPI_VERSION = '1.0'
 # mapping between ordering labels and the associated field used in
 # QS.order_by()
 QUERY_ORDER_NAME_FIELD = OrderedDict([
-    ['newest', '-created_at'],
-    ['oldest', 'created_at'],
+    ['newest', ['-taken_year', '-taken_month']],
+    ['oldest', ['taken_year', 'taken_month']],
 ])
 for name in QUERY_ORDER_NAME_FIELD:
     QUERY_ORDER_NAME_DEFAULT = name
@@ -36,7 +36,9 @@ def get_search_query_from_request(request):
         'phrase': request.GET.get('phrase', ''),
         'order': request.GET.get('order', QUERY_ORDER_NAME_DEFAULT),
         'facets': request.GET.get('facets', ''),
-        'page': page
+        'page': page,
+        'view': request.GET.get('view', 'grid'),
+        'perpage': request.GET.get('perpage', settings.ITEMS_PER_PAGE),
     }
 
     return ret
@@ -76,8 +78,11 @@ class ApiPhotoSearchView(View):
                 items = items.filter(subcategories__pk=pair[1])
 
         # ordering
-        items = items.order_by(QUERY_ORDER_NAME_FIELD.get(
-            search_query['order'], '-created_at'))
+        items = items.order_by(
+            *QUERY_ORDER_NAME_FIELD.get(
+                search_query['order'], ['-created_at']
+            )
+        )
 
         # text search (wagtail or haystack as a proxy to a search engine)
         s = get_search_backend()
@@ -115,7 +120,7 @@ class ApiPhotoSearchView(View):
         return ret
 
     def paginate_response(self, res, items, search_query, request):
-        per_page = settings.ITEMS_PER_PAGE
+        per_page = search_query['perpage']
         paginator = Paginator(items, per_page)
         try:
             page = paginator.page(search_query['page'])
