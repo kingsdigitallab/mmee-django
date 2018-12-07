@@ -21,6 +21,51 @@ DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
 
 
 @register_snippet
+class PhotoFlag(models.Model):
+    '''
+    Represents a comment from a web user
+    about the inappropriateness of a Photo record.
+    '''
+    photo = models.ForeignKey(
+        'Photo', on_delete=models.CASCADE,
+        related_name='flags'
+    )
+    flagger_comment = models.TextField(
+        max_length=400,
+        help_text='Please briefly tell us which exact parts of this web page'
+        ' or photo are inappropriate and why you think they are.'
+    )
+    reviewer_comment = models.TextField(
+        blank=True, null=True,
+        help_text='Please provide: your name, the date, your opinion after'
+        ' review and the action taken'
+        ' (keep photo live or not, edited content).'
+    )
+    closed = models.BooleanField(
+        'resolved', default=False,
+        help_text='Tick to mark the review process complete'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return 'Photo Flag #{}'.format(self.pk)
+
+    panels = [
+        FieldPanel('flagger_comment'),
+        FieldPanel('reviewer_comment'),
+        FieldPanel('closed'),
+        SnippetChooserPanel('photo'),
+    ]
+
+    class Meta:
+        ordering = ['-updated_at']
+        verbose_name = 'Flag'
+        verbose_name_plural = 'Flags'
+
+
+@register_snippet
 class PhotoCategory(index.Indexed, models.Model):
     label = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=50)
@@ -181,10 +226,10 @@ class Photo(index.Indexed, models.Model):
     REVIEW_STATUS_PUBLIC = 1
     REVIEW_STATUS_ARCHIVED = 2
     REVIEW_STATUSES = (
-        (REVIEW_STATUS_SUBMITTING, 'Incomplete submission'),
-        (REVIEW_STATUS_SUBMITTED, 'Submitted'),
+        (REVIEW_STATUS_SUBMITTED, 'To be reviewed (not public)'),
         (REVIEW_STATUS_PUBLIC, 'Public'),
-        (REVIEW_STATUS_ARCHIVED, 'Archived'),
+        (REVIEW_STATUS_ARCHIVED, 'Archived (not public)'),
+        (REVIEW_STATUS_SUBMITTING, 'Incomplete submission'),
     )
 
     photographer = models.ForeignKey(
@@ -213,9 +258,12 @@ class Photo(index.Indexed, models.Model):
     )
     updated_at = models.DateTimeField(auto_now=True)
 
-    taken_year = models.IntegerField(blank=True, null=True, default=None)
-    taken_month = models.IntegerField(blank=True, null=True, default=None)
-    taken_day = models.IntegerField(blank=True, null=True, default=None)
+    taken_year = models.IntegerField(
+        'Year (photo content)', blank=True, null=True, default=None)
+    taken_month = models.IntegerField(
+        'Month (photo content)', blank=True, null=True, default=None)
+    taken_day = models.IntegerField(
+        'Day (photo content)', blank=True, null=True, default=None)
 
     location = models.PointField(blank=True, null=True)
 

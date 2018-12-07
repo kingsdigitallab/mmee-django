@@ -1171,5 +1171,52 @@ footer {
 }
 
 
+// GN - front-end flash message box to provide feedback to user actions
 
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
 
+// see form to flag a photo as inappropriate
+.form-flag {
+    display: none;
+    
+    border: 1px solid grey;
+    padding: 1rem;
+    margin: 0.5rem auto;
+    max-width: 40rem;
+    
+    textarea {
+        width: 100%;
+        height: 5rem;
+    }
+}
+ 
+ul.errorlist {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  
+  li {
+      color: #a94442;
+      font-weight: bold;
+  }    
+}

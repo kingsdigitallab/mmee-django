@@ -15,12 +15,39 @@
         </div>
     </section> <!-- end .search -->
 
+    {% if photo_flag %}
+        <p class="alert alert-success">
+            Thank you for caring about the quality of our content.
+            An editor will soon review your comment and take the
+            appropriate action. 
+        </p>
+    {% else %}
+        <!-- The form for a visitor to flag a photo as inappropriate-->
+        <form id="form-flag" class="form-flag" action="" method="POST">
+            {% csrf_token %}
+            {{ form_flag.non_field_errors }}
+            
+            {{ form_flag.flagger_comment.errors }}
+            <p>{{ form_flag.flagger_comment.help_text }}</p>
+            {{ form_flag.flagger_comment }}
+            <p><input type="submit" name="submit" value="Submit" class="form-submit"></p>
+        </form>
+    {% endif %}
+
     <section id="photo">
         <div class="photo-image">
           {% image photo.image height-700 height="" width="" %}
         </div> <!-- end #photo -->
 
         <div class="photo-data">
+          {% if not photo_flag %}
+              <p>
+                  <a class="flag-button" href="#form-flag">
+                    Report a problem with this photo
+                  </a>
+              </p>
+          {% endif %}
+
           <div class="photo-description">
             <h3>Description</h3>
             <p>
@@ -43,11 +70,15 @@
                 </ul>
           </div><!-- end .photograph-data -->
 
-          <div class="photo-location">
-            <h3>Location</h3>
-            <p>e.g. London, United Kingdom</p> <!-- TO: GN, could you add geolocation, lat/long here please -->
-                
-          </div><!-- end .location -->
+          {% if photo.location %}
+              <div class="photo-location">
+                <h3>Location</h3>
+                <!-- TO: GN, could you add geolocation, lat/long here please -->
+                <p>{{ photo.location }}</p> 
+                    
+              </div><!-- end .location -->
+          {% endif %}
+                    
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
     
@@ -57,32 +88,54 @@
         <h3>Map</h3>
         <!-- div instead of img -->
         {% if photo.location %}
-          <div id="map-leaflet">
+            <div id="map-leaflet">
+            </div>
         {% else %}
-          <p>No exact coordinates for this photo</p>
+            <p>This photo has not yet been precisely located on a map</p>
         {% endif %}
-        </div>
         
     </section> <!-- end #map -->
 
 </main>
 
+{% endblock main %}
+
+{% block footer_scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Create map and set view
-  var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
-  var photomap = L.map('map-leaflet').setView(photo_point, 15);
-  // Create tilelayer and add to map
-  var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
-  var sample_markers = [
-    {'latlng':photo_point, 'content':"This Photo"}
-  ];
-  for (i in sample_markers){
-    m = L.marker(sample_markers[i]['latlng']).bindPopup(
-        sample_markers[i]['content']
-    ).addTo(photomap);
-  }
+$(function(){
+    var map_id = 'map-leaflet';
+
+    if (document.getElementById(map_id)) {
+        document.addEventListener('DOMContentLoaded', function() {
+          // Create map and set view
+          var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
+          var photomap = L.map(map_id).setView(photo_point, 15);
+          // Create tilelayer and add to map
+          var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
+          var sample_markers = [
+            {'latlng':photo_point, 'content':"This Photo"}
+          ];
+          for (i in sample_markers){
+            m = L.marker(sample_markers[i]['latlng']).bindPopup(
+                sample_markers[i]['content']
+            ).addTo(photomap);
+          }
+        });
+    }
+
+    function show_form_flag() {
+        var $form_flag = $('#form-flag');
+        $form_flag.show();
+        $form_flag.find('textarea').focus();
+    }
+    
+    $('.flag-button').on('click', function() {
+        show_form_flag();
+    });
+    
+    {% if form_flag.is_bound %}
+        show_form_flag();
+    {% endif %}
 });
 </script>
-
-{% endblock main %}
+{% endblock %}

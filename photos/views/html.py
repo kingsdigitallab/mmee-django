@@ -8,6 +8,8 @@ from django.forms.fields import ImageField, BooleanField
 from django.views.generic.edit import CreateView
 from wagtail.images.models import Image
 from django.forms import ModelForm
+from photos.models import PhotoFlag
+from django.core.exceptions import ValidationError
 
 
 class PhotoSearchView(TemplateView):
@@ -22,14 +24,64 @@ class PhotoSearchView(TemplateView):
         return context
 
 
+class PhotoFlagForm(ModelForm):
+
+    class Meta:
+        model = PhotoFlag
+        fields = [
+            'flagger_comment',
+        ]
+
+    def clean_flagger_comment(self):
+        ret = self.cleaned_data['flagger_comment']
+        if ret == 'test':
+            # for design purpose, easy way to see errors on page
+            ret = ''
+        if ret == 'test2':
+            raise ValidationError(
+                'A test error message, not related to a field'
+            )
+        return ret
+
+
 class PhotoDetailView(DetailView):
     template_name = 'photos/photo.html'
     model = Photo
 
+    def dispatch(self, *args, **kwargs):
+        '''Init flag data/form each time we process a new request'''
+        self.form_flag = PhotoFlagForm()
+        self.photo_flag = None
+        return super(PhotoDetailView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context['phrase'] = self.request.GET.get('phrase', '')
+
+        # a form for the user to flag a photo
+        context['form_flag'] = self.form_flag
+        # a new, saved PhotoFlag just posted by the user, None otherwise
+        context['photo_flag'] = self.photo_flag
+
         return context
+
+    def post(self, request, *args, **kwargs):
+        '''The user posts a comment about photo being inappropriate'''
+        photo = self.get_object()
+
+        photo_flag = PhotoFlag(photo=photo)
+        form_flag = PhotoFlagForm(request.POST, instance=photo_flag)
+
+        if form_flag.is_valid():
+            self.photo_flag = form_flag.save()
+
+        self.form_flag = form_flag
+
+        # this will call get_context_data()
+        ret = self.get(request, *args, **kwargs)
+
+        return ret
 
 
 class PhotoForm(ModelForm):
