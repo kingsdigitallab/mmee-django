@@ -30,7 +30,10 @@
             {{ form_flag.flagger_comment.errors }}
             <p>{{ form_flag.flagger_comment.help_text }}</p>
             {{ form_flag.flagger_comment }}
-            <p><input type="submit" name="submit" value="Submit" class="form-submit"></p>
+            <p>
+                <a href="#" class="form-cancel">Cancel</a>
+                <input type="submit" name="submit" value="Submit" class="form-submit">
+            </p>
         </form>
     {% endif %}
 
@@ -101,36 +104,41 @@
 {% endblock main %}
 
 {% block footer_scripts %}
+{{ block.super }}
 <script>
 $(function(){
     var map_id = 'map-leaflet';
 
     if (document.getElementById(map_id)) {
-        document.addEventListener('DOMContentLoaded', function() {
-          // Create map and set view
-          var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
-          var photomap = L.map(map_id).setView(photo_point, 15);
-          // Create tilelayer and add to map
-          var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
-          var sample_markers = [
-            {'latlng':photo_point, 'content':"This Photo"}
-          ];
-          for (i in sample_markers){
-            m = L.marker(sample_markers[i]['latlng']).bindPopup(
-                sample_markers[i]['content']
-            ).addTo(photomap);
-          }
-        });
+        // Create map and set view
+        var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
+        var photomap = L.map(map_id).setView(photo_point, 15);
+        // Create tilelayer and add to map
+        var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
+        var sample_markers = [
+          {'latlng':photo_point, 'content':"This Photo"}
+        ];
+        for (i in sample_markers){
+          m = L.marker(sample_markers[i]['latlng']).bindPopup(
+              sample_markers[i]['content']
+          ).addTo(photomap);
+        }
     }
 
-    function show_form_flag() {
+    function show_form_flag(hide) {
         var $form_flag = $('#form-flag');
-        $form_flag.show();
-        $form_flag.find('textarea').focus();
+        $form_flag.toggle(!hide);
+        if (!hide) {
+            $form_flag.find('textarea').focus();
+        }
     }
     
     $('.flag-button').on('click', function() {
         show_form_flag();
+    });
+    
+    $('.form-cancel').on('click', function() {
+        show_form_flag(1);
     });
     
     {% if form_flag.is_bound %}

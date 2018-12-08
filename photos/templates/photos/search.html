@@ -184,6 +184,9 @@
             <div id="sticky-map" class="sticky">
                 <!-- p>Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p -->
             </div>
+            <!-- div class="accidental-map-interaction-protection-glass">
+                TODO: click to interact
+            </div -->
         </article>
 
     </section> <!-- end #results -->
@@ -199,11 +202,26 @@
 {% endblock %}
 
 {% block footer_scripts %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+ 
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+
 <script>
 
 $(function() {
     // Create map and set view
     var photomap = L.map('map-leaflet').setView([51.52, -0.03], 12);
+    L.control.locate().addTo(photomap);
+    
+    function init_click_map_to_interact(map) {
+        // map.scrollWheelZoom.disable();
+        // map.once('focus', function() {
+        //     map.scrollWheelZoom.enable();
+        // });
+    };
+    init_click_map_to_interact(photomap);
+    
     // Create tilelayer and add to map
     var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
     var markers = [];
