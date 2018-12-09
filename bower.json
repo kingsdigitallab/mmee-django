@@ -1,16 +1,18 @@
 {
-    "name": "mmee",
-    "version": "0.1",
-    "dependencies": {
-        "jquery": null
-
-    },
-    "main": "assets/js/main.js",
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ]
+  "name": "mmee",
+  "version": "0.1",
+  "dependencies": {
+    "jquery": "<4",
+    "leaflet": "<2",
+    "leaflet.locatecontrol": "<1",
+    "vue": "<3"
+  },
+  "main": "assets/js/main.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }

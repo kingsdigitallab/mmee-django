@@ -125,6 +125,7 @@
             <select aria-label="Sort by" v-model="meta.query.order">
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
+              <option value="nearest">Nearest</option>
             </select>
         </div>
 
@@ -203,15 +204,16 @@
 
 {% block footer_scripts %}
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
- 
-<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
-
 <script>
 
 $(function() {
+    var photos = window.photos = [];
+    var query = {{ search_query|json }};
+
     // Create map and set view
-    var photomap = L.map('map-leaflet').setView([51.52, -0.03], 12);
+    centre = (query.geo.split(',')).map(function(v) {return parseFloat(v)});
+    var photomap = L.map('map-leaflet').setView([centre[0], centre[1]], centre[2]);
+    window.photomap = photomap;
     L.control.locate().addTo(photomap);
     
     function init_click_map_to_interact(map) {
@@ -231,7 +233,7 @@ $(function() {
       photomap.invalidateSize();
     }
 
-    function update_map(photos) {    
+    function update_map(photos, reframe) {    
       markers.map(function(marker) {
           photomap.removeLayer(marker);
       });
@@ -248,7 +250,7 @@ $(function() {
             return pa.location;
         }
       })
-      if (points.length) {
+      if (points.length && reframe) {
         photomap.fitBounds(points);
       }
       if ($map === null) {
@@ -258,10 +260,7 @@ $(function() {
       }
       resize_map();
     }
-    
-    var photos = window.photos = [];
-    var query = {{ search_query|json }};
-        
+            
     var search_app = new Vue({
         el: '#search-screen',
         data: {
@@ -302,12 +301,15 @@ $(function() {
         },
         watch: {
             photos: function() {
-                update_map(this.photos);
+                update_map(this.photos, this.meta.query.order != 'nearest');
             },
             'meta.query.order': function() {
                 this.call_api({page: 1});
             },
             'meta.query.perpage': function() {
+                this.call_api({page: 1});
+            },
+            'meta.query.geo': function() {
                 this.call_api({page: 1});
             },
         },
@@ -416,13 +418,22 @@ $(function() {
         }
     }); 
 
-
     function replace_query_string(qs) {
         if (history.pushState) {
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + qs;
             window.history.pushState({path:newurl},'',newurl);
         }
     }
+
+    function update_query_geo() {
+        var centre = photomap.getCenter();
+        search_app.meta.query.geo = get_str_from_latlng(centre)+','+photomap.getZoom();
+        console.log(search_app.meta.query.geo);
+    }
+    update_query_geo();
+    photomap.on('moveend', function () {
+        update_query_geo();
+    });
 
 });
 

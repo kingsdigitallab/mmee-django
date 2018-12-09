@@ -11,16 +11,16 @@
   {# GN: remove this when we go live, only added to avoid Google popup on lorem ipsum#}
   <meta name="google" content="notranslate">
 
-  {% compress css %}
-  <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
-  {% endcompress %}
-  
-  {# TODO: local copies and compress #}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.css">
-
   {# TO: Need to download #}  
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
+  <link rel="stylesheet" href="{% static 'vendor/leaflet/dist/leaflet.css' %}">
+
+  {% compress css %}
+  <link rel="stylesheet" href="{% static 'vendor/leaflet.locatecontrol/dist/L.Control.Locate.css' %}" />
+  <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
+  {% endcompress %}
+  
 </head>
 <body>
 
@@ -51,12 +51,13 @@
   {% compress js %}
   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
 
+  <script src="{% static 'vendor/leaflet/dist/leaflet.js' %}"></script>
+  <script src="{% static 'vendor/leaflet.locatecontrol/src/L.Control.Locate.js' %}" charset="utf-8"></script>
+
+  <script src="{% static 'vendor/vue/dist/vue.js' %}"></script>
+
   <script src="{% static 'js/main.js' %}"></script>
   {% endcompress %}
-
-  {# TODO: local copies and compress #}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
   {% if GA_ID %}
       {% compress js %}

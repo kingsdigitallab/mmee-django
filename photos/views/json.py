@@ -9,10 +9,20 @@ from wagtail.search.query import MATCH_ALL
 from wagtail.search.backends import get_search_backend
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage
+from django.contrib.gis.geos.point import Point
+from django.contrib.gis.db.models.functions import Distance
+import time
 
 # Our API complies with JSON API standard
 # see https://jsonapi.org/format/
 JSONAPI_VERSION = '1.0'
+
+'''
+Important notes about coordinates:
+Django uses (long, lat) but leaflet uses (lat, long).
+The conversion is done by the API, so it receieves and returns (lat, long).
+'''
+MAP_DEFAULT_CENTRE = '51.52,-0.03,12'
 
 # mapping between ordering labels and the associated field used in
 # QS.order_by()
@@ -39,6 +49,7 @@ def get_search_query_from_request(request):
         'page': page,
         'view': request.GET.get('view', 'grid'),
         'perpage': request.GET.get('perpage', settings.ITEMS_PER_PAGE),
+        'geo': request.GET.get('geo', MAP_DEFAULT_CENTRE),
     }
 
     return ret
@@ -60,6 +71,8 @@ class ApiPhotoSearchView(View):
         https://jsonapi-validator.herokuapp.com/
         https://jsonapi.org/format/#document-meta
         '''
+        t0 = time.time()
+
         search_query = get_search_query_from_request(request)
 
         # Baseline query: get all live Photos with an image attached to them
@@ -78,11 +91,21 @@ class ApiPhotoSearchView(View):
                 items = items.filter(subcategories__pk=pair[1])
 
         # ordering
-        items = items.order_by(
-            *QUERY_ORDER_NAME_FIELD.get(
-                search_query['order'], ['-created_at']
+        if search_query['order'] == 'nearest':
+            # ['51.1', '1', 12] => [51.1, 1]
+            center = [float(v) for v in search_query['geo'].split(',')]
+            # lat, long -> long, lat
+            center = Point(center[1], center[0], srid=4326)
+            # https://stackoverflow.com/a/35896358/3748764
+            items = items.annotate(
+                distance=Distance('location', center)
+            ).order_by('distance')
+        else:
+            items = items.order_by(
+                *QUERY_ORDER_NAME_FIELD.get(
+                    search_query['order'], ['-created_at']
+                )
             )
-        )
 
         # text search (wagtail or haystack as a proxy to a search engine)
         s = get_search_backend()
@@ -93,14 +116,16 @@ class ApiPhotoSearchView(View):
         facets = self.get_facets_from_items(items, selected_facet_options)
 
         # Create response dictionary
-        # PLEASE keep this compatible with JSON API format!
         meta = OrderedDict([
             ['pagination', {}],
             ['query', search_query],
             ['qs', self.get_query_string(search_query)],
+            ['debug', {}],
             ['facets', facets],
         ])
 
+        # PLEASE keep this compatible with JSON API format!
+        # jsonapi.org
         ret = OrderedDict([
             ['jsonapi', {'version': JSONAPI_VERSION}],
             ['meta', meta],
@@ -116,6 +141,11 @@ class ApiPhotoSearchView(View):
             item.get_json_dic(imgspecs=imgspecs)
             for item in ret['data']
         ]
+
+        t1 = time.time()
+        ret['meta']['debug'] = {
+            'duration': t1 - t0
+        }
 
         return ret
 
@@ -181,7 +211,6 @@ class ApiPhotoSearchView(View):
         # #faceted-search
         # format: [(PK, COUNT), ...]
         options = items.facet('subcategories__pk')
-        # print(options)
         subs = PhotoSubcategory.objects.filter(
             pk__in=[option for option in options.keys()]
         ).values_list(
