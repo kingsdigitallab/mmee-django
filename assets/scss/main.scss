@@ -812,6 +812,133 @@ section#photo-map{
   p{
     text-align:justify;
   }
+
+/* Form label and placeholder */
+.form-field {
+  margin-bottom: 20px;
+  position: relative;
+  input {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #DDD;
+  background-color: transparent;
+  margin: 0px auto;
+  height: 42px;
+  outline: none !important;
+  font-size: 20px;
+  color: rgba(0,0,0,0.8);
+  background: -webkit-linear-gradient(bottom, #51BBBE 50%, #51BBBE 50%);
+  background: linear-gradient(to top, #51BBBE 50%, #51BBBE 50%);
+  background-position: left bottom;
+  background-size: 0 1px;
+  background-repeat: no-repeat;
+  transition: all .2s ease-in-out;
+
+}
+
+  ::-webkit-input-placeholder { color: #DDD; font-size: 13px; font-weight: 200; }
+  :-moz-placeholder { color: #DDD; font-size: 13px; font-weight: 200; }
+  ::-moz-placeholder {  color: #DDD; font-size: 13px; font-weight: 200; }
+  :-ms-input-placeholder { color: #DDD; font-size: 13px; font-weight: 200; }
+
+
+label {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  text-align: left;
+  display: block;
+  width: 100%;
+  height: 42px;
+  line-height: 40px;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 200;
+  background: transparent;
+  color: rgba(0,0,0,0.6);
+  margin: 0px auto;
+  cursor: text;
+  transition: all .15s ease-in-out;
+}
+input:hover, input:focus { border-color: #51BBBE; }
+input:focus { 
+  background-position: left bottom;
+  background-size: 100% 1px;
+}
+input:valid + label, input:focus + label { 
+  height: 20px; 
+  line-height: 0; 
+  font-size: 10px;
+  color: #51BBBE;
+}
+
+input:focus ::-webkit-input-placeholder { color: transparent; font-size: 0; }
+input:focus :-moz-placeholder { color: transparent; font-size: 0; }
+input:focus ::-moz-placeholder { color: transparent; font-size: 0; }
+input:focus :-ms-input-placeholder { color: transparent; font-size: 0; }
+
+  textarea {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #DDD;
+  background-color: transparent;
+  margin: 0px auto;
+  height: 32px;
+  padding-top:10px;
+  outline: none !important;
+  font-size: 20px;
+  color: rgba(0,0,0,0.8);
+  background: -webkit-linear-gradient(bottom, #51BBBE 50%, #51BBBE 50%);
+  background: linear-gradient(to top, #51BBBE 50%, #51BBBE 50%);
+  background-position: left bottom;
+  background-size: 0 1px;
+  background-repeat: no-repeat;
+  transition: all .2s ease-in-out;
+
+    ::-webkit-input-placeholder { text-align: left; color: #DDD; font-size: 13px; font-weight: 200; margin-top:30px;}
+    :-moz-placeholder { text-align: left; color: #DDD; font-size: 13px; font-weight: 200; margin-top:30px;}
+    ::-moz-placeholder { text-align: left; color: #DDD; font-size: 13px; font-weight: 200; margin-top:30px;}
+    :-ms-input-placeholder { text-align: left; color: #DDD; font-size: 13px; font-weight: 200; margin-top:30px;}
+
+}
+
+textarea:hover, textarea:focus { border-color: #51BBBE; }
+textarea:focus { 
+  background-position: left bottom;
+  background-size: 100% 1px;
+}
+textarea:valid + label, textarea:focus + label { 
+  line-height: 0; 
+  font-size: 10px;
+  color: #51BBBE;
+  padding-top:0;
+}
+
+::-webkit-input-placeholder {
+  opacity: 0;
+  transition: inherit;
+}
+/**
+* Show the placeholder when the input is focused.
+*/
+input:focus::-webkit-input-placeholder {
+  opacity: 1;
+}
+
+/* Show the placeholder when the input is focused.
+*/
+textarea:focus::-webkit-input-placeholder {
+  opacity: 1;
+  padding-top:5px;
+}
+}
+
+
+
   /* Multi-Part CSS */
   input[type=checkbox] {
     position: absolute;
@@ -828,7 +955,10 @@ section#photo-map{
   #part1,
   #part2,
   #part3,
-  #part4{
+  #part4,
+  #part5,
+  #part6,
+  #part7{
     z-index: 2;
     display: block;
     height: auto;
@@ -842,7 +972,10 @@ section#photo-map{
   /* Hidden Parts */
   #part2,
   #part3,
-  #part4 {
+  #part4,
+  #part5,
+  #part6,
+  #part7{
     opacity: 0;
     height: 0;
     overflow: hidden;
@@ -879,7 +1012,36 @@ section#photo-map{
     width: 0;
     height: 0;
   }
-
+  /* Show Step 5  & Hide Step 4 */
+  #step5:checked ~ #part5 {
+    opacity: 1;
+    height: auto;
+  }
+  #step5:checked ~ #part4 {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  /* Show Step 6  & Hide Step 5 */
+  #step6:checked ~ #part6 {
+    opacity: 1;
+    height: auto;
+  }
+  #step6:checked ~ #part5 {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  /* Show Step 7  & Hide Step 6 */
+  #step7:checked ~ #part7 {
+    opacity: 1;
+    height: auto;
+  }
+  #step7:checked ~ #part6 {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 }
 
 
@@ -1166,9 +1328,8 @@ footer {
        }
      }
   } /* end section #search */  
-
-
 }
+
 
 
 // GN - front-end flash message box to provide feedback to user actions
