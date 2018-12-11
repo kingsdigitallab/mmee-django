@@ -9,77 +9,60 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.shortcuts import get_rendition_or_not_found
 from collections import OrderedDict
+from django.utils import timezone
+import datetime
 import re
 
 ''' TODO:
 + .created_at and .modified
 '''
 
+DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
+
 
 @register_snippet
-class Photographer(index.Indexed, models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(blank=True, null=True)
-
-    phone_regex = RegexValidator(
-        regex=r'^0\d{10}$', message=(
-            'Phone number must be entered in the format: "01234567890"; '
-            '11 digits allowed.'))
-    phone_number = models.CharField(
-        validators=[phone_regex], max_length=11, blank=True, null=True)
-
-    AGE_RANGE_CHOICES = [(0, 'undefined')] + [
-        (i, '{}-{}'.format(i * 10 - 10, i * 10 - 1))
-        for i
-        in range(1, 11)
-    ]
-
-    age_range = models.PositiveSmallIntegerField(
-        choices=AGE_RANGE_CHOICES, default=0
+class PhotoFlag(models.Model):
+    '''
+    Represents a comment from a web user
+    about the inappropriateness of a Photo record.
+    '''
+    photo = models.ForeignKey(
+        'Photo', on_delete=models.CASCADE,
+        related_name='flags'
+    )
+    flagger_comment = models.TextField(
+        max_length=400,
+        help_text='Please briefly tell us which exact parts of this web page'
+        ' or photo are inappropriate and why you think they are.'
+    )
+    reviewer_comment = models.TextField(
+        blank=True, null=True,
+        help_text='Please provide: your name, the date, your opinion after'
+        ' review and the action taken'
+        ' (keep photo live or not, edited content).'
+    )
+    closed = models.BooleanField(
+        'resolved', default=False,
+        help_text='Tick to mark the review process complete'
     )
 
-    class Meta:
-        ordering = ['last_name', 'first_name', 'email', 'phone_number']
-        unique_together = ['email', 'last_name', 'first_name']
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        return 'Photo Flag #{}'.format(self.pk)
 
     panels = [
-        FieldPanel('first_name'),
-        FieldPanel('last_name'),
-        FieldPanel('email'),
-        FieldPanel('phone_number'),
+        FieldPanel('flagger_comment'),
+        FieldPanel('reviewer_comment'),
+        FieldPanel('closed'),
+        SnippetChooserPanel('photo'),
     ]
 
-    search_fields = [
-        index.SearchField('first_name', partial_match=True),
-        index.SearchField('last_name', partial_match=True),
-        index.SearchField('email', partial_match=True),
-        index.SearchField('phone_number', partial_match=True),
-    ]
-
-    def get_age_range_display(self):
-        ret = ''
-        for r in self.AGE_RANGE_CHOICES:
-            if r[0] == self.age_range:
-                ret = r[1]
-                break
-
-        return ret
-
-    @classmethod
-    def get_age_range_from_str(cls, age_range):
-        '''10-19 => 2'''
-        ret = 0
-        if age_range:
-            for k, rng in cls.AGE_RANGE_CHOICES:
-                if age_range == rng:
-                    ret = k
-            if ret == 0:
-                raise('Invalid date range {}'.format(age_range))
-        return ret
+    class Meta:
+        ordering = ['-updated_at']
+        verbose_name = 'Flag'
+        verbose_name_plural = 'Flags'
 
 
 @register_snippet
@@ -136,6 +119,106 @@ class PhotoSubcategory(index.Indexed, models.Model):
 
 
 @register_snippet
+class Photographer(index.Indexed, models.Model):
+    # optional - we keep those in case but no longer needed
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone_regex = RegexValidator(
+        regex=r'^0\d{10}$',
+        message=(
+            'Phone number must be entered in the format: "01234567890"; '
+            '11 digits allowed.'
+        )
+    )
+    phone_number = models.CharField(
+        validators=[phone_regex], max_length=11, blank=True, null=True)
+
+    #
+    AGE_RANGE_CHOICES = [
+        (0, 'unspecified'),
+        (1, '18 and under'),
+        (2, '19-25'),
+        (3, '26-45'),
+        (4, '46-65'),
+        (5, '66 and over'),
+    ]
+
+    age_range = models.PositiveSmallIntegerField(
+        choices=AGE_RANGE_CHOICES,
+        default=0
+    )
+
+    GENDER_CHOICES = [
+        (0, 'unspecified'),
+        (1, 'other'),
+        (2, 'female'),
+        (3, 'male'),
+    ]
+
+    gender = models.PositiveSmallIntegerField(
+        choices=GENDER_CHOICES,
+        default=0
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # ordering = ['last_name', 'first_name', 'email', 'phone_number']
+        # unique_together = ['email', 'last_name', 'first_name']
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return 'Photographer #{}'.format(self.pk)
+
+    panels = [
+        # FieldPanel('first_name'),
+        # FieldPanel('last_name'),
+        # FieldPanel('email'),
+        # FieldPanel('phone_number'),
+        FieldPanel('age_range'),
+        FieldPanel('gender'),
+    ]
+
+    search_fields = [
+        # index.SearchField('first_name', partial_match=True),
+        # index.SearchField('last_name', partial_match=True),
+        # index.SearchField('email', partial_match=True),
+        # index.SearchField('phone_number', partial_match=True),
+        # index.SearchField('age_range', partial_match=True),
+        # index.SearchField('gender', partial_match=True),
+    ]
+
+    def get_age_range_from_age(self, age=None):
+        '''e.g. get_age_range_from_age(20) => 2 i.e. (2, '19-25')'''
+        if age is None:
+            return self.AGE_RANGE_CHOICES[0]
+
+        ret = 2
+        while True:
+            if ret >= len(self.AGE_RANGE_CHOICES):
+                break
+            age_min = re.findall(r'^\d+', self.AGE_RANGE_CHOICES[ret])
+            if age < age_min:
+                break
+        ret -= 1
+
+        return ret
+
+    def get_str_from_age_range(self):
+        return dict(self.AGE_RANGE_CHOICES).get(self.age_range, '')
+
+    @classmethod
+    def get_age_range_from_str(cls, age_range_str):
+        '''19-25 => 2'''
+        return {s: n for n, s in cls.AGE_RANGE_CHOICES}[age_range_str]
+
+    def get_str_from_gender(self):
+        return dict(self.GENDER_CHOICES).get(self.gender, '')
+
+
+@register_snippet
 class Photo(index.Indexed, models.Model):
 
     REVIEW_STATUS_SUBMITTING = -1
@@ -143,14 +226,17 @@ class Photo(index.Indexed, models.Model):
     REVIEW_STATUS_PUBLIC = 1
     REVIEW_STATUS_ARCHIVED = 2
     REVIEW_STATUSES = (
-        (REVIEW_STATUS_SUBMITTING, 'Incomplete submission'),
-        (REVIEW_STATUS_SUBMITTED, 'Submitted'),
+        (REVIEW_STATUS_SUBMITTED, 'To be reviewed (not public)'),
         (REVIEW_STATUS_PUBLIC, 'Public'),
-        (REVIEW_STATUS_ARCHIVED, 'Archived'),
+        (REVIEW_STATUS_ARCHIVED, 'Archived (not public)'),
+        (REVIEW_STATUS_SUBMITTING, 'Incomplete submission'),
     )
 
-    photographer = models.ForeignKey(Photographer, on_delete=models.SET_NULL,
-                                     null=True, blank=True, default=None)
+    photographer = models.ForeignKey(
+        Photographer,
+        on_delete=models.SET_NULL,
+        null=True, blank=True, default=None
+    )
     # GN: what does that number represents? What are we doing with it?
     number = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
 
@@ -167,12 +253,17 @@ class Photo(index.Indexed, models.Model):
     description = models.TextField(blank=True, default='')
     comments = models.TextField(blank=True, null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
     updated_at = models.DateTimeField(auto_now=True)
 
-    taken_year = models.IntegerField(blank=True, null=True, default=None)
-    taken_month = models.IntegerField(blank=True, null=True, default=None)
-    taken_day = models.IntegerField(blank=True, null=True, default=None)
+    taken_year = models.IntegerField(
+        'Year (photo content)', blank=True, null=True, default=None)
+    taken_month = models.IntegerField(
+        'Month (photo content)', blank=True, null=True, default=None)
+    taken_day = models.IntegerField(
+        'Day (photo content)', blank=True, null=True, default=None)
 
     location = models.PointField(blank=True, null=True)
 
@@ -270,6 +361,9 @@ class Photo(index.Indexed, models.Model):
         return ret
 
     def get_json_dic(self, imgspecs=None):
+        '''Returns a python dictionary representing this instance
+        This dictionary will be converted into javascript by the web API
+        '''
         p = self
 
         # TODO: should be dynamic, based on client (smaller for mobile devices)
