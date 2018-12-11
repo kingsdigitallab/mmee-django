@@ -344,126 +344,127 @@ section#search{
 
   }
   button{
-    &:hover{
-      opacity: 0.6;
+      &:hover{
+        opacity: 0.6;
+      }
     }
-  }
-    }/* end .search-field */ 
+  }/* end .search-field */ 
 
-
-    .search-filters{
+  .search-filters{
+    text-align:center;
+    width:100%;
+    margin-top:2em;
+    .filter{
+      display: inline-block;
       text-align:center;
-      width:100%;
-      margin-top:2em;
-      .filter{
+      width:15rem;
+      background:$primary-color;
+      color: $white;
+        &:hover{
+          background: $secondary-color;
+        }
+      input#filter-nav[type="checkbox"]{
+        display:none;
+      }
+      input#filter-nav[type="checkbox"]:checked ~ .filter-list{
+        margin:0;
+      }
+      input#filter-nav:checked + label.filter-label:after {
+        content: "✕";
+        position: absolute;
+        top: 10px;
+        left: 220px;
+        color:white;
+        z-index:501;
+      }
+      input#filter-nav[type="checkbox"]:checked ~ label.filter-label{
+        width:15rem;
+        background:$primary-color;
+        color:$white;
+        &:hover{
+          background: $secondary-color;
+        }
+      }
+      input#filter-nav[type="checkbox"]:checked ~ section{
+        -webkit-transform:translate3d(260px, 0, 0);
+        -moz-transform:translate3d(260px, 0, 0);
+        -o-transform:translate3d(260px, 0, 0);
+        transform:translate3d(260px, 0, 0);
+      }
+      label.filter-label{
+        padding: 0.4rem 1rem;
+        cursor: pointer;
         display: inline-block;
-        text-align:center;
-        width:75%;
-
-        input#filter-nav[type="checkbox"]{
-          display:none;
-        }
-        input#filter-nav[type="checkbox"]:checked ~ .filter-list{
-          margin:0;
-        }
-        input#filter-nav:checked + label.filter-label:after {
-          content: "✕";
-          position: absolute;
-          top: 10px;
-          left: 220px;
-          color:white;
-          z-index:501;
-        }
-        input#filter-nav[type="checkbox"]:checked ~ label.filter-label{
-          background:$primary-color;
-          color:$white;
-          &:hover{
-            background: $secondary-color;
-          }
-        }
-        input#filter-nav[type="checkbox"]:checked ~ section{
-          -webkit-transform:translate3d(260px, 0, 0);
-          -moz-transform:translate3d(260px, 0, 0);
-          -o-transform:translate3d(260px, 0, 0);
-          transform:translate3d(260px, 0, 0);
-        }
-        label.filter-label{
-          padding: 0.4rem 1rem;
-          cursor: pointer;
-          display: inline-block;
-          width:50%;
-          text-align: center;
-               -moz-transition:all 200ms ease-in;
-     -webkit-transition:all 200ms ease-in;
-     -o-transition:all 200ms ease-in;
-     transition:all 200ms ease-in;
-          &:hover{
-            color: $secondary-color;
-          }
-        }
-        .filter-list{
-          position:fixed;
-          top:0;
-          left:0;
+        width:50%;
+        text-align: center;
+        -moz-transition:all 200ms ease-in;
+        -webkit-transition:all 200ms ease-in;
+        -o-transition:all 200ms ease-in;
+        transition:all 200ms ease-in;
+      }
+      .filter-list{
+        position:fixed;
+        top:0;
+        left:0;
+        width:250px;
+        height:100%;
+        margin:0 0 0 -250px;
+        -moz-transition:all 200ms ease-in;
+        -webkit-transition:all 200ms ease-in;
+        -o-transition:all 200ms ease-in;
+        transition:all 200ms ease-in;
+        z-index:500;
+        ul{
           width:250px;
           height:100%;
-          margin:0 0 0 -250px;
-          -moz-transition:all 200ms ease-in;
-          -webkit-transition:all 200ms ease-in;
-          -o-transition:all 200ms ease-in;
-          transition:all 200ms ease-in;
-          z-index:500;
-          ul{
-            width:250px;
-            height:100%;
-            padding:1em;
-            background:$primary-color;
-            color:white;
+          padding:1em;
+          background:$primary-color;
+          color:white;
+          margin:0;
+          list-style:none;
+          overflow:scroll;
+
+          li{
             margin:0;
-            list-style:none;
-            overflow:scroll;
+                  }/* end li*/
+              } /* end ul*/
 
-            li{
-              margin:0;
-                    }/* end li*/
-                } /* end ul*/
-
-                label {
-                  display:block;
-                  -moz-transition:all 200ms ease-in;
-                  -webkit-transition:all 200ms ease-in;
-                  -o-transition:all 200ms ease-in;
-                  transition:all 200ms ease-in;
-                  z-index:500;
-                  &.filter-label{
-                    width:100px;
-                    font-size:1em;
-                    text-align:center;
-                    }/* end filter-label */
-                }/* end label */
-                button{
-                  font-size: 0.8rem;
-                  width: 100%;
-                  border: none;
-                  background-color: $white;
-                  cursor: pointer;
-                  padding: 0.5rem;
-                  margin: 1rem 0;
-                  text-transform: uppercase;
-                  color: $primary-color;
-                  border: 1px solid $white;                
-                  &:hover{
-                    background-color: $primary-color;
-                    border: 1px solid $white;
-                    color: $white;
-                  }
-                }/* end button */
-            }/* end .filter-list */
-            .multi-select{
-              display: none;
-            }
-        }/* end #filter */
-    }/* end .search-filters */
+              label {
+                display:block;
+                -moz-transition:all 200ms ease-in;
+                -webkit-transition:all 200ms ease-in;
+                -o-transition:all 200ms ease-in;
+                transition:all 200ms ease-in;
+                z-index:500;
+                &.filter-label{
+                  width:100px;
+                  font-size:1em;
+                  text-align:center;
+                  }/* end filter-label */
+              }/* end label */
+              button{
+                font-size: 0.8rem;
+                width: 100%;
+                border: none;
+                background-color: $white;
+                cursor: pointer;
+                padding: 0.5rem;
+                margin: 1rem 0;
+                text-transform: uppercase;
+                color: $primary-color;
+                border: 1px solid $white;                
+                &:hover{
+                  background-color: $primary-color;
+                  border: 1px solid $white;
+                  color: $white;
+                }
+              }/* end button */
+          }/* end .filter-list */
+          .multi-select{
+            display: none;
+          }
+      }/* end #filter */
+  }/* end .search-filters */
 } /* end section #search */  
 
 
@@ -560,7 +561,6 @@ section#results{
       display: block;
       background: #fff;
       color: $primary-color;
-      border-bottom: 2px solid #f0f0f0;
     }
 
 
@@ -688,6 +688,19 @@ padding: 0.5rem 0;
 }
 .page-more-wrapper {
     text-align: center;
+    width:15rem;
+    margin:0 auto 1rem auto;
+    background: $primary-color;
+    padding:0.4rem 0;
+    &:hover{
+      background: $secondary-color;
+    }
+    a{
+      color: $white;
+        &:hover{
+         color: $white;
+      }
+    }
 }
 
 .hidden {
@@ -698,7 +711,6 @@ padding: 0.5rem 0;
 }
 
 .sticky {
-    margin: 0;
     padding: 0;
     width: 100%;
     background-color: $secondary-color;
@@ -758,7 +770,7 @@ section#photo-map{
 }
 
 #map-leaflet {
-  height: 400px;
+  height: 55vh;
   width: 100%;
   margin-bottom: 2rem;
 }
@@ -1103,194 +1115,24 @@ footer {
   }
   /* end nav */
 
-  /**** SEARCH ****/
-  section#search{
-    .search-filters{
-      .filter{
-        label.filter-label{
-          width:20%;
-          text-align: center;
-        }
-
-        input[type=text],
-        input[type=tel] {
-          font-size: 1em;
-          height: 25px;
-          padding: 5px 10px;
-        }
-        .multi-select,
-        .multi-select-options,
-        input[type=text],
-        input[type=tel] {
-          background: #fff;
-          width: 100%;
-        }
-        .multi-select {
-          display: block;
-          position: relative;
-          line-height: 35px;
-          border: 1px solid #ddd;
-          margin: 0 0 50px;
-          padding: 0;
-          width:25%;
-          display: inline-block;
-          &:hover{
-            background: $secondary-color;
-          }
-        }
-        .multi-select input[type=checkbox],
-        .multi-select input[type=radio] {
-          display: none;
-        }
-        .multi-select label {
-          margin: 0;
-          padding: 0;
-          &:checked{
-          background: red;
-        }
-        }
-        .multi-select .toggle-open {
-          display: block;
-          font-size: 1em;
-          font-weight: bold;
-          padding: 0 10px;
-          height: 35px;
-          width: auto;
-          cursor: pointer;
-        }
-        .multi-select .toggle-open:after {
-          clear: both;
-          display: block;
-          position: absolute;
-          top: 12px;
-          right: 10px;
-          content: "";
-          height: 0;
-          width: 0;
-          padding: 0;
-          margin: 0 auto;
-          border: 8px solid transparent;
-          border-top-color: $gray;
-        }
-        .multi-select-options {
-          position: absolute;
-          top: 35px;
-          left: 0;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          overflow: auto;
-        }
-        .multi-select-options > li:first-child span {
-          border-top: 1px solid #ddd;
-        }
-        .multi-select-options > li span {
-          display: none;
-          height: 35px;
-          width: auto;
-          padding: 5px 10px;
-          background: #f3f3f3;
-          border: 1px solid #ddd;
-          border-top: 0;
-          cursor: pointer;
-        }
-        .multi-select-options > li span:after {
-          content: "\002B";
-          display: inline-block;
-          font-size: 1.5em;
-          font-weight: bold;
-          position: absolute;
-          right: 10px;
-          z-index: 99;
-        }
-        .multi-select-options > li span:hover {
-          background: $gray;
-        }
-        .multi-select-options > li input[type=checkbox]:checked + span {
-          background: $secondary-color;
-          font-weight: bold;
-        }
-        .multi-select-options > li input[type=checkbox]:checked + span:after {
-          content: "\2212";
-          font-size: 1.3em;
-        }
-        #toggle-open:checked, ~ .multi-select-options, #filter-a:checked, ~ .multi-select-options  {
-          height: 200px;
-        }
-
-                .multi-select label:checked ,
-        .multi-select:checked ~ .multi-select-options span,
-        .multi-select:checked ~ label, {
-          background: red;
-        }
-
-
-        #filter-a:checked ~ .multi-select-options label,
-        #filter-a:checked ~ .multi-select-options span,
-        #filter-b:checked ~ .multi-select-options label,
-        #filter-b:checked ~ .multi-select-options span,
-        #filter-c:checked ~ .multi-select-options label,
-        #filter-c:checked ~ .multi-select-options span {
-          display: block;
-        }
-        #filter-a:not(:checked) ~ .multi-select-options, 
-        #filter-b:not(:checked) ~ .multi-select-options, 
-        #filter-c:not(:checked) ~ .multi-select-options {
-          display: block;
-          background: none;
-          border: none;
-          padding: 5px 0;
-        }
-        #filter-a:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span,
-        #filter-b:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span,
-        #filter-c:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span {
-          display: inline-block;
-          float: left;
-          margin: 0 5px 5px 0;
-          padding: 0px 10px;
-          width: auto;
-          position: inherit;
-          top: 0;
-          border-top: 1px solid #ddd;
-        }
-        #filter-a:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:before,
-        #filter-b:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:before,
-        #filter-c:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:before {
-          content: '\2A09';
-          padding: 0 5px 0 0;
-        }
-        #filter-a:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:after,
-        #filter-b:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:after,
-        #filter-c:not(:checked) ~ .multi-select-options input[type=checkbox]:checked + span:after
-        {
-          content: '';
-          position: inherit;
-        }
-      }/* end #filter */
-    }/* end .search-filters */
-  } /* end section #search */  
 
   section#results{
     #photo-map{
       clear: both;
       display: block;
       position: absolute;
-      top: 6rem;
+      top: 8.6rem;
       right: 0;
       width: 75%;
       margin-right: -82%;
-      margin-top: 6rem;
       /* GN: temporary and blunt fix for sticky map, see AC ticket #80 */
       height: 100%;
       
       #map-leaflet {
-        position:absolute;
-        margin-top:-10vh;
-        /* height: 100vh; */
-        height: 90vh;
-        position: -webkit-sticky;
-        position: sticky;
-        top: 0;
+        height: 95vh;
+      }
+      .sticky{
+        margin-bottom: 20rem;
       }
     }
 
