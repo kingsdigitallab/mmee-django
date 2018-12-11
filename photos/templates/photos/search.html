@@ -69,41 +69,44 @@
     </section>
     <section id="results" v-else>
 
-        <p class="stats">
-            <template v-if="searching">Searching...</template>
-            <template v-else>{{ meta.pagination.count }} Photo<template v-if="meta.pagination.count > 1">s</template></template> 
-        </p>
 
-        View:
-        <template v-for="view in views">
-            <input :id="view.id" type="radio" v-model="meta.query.view" :value="view.key" @change.prevent="on_update_view">
-            <label :for="view.id"><i :class="view.class"></i> <span>{{ view.label }}</span></label>
-        </template>
+            View:
+            <template v-for="view in views">
+                <input :id="view.id" type="radio" v-model="meta.query.view" :value="view.key" @change.prevent="on_update_view">
+                <label :for="view.id"><i :class="view.class"></i> <span>{{ view.label }}</span></label>
+            </template>
 
-        <div class="sort">
-            Sort by:
-            <select aria-label="Sort by" v-model="meta.query.order">
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="nearest">Nearest</option>
-            </select>
+            <div class="sort">
+                Sort by:
+                <select aria-label="Sort by" v-model="meta.query.order">
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="nearest">Nearest</option>
+                </select>
+            </div>
+
+            <div class="itemsperpage">
+                Items per page:
+                <select aria-label="Items per page" v-model="meta.query.perpage">
+                  <option value="12">12</option>
+                  <option value="36">36</option>
+                  <option value="60">60</option>
+                </select>
+            </div>  
+
+        <div class="pagination-wrapper">
+            <span class="stats">
+                <template v-if="searching">Searching...</template>
+                <template v-else>{{ meta.pagination.count }} Photo<template v-if="meta.pagination.count > 1">s</template></template> 
+            </span>
+            <span class="pagination">
+                <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
+                Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
+                <a :href="link_next" v-on:click.prevent="on_click_link" class="button page-next">&gt;</a>
+            </span>
         </div>
 
-        <div class="itemsperpage">
-            Items per page:
-            <select aria-label="Items per page" v-model="meta.query.perpage">
-              <option value="12">12</option>
-              <option value="36">36</option>
-              <option value="60">60</option>
-            </select>
-        </div>
 
-
-        <div class="pagination">
-            <a :href="link_prev" v-on:click.prevent="on_click_link" class="button page-prev">&lt;</a>
-            Page {{ meta.pagination.page }} / {{ meta.pagination.pages }}
-            <a :href="link_next" v-on:click.prevent="on_click_link" class="button page-next">&gt;</a>
-        </div>
 
         <article id="photo-grid" class="tab-content">
             <div v-for="photo in photos" class="photo">

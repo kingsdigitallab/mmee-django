@@ -263,8 +263,7 @@ section#search{
     width:100%;
     text-align: center;
     input{
-
-      width: 75%;
+      width: 97%;
       height: 55px;
       padding: 0 20px;
       font-size: 1rem;
@@ -320,7 +319,9 @@ section#search{
   }
 
 
-  button.location-icon{
+/*  TO: Removed
+
+    button.location-icon{
     cursor: pointer;
     height: 45px;
     width: 45px;
@@ -342,7 +343,7 @@ section#search{
       box-shadow: 0px 0px 0px 2px;
     }
 
-  }
+  }*/
   button{
       &:hover{
         opacity: 0.6;
@@ -498,14 +499,10 @@ section#results{
         color: $secondary-color;
       }
     }
-
-    .view{
-      width: 33.333%;
-      display: inline-block;
-    }/* end .view */
     .sort{
-      width: 31%;
-      display: inline-block;
+      width: 10rem;
+      float: right;
+      margin-top:1.1rem;
       position: relative;
       text-align: right;
       /*select {
@@ -544,9 +541,10 @@ section#results{
       }*/
     }/* end .sort */
     .itemsperpage{
-      width: 31%;
-      display: inline-block;
+      width: 11rem;
       text-align: right;
+            float: right;
+      margin-top:1.1rem;
     }/* end .itemsperpage */
 
 
@@ -598,7 +596,10 @@ section#results{
               padding-bottom: 100%;
               overflow: hidden;
               position: relative;
-
+              border:3px solid $white;
+              &:hover{
+                  border:3px solid $secondary-color;
+              }
               img{
                 width: $image-crop-scale;
                 height: auto;
@@ -608,9 +609,6 @@ section#results{
                 right: -100%;
                 bottom: -100%;
                 left: -100%;
-                &:hover{
-                  opacity: 0.5;
-                }
               }
             }
             .photodata{
@@ -652,7 +650,7 @@ section#results{
               }
             }
             .photodata{
-              width:71%;
+              width:71%;//
               display:inline-block;
               vertical-align:top;
               h2{
@@ -677,14 +675,38 @@ section#results{
     }
 
     &[href=''] {
-        opacity: 0.4;  
+        opacity: 0;  
     }
 }
-.pagination {
+
+a.button.page-prev, a.button.page-next{
+  background: $primary-color;
+  padding: 0.5rem 1rem;
+  color: $white;
+  &:hover{
+    background: $secondary-color;
+  }
+} 
+
+a.button.page-prev{
+  margin-right:2rem;
+}
+
+a.button.page-next{
+  margin-left:2rem;
+}
+
+.pagination-wrapper {
 width:100%;
-text-align: center;
-background: $lightgray;
-padding: 0.5rem 0;
+padding:0.5rem 0;
+border-top:1px solid $lightgray;
+border-bottom:1px solid $lightgray;
+  .stats{
+
+  }
+  .pagination{
+    float:right;
+  }
 }
 .page-more-wrapper {
     text-align: center;
@@ -1160,16 +1182,6 @@ footer {
       font-size: 1.5rem;
     }
   }
-
-  /**** SEARCH ****/
-  section#search{
-    .search-field{ 
-      text-align: left;
-      input{
-        width: 82%;
-       }
-     }
-  } /* end section #search */  
 }
 
 
