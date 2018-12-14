@@ -6,7 +6,6 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from photos.models import (Photo, Photographer, PhotoCategory,
                            PhotoSubcategory)
-from django.utils.dateparse import parse_date
 import os
 from django.core.files.base import File
 import hashlib
@@ -36,12 +35,20 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # self.erase_all_data()
+
         self.image_path = options.get('image_path', None)
 
         with open(options['spreadsheet_path'][0]) as f:
             reader = csv.DictReader(f)
             for row in reader:
                 self.import_row(row)
+
+    def erase_all_data(self):
+        '''Remove all image, photo, photographers, subcat and cat from DB'''
+        for m in [Photo, Image, PhotoSubcategory, PhotoCategory, Photographer]:
+            print(m)
+            m.objects.all().delete()
 
     def import_row(self, row):
         # normalise the keys and values
@@ -63,6 +70,9 @@ class Command(BaseCommand):
         return photo
 
     def import_subcategories(self, row, photo):
+        if photo is None:
+            return photo
+
         terms = row.get('thesaurus_term', '')
         # Artefact; commemorative; mural
         terms = [t.strip() for t in terms.split(';')]
@@ -72,7 +82,7 @@ class Command(BaseCommand):
             # TODO: improve the parsing for more advanced cases
             cat, created = PhotoCategory.objects.get_or_create(label=term)
 
-            self._print_operation(cat, created)
+            _print_operation(cat, created)
 
             subcats = []
             while terms:
@@ -81,7 +91,7 @@ class Command(BaseCommand):
                     category=cat, label=term
                 )
                 subcats.append(subcat)
-                self._print_operation(subcat, created)
+                _print_operation(subcat, created)
             photo.subcategories.set(subcats)
 
         return photo
@@ -89,43 +99,61 @@ class Command(BaseCommand):
     def import_photo(self, row, photographer):
         '''
         Add or update a Photograph record from the given CSV row.
-        Uses the Photographer and the .
         '''
+        ret = None
+
+        image = self.get_or_create_image(row)
+        if not image:
+            print('WARNING: image file not found {}'.format(
+                row['filename']
+            ))
+            return ret
+
+        created = False
+        ret = Photo.objects.filter(image=image).first()
+
+        if not ret:
+            ret = Photo()
+            created = True
+
+        date_parts = _parse_date(row['date'])
         photo = {
-            'number': row['photo_number'],
-            'date': _parse_date(row['date']),
+            'taken_year': date_parts.year,
+            'taken_month': date_parts.month,
+            'taken_day': date_parts.day,
             'photographer': photographer,
-        }
-
-        ret, created = Photo.objects.get_or_create(**photo)
-
-        photo.update({
             'description': (row['description'] or ''),
             'comments': row['comments'],
-        })
+            'image': image,
+        }
+        coords = row['dd_co_ordinates']
+        if coords:
+            coords = coords.split()
+            photo['location'] = Point(float(coords[1]), float(coords[0]))
 
         for field in photo:
             if photo[field]:
                 setattr(ret, field, photo[field])
 
-        coords = row['dd_co_ordinates']
-        if coords:
-            coords = coords.split()
-            ret.location = Point(float(coords[1]), float(coords[0]))
-
         ret.save()
 
-        self._print_operation(ret, created, 'title')
+        _print_operation(ret, created, 'title')
 
         # Update or Create image file as Wagtail Image
-        # .title = slugify(FILENAME)
+        # .image_title = ~slugify(FILENAME)
         # .file = hash(FILE).jpg
+
+        return ret
+
+    def get_or_create_image(self, row):
+        image = None
+
         if self.image_path and row['filename']:
             path = os.path.join(self.image_path, row['filename'])
             if os.path.exists(path):
-                title = re.sub(
-                    '[^\w\.]', '-', row['filename']).lower().strip()
-
+                image_title = re.sub(
+                    r'[^\w\.]', '-', row['filename'].strip()
+                ).lower()
                 hash = get_has_from_file(path)
 
                 image = Image.objects.filter(
@@ -136,32 +164,13 @@ class Command(BaseCommand):
                     new_name = re.sub(r'.*\.', hash + '.', row['filename'])
                     image = Image(
                         file=ImageFile(File(open(path, 'rb')), name=new_name),
-                        title=title
+                        title=image_title
                     )
                     image.save()
 
-                    self._print_operation(image, True, 'title')
-                    ret.image = image
-                    ret.save()
+                    _print_operation(image, True, 'title')
 
-        return ret
-
-    def _print_operation(self, record, created, display_field=None):
-        operation = 'UP'
-        if created:
-            operation = 'CR'
-
-        if display_field is None:
-            display_name = str(record)
-        else:
-            display_name = getattr(record, display_field)[:20]
-
-        print('{} {} #{} "{}"'.format(
-            operation,
-            record.__class__.__name__,
-            record.pk,
-            display_name
-        ))
+        return image
 
     def import_photographer(self, row):
         '''
@@ -174,7 +183,7 @@ class Command(BaseCommand):
             'last_name': row['surname'],
             'email': _get_masked_email(row['email']),
             'phone_number': _get_masked_phone(row['phone']),
-            'age_range': Photographer.get_age_range_from_str(row['age_range']),
+            'age_range': Photographer.get_age_range_from_age(row['age_range']),
         }
 
         email = photographer['email']
@@ -204,90 +213,27 @@ class Command(BaseCommand):
                     setattr(ret, field, photographer[field])
         ret.save()
 
-        self._print_operation(ret, created)
-
-#         print(photographer)
-#         print(ret.first_name, ret.last_name, ret.email)
+        _print_operation(ret, created)
 
         return ret
 
-    def handle_old(self, *args, **options):
-        with open(options['spreadsheet_path'][0]) as f:
-            reader = csv.DictReader(f)
-            data = [r for r in reader]
 
-            cur_email = None
-            cur_phone = None
-            cur_name = None
-            cur_age = None
+def _print_operation(record, created, display_field=None):
+    operation = 'UP'
+    if created:
+        operation = 'CR'
 
-            for d in data:
-                # skips empty rows
-                if not d['photo number']:
-                    continue
+    if display_field is None:
+        display_name = str(record)
+    else:
+        display_name = getattr(record, display_field)[:20]
 
-                # Photographer
-                email = _get_masked_email(d['contact details'])
-                if email:
-                    cur_email = email
-                else:
-                    email = cur_email
-
-                photographer, _ = Photographer.objects.get_or_create(
-                    email=email)
-
-                phone = _get_masked_phone(d['contact details'])
-                if phone:
-                    cur_phone = phone
-                else:
-                    phone = cur_phone
-
-                photographer.phone_number = phone
-
-                name = d['Name of photographer']
-                if name:
-                    cur_name = name
-                else:
-                    name = cur_name
-
-                photographer.name = name
-
-                age = d['Age range']
-                if age:
-                    age = age[0]
-                    cur_age = age
-                else:
-                    age = cur_age
-
-                photographer.age_range = age
-
-                photographer.save()
-
-                # Photo
-                number = d['photo number']
-                date = parse_date(d['date'])
-
-                photo, _ = Photo.objects.get_or_create(
-                    photographer=photographer, number=number, date=date)
-                photo.title = d['description provided by photographer']
-                photo.comments = d['additional comments by photographer']
-
-                coords = d['DD co ordinates']
-                if coords:
-                    coords = coords.split()
-                    photo.location = Point(float(coords[1]), float(coords[0]))
-
-                # Terms
-                terms = d['Thesaurus term']
-                if terms:
-                    terms = terms.split(';')
-                    for term in terms:
-                        pass
-#                        monument_type, _ = MonumentType.objects.get_or_create(
-#                             title=term.strip().lower())
-#                         photo.monument_type.add(monument_type)
-
-                photo.save()
+    print('{} {} #{} "{}"'.format(
+        operation,
+        record.__class__.__name__,
+        record.pk,
+        display_name
+    ))
 
 
 def _parse_date(date_str):
@@ -325,7 +271,7 @@ def _get_masked_phone(text):
     if not text:
         return None
 
-    phone_match = re.match('.*?(\d{11}).*?', text)
+    phone_match = re.match(r'.*?(\d{11}).*?', text)
 
     if phone_match:
         return phone_match.group(1)

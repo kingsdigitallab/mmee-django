@@ -14,7 +14,6 @@ import datetime
 import re
 
 ''' TODO:
-+ .created_at and .modified
 '''
 
 DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
@@ -172,6 +171,7 @@ class Photographer(index.Indexed, models.Model):
     def __str__(self):
         return 'Photographer #{}'.format(self.pk)
 
+    # Django admin is the prefered interface to manage photographers
     panels = [
         # FieldPanel('first_name'),
         # FieldPanel('last_name'),
@@ -181,6 +181,7 @@ class Photographer(index.Indexed, models.Model):
         FieldPanel('gender'),
     ]
 
+    # Django admin is the prefered interface to manage photographers
     search_fields = [
         # index.SearchField('first_name', partial_match=True),
         # index.SearchField('last_name', partial_match=True),
@@ -190,18 +191,28 @@ class Photographer(index.Indexed, models.Model):
         # index.SearchField('gender', partial_match=True),
     ]
 
-    def get_age_range_from_age(self, age=None):
+    @classmethod
+    def get_age_range_from_age(cls, age=None):
         '''e.g. get_age_range_from_age(20) => 2 i.e. (2, '19-25')'''
-        if age is None:
-            return self.AGE_RANGE_CHOICES[0]
+        if isinstance(age, str):
+            m = re.match(r'^\d+', age)
+            if m:
+                age = int(m.group(0))
+            else:
+                age = ''
+
+        if age is None or age == '':
+            return 0
 
         ret = 2
         while True:
-            if ret >= len(self.AGE_RANGE_CHOICES):
+            if ret >= len(cls.AGE_RANGE_CHOICES):
                 break
-            age_min = re.findall(r'^\d+', self.AGE_RANGE_CHOICES[ret])
+            age_min = int(re.findall(
+                r'^\d+', cls.AGE_RANGE_CHOICES[ret][1])[0])
             if age < age_min:
                 break
+            ret += 1
         ret -= 1
 
         return ret
@@ -237,8 +248,6 @@ class Photo(index.Indexed, models.Model):
         on_delete=models.SET_NULL,
         null=True, blank=True, default=None
     )
-    # GN: what does that number represents? What are we doing with it?
-    number = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
 
     # public = models.BooleanField(default=False)
     # image = models.ImageField(upload_to='photos', blank=True, null=True)
@@ -269,8 +278,7 @@ class Photo(index.Indexed, models.Model):
 
     review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
 
-    subcategories = models.ManyToManyField(
-        PhotoSubcategory, null=True, blank=True)
+    subcategories = models.ManyToManyField(PhotoSubcategory)
 
     panels = [
         SnippetChooserPanel('photographer'),
@@ -287,14 +295,14 @@ class Photo(index.Indexed, models.Model):
     search_fields = [
         index.FilterField('review_status'),
         index.FilterField('subcategories__pk'),
-        index.SearchField('subcategories__pk'),
-        index.FilterField('photosubcategory_id'),
+        # index.SearchField('subcategories__pk'),
+        # index.FilterField('photosubcategory_id'),
         index.FilterField('image_id'),
         index.SearchField('description', partial_match=True),
-        index.RelatedFields('photographer', [
-            index.SearchField('first_name', partial_match=True),
-            index.SearchField('last_name', partial_match=True),
-        ]),
+        #         index.RelatedFields('photographer', [
+        #             index.SearchField('first_name', partial_match=True),
+        #             index.SearchField('last_name', partial_match=True),
+        #         ]),
     ]
 
     class Meta:
