@@ -34,8 +34,26 @@ class Command(BaseCommand):
             help='Path to image folder',
         )
 
+        parser.add_argument(
+            '--append',
+            action='store_true',
+            dest='append',
+            help='append photos, even if records already exist.'
+            ' For testing purpose.',
+        )
+
+        parser.add_argument(
+            '--reset',
+            action='store_true',
+            dest='reset',
+            help='CLEAR all photo records before importing',
+        )
+
     def handle(self, *args, **options):
-        # self.erase_all_data()
+        self.append_only = options.get('append', False)
+
+        if options.get('reset', False):
+            self.erase_all_data()
 
         self.image_path = options.get('image_path', None)
 
@@ -47,7 +65,7 @@ class Command(BaseCommand):
     def erase_all_data(self):
         '''Remove all image, photo, photographers, subcat and cat from DB'''
         for m in [Photo, Image, PhotoSubcategory, PhotoCategory, Photographer]:
-            print(m)
+            print('Erasing all {} records'.format(m))
             m.objects.all().delete()
 
     def import_row(self, row):
@@ -110,7 +128,8 @@ class Command(BaseCommand):
             return ret
 
         created = False
-        ret = Photo.objects.filter(image=image).first()
+        if not self.append_only:
+            ret = Photo.objects.filter(image=image).first()
 
         if not ret:
             ret = Photo()
@@ -154,7 +173,7 @@ class Command(BaseCommand):
                 image_title = re.sub(
                     r'[^\w\.]', '-', row['filename'].strip()
                 ).lower()
-                hash = get_has_from_file(path)
+                hash = get_hash_from_file(path)
 
                 image = Image.objects.filter(
                     file__contains=hash
@@ -279,7 +298,7 @@ def _get_masked_phone(text):
     return None
 
 
-def get_has_from_file(path):
+def get_hash_from_file(path):
     chunk_size = 1024 * 1024 * 10
     hash_md5 = hashlib.md5()
     with open(path, "rb") as f:

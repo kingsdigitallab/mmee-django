@@ -273,7 +273,9 @@ $(function() {
                 this.call_api({page: 1});
             },
             'meta.query.geo': function() {
-                this.call_api({page: 1});
+                if (this.meta.query.order == 'nearest') {
+                    this.call_api({page: 1});
+                }
             },
         },
         computed: {
@@ -379,7 +381,7 @@ $(function() {
                 });
             },
         }
-    }); 
+    });
 
     function replace_query_string(qs) {
         if (history.pushState) {
@@ -393,6 +395,7 @@ $(function() {
         search_app.meta.query.geo = get_str_from_latlng(centre)+','+photomap.getZoom();
         console.log(search_app.meta.query.geo);
     }
+
     update_query_geo();
     photomap.on('moveend', function () {
         update_query_geo();
@@ -402,6 +405,4 @@ $(function() {
 
 </script>
 
-
 {% endblock %}
-
