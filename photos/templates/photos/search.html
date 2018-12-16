@@ -187,37 +187,40 @@ $(function() {
     var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
     var markers = [];
     var $map = null;
+    var cluster_group = null;
     
     function resize_map() {
       photomap.invalidateSize();
     }
 
     function replace_map_markers(photos, reframe) {
-      markers.map(function(marker) {
-          photomap.removeLayer(marker);
-      });
-      photos.map(function(p) {
-        var pa = p.attributes;
-        if (pa.location) {
-            markers.push(L.marker(pa.location).bindPopup(
-                '<a href="'+pa.url+'">'+pa.title+'</a>'
-            ));
+        markers = [];
+        photos.map(function(p) {
+            var pa = p.attributes;
+            if (pa.location) {
+                markers.push(L.marker(pa.location).bindPopup(
+                    '<a href="'+pa.url+'">'+pa.title+'</a>'
+                ));
+            }
+        });
+        if (markers.length) {
+            if (cluster_group) {
+                photomap.removeLayer(cluster_group);
+            }
+            cluster_group = L.markerClusterGroup();
+            cluster_group.addLayers(markers);
+            photomap.addLayer(cluster_group);
+            
+            if (reframe) {
+                photomap.fitBounds(cluster_group.getBounds());
+            }
         }
-      });
-      if (markers.length) {
-        var cluster_group = L.markerClusterGroup();
-        cluster_group.addLayers(markers);
-        photomap.addLayer(cluster_group);
-        if (reframe) {
-          // photomap.fitBounds(group.getBounds());
+        if ($map === null) {
+            $map = $('#map-leaflet').detach();
+            // $('#photo-map').append($map);
+            $('#sticky-map').append($map);
         }
-      }
-      if ($map === null) {
-        $map = $('#map-leaflet').detach();
-        // $('#photo-map').append($map);
-        $('#sticky-map').append($map);
-      }
-      resize_map();
+        resize_map();
     }
             
     var search_app = new Vue({
