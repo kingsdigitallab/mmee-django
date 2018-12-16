@@ -17,7 +17,9 @@
   <link rel="stylesheet" href="{% static 'leaflet/dist/leaflet.css' %}">
 
   {% compress css %}
-  <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" />
+  <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" >
+  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.css' %}" >
+  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.Default.css' %}" >
   <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
   {% endcompress %}
   
@@ -52,7 +54,8 @@
   <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
 
   <script src="{% static 'leaflet/dist/leaflet.js' %}"></script>
-  <script src="{% static 'leaflet.locatecontrol/src/L.Control.Locate.js' %}" charset="utf-8"></script>
+  <script src="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}" charset="utf-8"></script>
+  <script src="{% static 'leaflet.markercluster/dist/leaflet.markercluster.js' %}" charset="utf-8"></script>
 
   <script src="{% static 'vue/dist/vue.js' %}"></script>
 

@@ -192,22 +192,24 @@ $(function() {
       photomap.invalidateSize();
     }
 
-    function replace_map_markers(photos, reframe) {    
+    function replace_map_markers(photos, reframe) {
       markers.map(function(marker) {
           photomap.removeLayer(marker);
       });
-      markers = photos.map(function(p) {
+      photos.map(function(p) {
         var pa = p.attributes;
         if (pa.location) {
-            return L.marker(pa.location).bindPopup(
+            markers.push(L.marker(pa.location).bindPopup(
                 '<a href="'+pa.url+'">'+pa.title+'</a>'
-            );
+            ));
         }
       });
       if (markers.length) {
-        var group = L.featureGroup(markers).addTo(photomap);
+        var cluster_group = L.markerClusterGroup();
+        cluster_group.addLayers(markers);
+        photomap.addLayer(cluster_group);
         if (reframe) {
-          photomap.fitBounds(group.getBounds());
+          // photomap.fitBounds(group.getBounds());
         }
       }
       if ($map === null) {
