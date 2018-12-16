@@ -234,7 +234,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL.strip('/'))
 if not os.path.exists(STATIC_ROOT):
     os.makedirs(STATIC_ROOT)
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'assets'),)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'node_modules'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -299,8 +302,11 @@ AC_TOKEN = ''
 
 AUTH_LDAP_REQUIRE_GROUP = (
     (
-        LDAPGroupQuery('cn=kdl-staff,' + LDAP_BASE_OU) |
-        LDAPGroupQuery('cn=mmee,' + LDAP_BASE_OU)
+        LDAPGroupQuery(
+            'cn=kdl-staff,' + LDAP_BASE_OU
+        ) | LDAPGroupQuery(
+            'cn=mmee,' + LDAP_BASE_OU
+        )
     )
 )
 

@@ -14,10 +14,10 @@
   {# TO: Need to download #}  
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-  <link rel="stylesheet" href="{% static 'vendor/leaflet/dist/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'leaflet/dist/leaflet.css' %}">
 
   {% compress css %}
-  <link rel="stylesheet" href="{% static 'vendor/leaflet.locatecontrol/dist/L.Control.Locate.css' %}" />
+  <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" />
   <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
   {% endcompress %}
   
@@ -49,12 +49,12 @@
   </footer>
 
   {% compress js %}
-  <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
 
-  <script src="{% static 'vendor/leaflet/dist/leaflet.js' %}"></script>
-  <script src="{% static 'vendor/leaflet.locatecontrol/src/L.Control.Locate.js' %}" charset="utf-8"></script>
+  <script src="{% static 'leaflet/dist/leaflet.js' %}"></script>
+  <script src="{% static 'leaflet.locatecontrol/src/L.Control.Locate.js' %}" charset="utf-8"></script>
 
-  <script src="{% static 'vendor/vue/dist/vue.js' %}"></script>
+  <script src="{% static 'vue/dist/vue.js' %}"></script>
 
   <script src="{% static 'js/main.js' %}"></script>
   {% endcompress %}
