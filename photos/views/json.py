@@ -73,6 +73,10 @@ class ApiPhotoSearchView(View):
         '''
         t0 = time.time()
 
+        # If True, the request asks for photo ids and geolocations only
+        # and the response should be more compact.
+        geo_only = request.GET.get('geo_only', 0)
+
         search_query = get_search_query_from_request(request)
 
         # Baseline query: get all live Photos with an image attached to them
@@ -80,6 +84,10 @@ class ApiPhotoSearchView(View):
             image__isnull=False,
             review_status=self.model.REVIEW_STATUS_PUBLIC
         )
+
+        if not geo_only:
+            # normal query returns image urls, see get_json_dict below
+            items = items.select_related('image')
 
         # filter by selected facets
         query_facets = search_query['facets']
@@ -113,7 +121,11 @@ class ApiPhotoSearchView(View):
         # NOT a Django QuerySet
         items = s.search(search_query['phrase'] or MATCH_ALL, items)
 
-        facets = self.get_facets_from_items(items, selected_facet_options)
+        t0_1 = time.time()
+
+        facets = []
+        if not geo_only:
+            facets = self.get_facets_from_items(items, selected_facet_options)
 
         # Create response dictionary
         meta = OrderedDict([
@@ -135,16 +147,29 @@ class ApiPhotoSearchView(View):
         # paginate the result and response
         self.paginate_response(ret, items, search_query, request)
 
+        t0_2 = time.time()
+
         # serialise Photos into JSON-like dictionaries
         imgspecs = request.GET.get('imgspecs', 'height-500')
-        ret['data'] = [
-            item.get_json_dic(imgspecs=imgspecs)
-            for item in ret['data']
-        ]
+        t0_3 = time.time()
+        if 1:
+            t0_3 = time.time()
+            ret['data'] = [
+                item.get_json_dic(imgspecs=imgspecs, geo_only=geo_only)
+                for item in ret['data']
+            ]
+        else:
+            ret['data'] = [
+                item.get_json_dic(imgspecs=imgspecs)
+                for item in ret['data']
+            ]
 
         t1 = time.time()
         ret['meta']['debug'] = {
-            'duration': t1 - t0
+            'duration_total': t1 - t0,
+            'd1': t0_1 - t0,
+            'd2': t0_2 - t0_1,
+            'd3': t0_3 - t0_2,
         }
 
         return ret

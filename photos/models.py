@@ -296,7 +296,7 @@ class Photo(index.Indexed, models.Model):
         index.FilterField('review_status'),
         index.FilterField('subcategories__pk'),
         # index.SearchField('subcategories__pk'),
-        # index.FilterField('photosubcategory_id'),
+        index.FilterField('photosubcategory_id'),
         index.FilterField('image_id'),
         index.SearchField('description', partial_match=True),
         #         index.RelatedFields('photographer', [
@@ -368,7 +368,7 @@ class Photo(index.Indexed, models.Model):
 
         return ret
 
-    def get_json_dic(self, imgspecs=None):
+    def get_json_dic(self, imgspecs=None, geo_only=False):
         '''Returns a python dictionary representing this instance
         This dictionary will be converted into javascript by the web API
         '''
@@ -381,22 +381,31 @@ class Photo(index.Indexed, models.Model):
         if p.location:
             location = [p.location.y, p.location.x]
 
-        ret = OrderedDict([
-            ['id', str(p.pk)],
-            ['type', type_slug],
-            ['attributes', {
-                'title': p.title,
-                'description': p.description,
-                'location': location,
-                'image': self.get_image_tag(imgspecs),
-                # TODO: don't hard-code this!
-                'url': '/{}/{}'.format(type_slug, p.pk),
-                'taken_year': p.taken_year,
-                'taken_month': p.taken_month,
-                'taken_month_name': p.taken_month_name,
-                'taken_day': p.taken_day,
-                'created_at': p.created_at,
-            }]
-        ])
+        if geo_only:
+            ret = OrderedDict([
+                ['id', str(p.pk)],
+                ['type', type_slug],
+                ['attributes', {
+                    'location': location,
+                }]
+            ])
+        else:
+            ret = OrderedDict([
+                ['id', str(p.pk)],
+                ['type', type_slug],
+                ['attributes', {
+                    'title': p.title,
+                    'description': p.description,
+                    'location': location,
+                    'image': self.get_image_tag(imgspecs),
+                    # TODO: don't hard-code this!
+                    'url': '/{}/{}'.format(type_slug, p.pk),
+                    'taken_year': p.taken_year,
+                    'taken_month': p.taken_month,
+                    'taken_month_name': p.taken_month_name,
+                    'taken_day': p.taken_day,
+                    'created_at': p.created_at,
+                }]
+            ])
 
         return ret
