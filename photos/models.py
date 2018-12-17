@@ -293,6 +293,7 @@ class Photo(index.Indexed, models.Model):
     ]
 
     search_fields = [
+        index.FilterField('id'),
         index.FilterField('review_status'),
         index.FilterField('subcategories__pk'),
         # index.SearchField('subcategories__pk'),

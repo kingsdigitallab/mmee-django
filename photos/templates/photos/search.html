@@ -168,12 +168,13 @@
 $(function() {
     var photos = window.photos = [];
     var query = {{ search_query|json }};
+    var image_size_increment = 75;
+    var map_image_size = 2 * image_size_increment;
 
     // Create map and set view
     centre = (query.geo.split(',')).map(function(v) {return parseFloat(v)});
-    var photomap = L.map('map-leaflet').setView([centre[0], centre[1]], centre[2]);
-    window.photomap = photomap;
-    L.control.locate().addTo(photomap);
+    window.photomap = L.map('map-leaflet').setView([centre[0], centre[1]], centre[2]);
+    L.control.locate().addTo(window.photomap);
     
     function init_click_map_to_interact(map) {
         // map.scrollWheelZoom.disable();
@@ -181,38 +182,50 @@ $(function() {
         //     map.scrollWheelZoom.enable();
         // });
     };
-    init_click_map_to_interact(photomap);
+    init_click_map_to_interact(window.photomap);
     
     // Create tilelayer and add to map
-    var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
-    var markers = [];
+    var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(window.photomap);
+    var markers = {};
     var $map = null;
-    var cluster_group = null;
-    
+    var cluster_group = L.markerClusterGroup();
+    window.photomap.addLayer(cluster_group);
+
+    function on_click_marker(e) {
+        var marker = e.target;
+        var content = '<a href="/photos/'+marker.id+'">Loading image...</a>';
+        marker.setPopupContent(content);
+        var req = $.getJSON('/api/1.0/photos/', {'id': marker.id, 'imgspecs': 'height-'+map_image_size});
+        req.done(function(res) {
+            content = '<a class="map-img" href="/photos/'+marker.id+'">'+res.data[0].attributes.image+'</a>';
+            marker.setPopupContent(content);
+        });
+    }
+
     function resize_map() {
-      photomap.invalidateSize();
+        window.photomap.invalidateSize();
     }
 
     function replace_map_markers(photos, reframe) {
-        markers = [];
+        markers = {};
+        var has_markers = false;
         photos.map(function(p) {
             var pa = p.attributes;
             if (pa.location) {
-                markers.push(L.marker(pa.location).bindPopup(
-                    '<a href="'+pa.url+'">'+pa.title+'</a>'
-                ));
+                // TODO: expensive to set content and event for thousands of markers
+                var marker = L.marker(pa.location).bindPopup('loading...');
+                marker.id = p.id;
+                marker.on('click', on_click_marker);
+                markers[p.id] = marker;
+                has_markers = true;
             }
         });
-        if (markers.length) {
-            if (cluster_group) {
-                photomap.removeLayer(cluster_group);
-            }
-            cluster_group = L.markerClusterGroup();
-            cluster_group.addLayers(markers);
-            photomap.addLayer(cluster_group);
+        if (has_markers) {
+            cluster_group.clearLayers();
+            cluster_group.addLayers(Object.values(markers));
             
             if (reframe) {
-                photomap.fitBounds(cluster_group.getBounds());
+                window.photomap.fitBounds(cluster_group.getBounds());
             }
         }
         if ($map === null) {
@@ -347,7 +360,7 @@ $(function() {
                     )
                 }
                 
-                query.imgspecs = this.get_image_spec(3, 75);
+                query.imgspecs = this.get_image_spec(3, image_size_increment);
                                 
                 // query for the photo result (list of images)
                 var req = $.getJSON('/api/1.0/photos/', query);
@@ -402,7 +415,6 @@ $(function() {
                 var ret = fields.map(function(field) {
                     return field + '=' + (query[field] || '');
                 }).join('&');
-                console.log(ret);
                 return ret;
             },
             get_image_spec: function(image_per_row, size_step) {
@@ -433,12 +445,6 @@ $(function() {
         }
     }
 
-    function set_query_centre_from_map_centre() {
-        var centre = photomap.getCenter();
-        search_app.meta.query.geo = get_str_from_latlng(centre)+','+photomap.getZoom();
-        console.log('set query centre: ' + search_app.meta.query.geo);
-    }
-
     function get_dict_from_query_string(qs) {
         // qs = '?a=b&c=d'
         var ret = {};
@@ -457,8 +463,14 @@ $(function() {
         return ret;
     }
 
+    function set_query_centre_from_map_centre() {
+        var centre = window.photomap.getCenter();
+        search_app.meta.query.geo = get_str_from_latlng(centre)+','+window.photomap.getZoom();
+        // console.log('set query centre: ' + search_app.meta.query.geo);
+    }
+
     set_query_centre_from_map_centre();
-    photomap.on('moveend', function () {
+    window.photomap.on('moveend', function () {
         set_query_centre_from_map_centre();
     });
 

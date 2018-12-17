@@ -50,6 +50,7 @@ def get_search_query_from_request(request):
         'view': request.GET.get('view', 'grid'),
         'perpage': request.GET.get('perpage', settings.ITEMS_PER_PAGE),
         'geo': request.GET.get('geo', MAP_DEFAULT_CENTRE),
+        'id': request.GET.get('id', ''),
     }
 
     return ret
@@ -84,6 +85,9 @@ class ApiPhotoSearchView(View):
             image__isnull=False,
             review_status=self.model.REVIEW_STATUS_PUBLIC
         )
+
+        if search_query['id']:
+            items = items.filter(id__in=search_query['id'].split(','))
 
         if not geo_only:
             # normal query returns image urls, see get_json_dict below
