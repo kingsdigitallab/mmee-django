@@ -1236,6 +1236,24 @@ ul.errorlist {
   }    
 }
 
+// .photo-image a {
+//     position: fixed;
+// }
+
 .map-img img {
-  min-width: 240px;
+    min-width: 240px;
+}
+
+.btn-show-on-map {
+    position: absolute;
+    font-size: 2rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.1);
+    color: #257478;
+    z-index: 2;
+    
+    &:hover {
+        color: #FFC800;
+    }
 }

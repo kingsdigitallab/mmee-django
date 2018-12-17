@@ -106,7 +106,7 @@
 
         <article id="photo-grid" class="tab-content">
             <div v-for="photo in photos" class="photo">
-              <div class="photo-image">
+              <div class="photo-image" :data-photoid="photo.id">
                 <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                 </a>
               </div>
@@ -124,7 +124,7 @@
     </div>-->
         <article id="photo-list" class="tab-content">
             <div v-for="photo in photos" class="photo">
-                <div class="photo-image">
+                <div class="photo-image" :data-photoid="photo.id">
                   <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                   </a>
                 </div>
@@ -170,7 +170,7 @@ $(function() {
     var query = {{ search_query|json }};
     var image_size_increment = 75;
     var map_image_size = 2 * image_size_increment;
-
+    
     // Create map and set view
     centre = (query.geo.split(',')).map(function(v) {return parseFloat(v)});
     window.photomap = L.map('map-leaflet').setView([centre[0], centre[1]], centre[2]);
@@ -223,10 +223,6 @@ $(function() {
         if (has_markers) {
             cluster_group.clearLayers();
             cluster_group.addLayers(Object.values(markers));
-            
-            if (reframe) {
-                window.photomap.fitBounds(cluster_group.getBounds());
-            }
         }
         if ($map === null) {
             $map = $('#map-leaflet').detach();
@@ -234,6 +230,10 @@ $(function() {
             $('#sticky-map').append($map);
         }
         resize_map();
+
+        if (has_markers && reframe) {
+            window.photomap.fitBounds(cluster_group.getBounds());
+        }
     }
             
     var search_app = new Vue({
@@ -472,6 +472,26 @@ $(function() {
     set_query_centre_from_map_centre();
     window.photomap.on('moveend', function () {
         set_query_centre_from_map_centre();
+    });
+    
+    $('div.wrapper').on('mouseenter mouseleave', '.photo-image', function(e) {
+        if (!window.$btn_show_on_map) {
+            window.$btn_show_on_map = $('<a href="#" class="btn-show-on-map"><i class="fas fa-map-pin"></i></a>');
+            window.$btn_show_on_map.on('click', function() {
+                var photoid = $(this).parents('.photo-image').data('photoid');
+                var marker = markers[photoid];
+                if (marker) {
+                    var latLngs = [ marker.getLatLng() ];
+                    var markerBounds = L.latLngBounds(latLngs);                
+                    window.photomap.fitBounds(markerBounds);
+                }
+            });
+        }
+        if (e.type == 'mouseleave') {
+            window.$btn_show_on_map.detach();
+        } else {
+            $(e.currentTarget).prepend(window.$btn_show_on_map);
+        }
     });
 
 });
