@@ -66,6 +66,9 @@ var photo_search = function(g_initial_query) {
                 },
             ]
         },
+        created: function() {
+            this.$options.request = null;
+        },
         mounted: function() {
             this.$nextTick(function () {
                 // this is to fetch and show initial results
@@ -163,7 +166,14 @@ var photo_search = function(g_initial_query) {
                 Both are query dependent (i.e. depend on search phrase, facets).
                 */
                 
+                // build the query
                 var self = this;
+                
+                if (self.updating_from_response) {
+                    console.log('Skip API call due to changes made in last response.');
+                    return;
+                }
+                
                 var query = {};
                 self.searching = 1;
                 
@@ -184,21 +194,34 @@ var photo_search = function(g_initial_query) {
                 
                 query.imgspecs = this.get_image_spec(3, g_image_size_increment);
                                 
+                if (this.$options.request) {
+                    // In case user paginates or pan maps multiple times quickly
+                    // no need to continue processing last request.
+                    // Also a good way to avoid infinite loops.
+                    // e.g. ?order=nearest&perpage=60&geo=51.524,-0.048,0&page=1&phrase=sign&view=grid 
+                    this.$options.request.abort();
+                }
+                                
                 // request for the photo result (list of images)
-                var req = $.getJSON('/api/1.0/photos/', query);
-                req.done(function(data) {
+                this.$options.request = $.getJSON('/api/1.0/photos/', query);
+                this.$options.request.done(function(data) {
                     if (!load_more) {
                         Vue.set(self, 'photos', []);
                     }
                     Array.prototype.push.apply(self.photos, data.data);
+                    
                     self.updating_from_response = 1;
                     // console.log('' + query.geo + ' -> ' + data.meta.query.geo);
                     Vue.set(self, 'meta', data.meta);
                     Vue.set(self, 'links', data.links);
-                    self.updating_from_response = 0;
                     
                     mmee.replace_query_string(data.meta.qs);
                     self.searching = 0;
+                });
+                this.$options.request.always(function() {
+                    self.$nextTick(function () {
+                        self.updating_from_response = 0;
+                    });
                 });
 
                 // request for the map result (map markers)
@@ -208,7 +231,7 @@ var photo_search = function(g_initial_query) {
                     query.geo_only = 1;
                     var geo_query_hash = this.get_hash_from_geo_query(query);
                     if (geo_query_hash !== self.last_geo_query_hash) {
-                        console.log('GEO ONLY QUERY');
+                        console.log('GEO ONLY QUERY ' + geo_query_hash);
                         var req_geo_only = $.getJSON('/api/1.0/photos/', query);
                         req_geo_only.done(function(data) {
                             self.last_geo_query_hash = self.get_hash_from_geo_query(data.meta.query);
@@ -260,8 +283,8 @@ var photo_search = function(g_initial_query) {
 
     function set_query_centre_from_map_centre() {
         var centre = g_leaflet.map.getCenter();
+        // console.log('set query centre: ');
         g_search_app.meta.query.geo = mmee.get_str_from_latlng(centre)+','+g_leaflet.map.getZoom();
-        // console.log('set query centre: ' + g_search_app.meta.query.geo);
     }
 
     set_query_centre_from_map_centre();
@@ -277,16 +300,22 @@ var photo_search = function(g_initial_query) {
         if (!$g_btn_show_on_map) {
             $g_btn_show_on_map = $('<a href="#" class="btn-show-on-map"><i class="fas fa-map-pin"></i></a>');
             $g_btn_show_on_map.on('click', function() {
-                var geo = $(this).parents('.photo-image').data('geo').split(',');
-                var bounds = L.latLngBounds([geo.map(function(v) {return parseFloat(v);})]);
-                g_search_app.show_map_bounds(bounds);
+                var geo = $(this).parents('.photo-image').data('geo');
+                if (geo) {
+                    geo = geo.split(',');
+                    var bounds = L.latLngBounds([geo.map(function(v) {return parseFloat(v);})]);
+                    g_search_app.show_map_bounds(bounds);
+                }
                 return false;
             });
         }
         if (e.type == 'mouseleave') {
             $g_btn_show_on_map.detach();
         } else {
-            $(e.currentTarget).prepend($g_btn_show_on_map);
+            var geo = $(this).data('geo');
+            if (geo) {
+                $(e.currentTarget).prepend($g_btn_show_on_map);
+            }
         }
     });
     

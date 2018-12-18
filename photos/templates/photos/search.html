@@ -196,6 +196,7 @@
             
             var adjust_handler;
             $(window).on('resize scroll', function() {
+                // console.log('window resize scroll');
                 clearTimeout(adjust_handler);
                 adjust_handler = setTimeout(adjust_map_height, 400);
             });
