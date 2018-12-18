@@ -179,18 +179,15 @@
                     var m0 = $(window).scrollTop() - $('#photo-map').offset().top;
                     m0 = m0 > 0 ? m0 : 0;
                     h -= m0;
-                    // var wh = $(window).height();
-                    // h = (h < wh) ? h : wh;
                     var m1 = $('#photo-map').offset().top + $('#photo-map').height()- ($(window).scrollTop() + $(window).height());
                     m1 = m1 > 0 ? m1 : 0;
-                    console.log(m0 + ' ' + m1);
                     h -= m1;
                     
-                    h = h < 10 ? 10 : h; 
+                    var margin_top_and_bottom = map_height - $('#map-leaflet').outerHeight();
+                    var min_height = 10 + margin_top_and_bottom;
+                    h = h < min_height ? min_height : h; 
                     
                     if (Math.abs(h - map_height) > 2) {
-                        console.log('correct ' + h + ' ' + map_height);
-                        var margin_top_and_bottom = map_height - $('#map-leaflet').outerHeight();
                         $('#map-leaflet').outerHeight(h - margin_top_and_bottom);
                         search.leaflet.resize_map();
                     }
