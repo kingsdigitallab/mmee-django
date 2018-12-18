@@ -19,7 +19,7 @@ from kdl_ldap.settings import *  # noqa
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 PROJECT_NAME = 'mmee'
-PROJECT_TITLE = 'Memory Mapping the East End'
+PROJECT_TITLE = 'Sensing Place'
 
 # -----------------------------------------------------------------------------
 # Core Settings
@@ -47,7 +47,6 @@ CACHES = {
         }
     }
 }
-
 
 CSRF_COOKIE_SECURE = True
 
@@ -80,7 +79,7 @@ INSTALLED_APPS = [
     'compressor',
 ]
 
-INSTALLED_APPS += [    # your project apps here
+INSTALLED_APPS += [  # your project apps here
     'activecollab_digger',
     'django.contrib.gis',
     'kdl_ldap',
@@ -292,7 +291,6 @@ GA_ID = ''
 db_engine = 'django.db.backends.postgresql_psycopg2'
 if 'django.contrib.gis' in INSTALLED_APPS:
     db_engine = 'django.contrib.gis.db.backends.postgis'
-
 
 AC_BASE_URL = 'https://app.activecollab.com/148987'
 AC_API_URL = AC_BASE_URL + '/api/v1/'

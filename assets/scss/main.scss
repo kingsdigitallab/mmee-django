@@ -1143,18 +1143,25 @@ footer {
       clear: both;
       display: block;
       position: absolute;
-      top: 8.6rem;
+      // GN: pushed it up a little so we can see more of the map on page load
+      // also because it's not affected by the pagination and other controls
+      // on the left hand side. 
+      // top: 8.6rem;
+      top: 0; // keep this to 0
+      padding-top: 2rem;
+      
       right: 0;
       width: 75%;
       margin-right: -82%;
-      /* GN: temporary and blunt fix for sticky map, see AC ticket #80 */
+      
+      /* GN: goes all the way down to the footer */
       height: 100%;
       
       #map-leaflet {
         height: 95vh;
       }
       .sticky{
-        margin-bottom: 20rem;
+        // margin-bottom: 20rem;
       }
     }
 
