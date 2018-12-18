@@ -786,6 +786,7 @@ section#photo-map{
       font-size: 0.7rem;
       text-transform: uppercase;
       margin:0 0 0.2rem 0;
+      margin: 0;
       font-weight: 100;
   }
   
@@ -1143,12 +1144,10 @@ footer {
       clear: both;
       display: block;
       position: absolute;
-      // GN: pushed it up a little so we can see more of the map on page load
-      // also because it's not affected by the pagination and other controls
-      // on the left hand side. 
+      // GN: use margin on map-leaflet instead, leave margin & padding = 0 on this element
       // top: 8.6rem;
       top: 0; // keep this to 0
-      padding-top: 2rem;
+      padding-top: 0;
       
       right: 0;
       width: 75%;
@@ -1158,10 +1157,11 @@ footer {
       height: 100%;
       
       #map-leaflet {
-        height: 95vh;
-      }
-      .sticky{
-        // margin-bottom: 20rem;
+        // GN: pushed it up a little so we can see more of the map on page load
+        // also because it's not affected by the pagination and other controls
+        // on the left hand side. 
+        height: 40vw;
+        margin: 2rem 0;
       }
     }
 

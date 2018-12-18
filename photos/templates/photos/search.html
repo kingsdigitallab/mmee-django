@@ -167,6 +167,42 @@
     <script src="{% static 'photos/photos_search.js' %}"></script>
     <script>
         var initial_query = {{ search_query|json }};
-        window.photo_search(initial_query);
+        var search = window.photo_search(initial_query);
+
+        $(function() {
+            function adjust_map_height() {
+                var map_height = $('#map-leaflet').outerHeight(true);
+                if (map_height > 0) {
+                    // for this to work we assume that
+                    // the parent elements of leaflet have 0 padding and margin
+                    var h = $('#photo-map').height();
+                    var m0 = $(window).scrollTop() - $('#photo-map').offset().top;
+                    m0 = m0 > 0 ? m0 : 0;
+                    h -= m0;
+                    // var wh = $(window).height();
+                    // h = (h < wh) ? h : wh;
+                    var m1 = $('#photo-map').offset().top + $('#photo-map').height()- ($(window).scrollTop() + $(window).height());
+                    m1 = m1 > 0 ? m1 : 0;
+                    console.log(m0 + ' ' + m1);
+                    h -= m1;
+                    
+                    h = h < 10 ? 10 : h; 
+                    
+                    if (Math.abs(h - map_height) > 2) {
+                        console.log('correct ' + h + ' ' + map_height);
+                        var margin_top_and_bottom = map_height - $('#map-leaflet').outerHeight();
+                        $('#map-leaflet').outerHeight(h - margin_top_and_bottom);
+                        search.leaflet.resize_map();
+                    }
+                }
+            };
+            
+            var adjust_handler;
+            $(window).on('resize scroll', function() {
+                clearTimeout(adjust_handler);
+                adjust_handler = setTimeout(adjust_map_height, 400);
+            });
+        });
+        
     </script>
 {% endblock %}
