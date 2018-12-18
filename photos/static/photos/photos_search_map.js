@@ -32,6 +32,10 @@ var search_map = function(L, g_map_image_size, on_map_created) {
     
     ns.resize_map = function() {
         // redraw map after any chnage in size
+        $(window).trigger('resize');
+    };
+
+    ns.redraw_map = function() {
         ns.map.invalidateSize();
     };
 

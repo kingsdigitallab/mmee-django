@@ -192,7 +192,7 @@ var photo_search = function(g_initial_query) {
                     }
                     Array.prototype.push.apply(self.photos, data.data);
                     self.updating_from_response = 1;
-                    console.log('' + query.geo + ' -> ' + data.meta.query.geo);
+                    // console.log('' + query.geo + ' -> ' + data.meta.query.geo);
                     Vue.set(self, 'meta', data.meta);
                     Vue.set(self, 'links', data.links);
                     self.updating_from_response = 0;

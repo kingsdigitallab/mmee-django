@@ -189,7 +189,7 @@
                     
                     if (Math.abs(h - map_height) > 2) {
                         $('#map-leaflet').outerHeight(h - margin_top_and_bottom);
-                        search.leaflet.resize_map();
+                        search.leaflet.redraw_map();
                     }
                 }
             };
