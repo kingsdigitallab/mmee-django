@@ -4,11 +4,14 @@ from ..models import Photo
 from photos.views.json import get_search_query_from_request
 from django.views.generic.detail import DetailView
 from django.views.generic.base import TemplateView
-from django.forms.fields import ImageField, BooleanField
+from django.forms.fields import (
+    ImageField, BooleanField,
+    CharField, ChoiceField
+)
 from django.views.generic.edit import CreateView
 from wagtail.images.models import Image
 from django.forms import ModelForm
-from photos.models import PhotoFlag
+from photos.models import PhotoFlag, Photographer
 from django.core.exceptions import ValidationError
 
 
@@ -86,14 +89,35 @@ class PhotoDetailView(DetailView):
 
 class PhotoForm(ModelForm):
     image_file = ImageField()
+
+    age_range = ChoiceField(
+        choices=Photographer.AGE_RANGE_CHOICES,
+    )
+    gender = ChoiceField(
+        choices=Photographer.GENDER_CHOICES,
+    )
+    gender_other = CharField(max_length=20, required=False)
+
     consent = BooleanField()
 
     class Meta:
         model = Photo
         fields = [
             'image_file',
-            'taken_year', 'taken_month', 'description',
-            'consent'
+            'taken_year', 'taken_month',
+            'location',
+            # TODO: split into three inputs?
+            'author_focus_keywords',
+            'author_feeling_category',
+            'author_feeling_keywords',
+            'author_reason',
+            # 'photographer__age_range',
+            'age_range',
+            # 'photographer__gender',
+            'gender',
+            # 'photographer__gender_other',
+            'gender_other',
+            'consent',
         ]
 
 

@@ -20,6 +20,7 @@ class PhotoFlagAdmin(admin.ModelAdmin):
 
     def admin_thumbnail(self, flag):
         return mark_safe(flag.photo.get_image_tag('height-100'))
+
     admin_thumbnail.short_description = 'Thumbnail'
 
 
@@ -136,7 +137,7 @@ class PhotoAdmin(admin.ModelAdmin):
     list_filter = ['review_status', PhotoFlagFilter,
                    PhotoLocationFilter,
                    PhotoSubcategoriesFilter, PhotoImageFilter,
-                   'photographer__gender', 'photographer__age_range'
+                   'photographer__gender_category', 'photographer__age_range'
                    ]
 
     search_fields = ['photographer__first_name',
@@ -146,20 +147,24 @@ class PhotoAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Status', {
-            'fields': ('review_status', )
+            'fields': ('review_status',)
         }),
         ('Related records', {
             'fields': ('image', 'photographer',),
         }),
-        ('Edited information', {
+        ('Info supplied by project team', {
             'fields': (
                 'subcategories',
                 'comments'
             ),
         }),
-        ('Submitted information', {
+        ('Information supplied by photographer', {
             'fields': (
                 'taken_year', 'taken_month',  # 'taken_day',
+                'author_focus_keywords',
+                'author_feeling_category',
+                'author_feeling_keywords',
+                'author_reason',
                 'description',
             ),
         }),
@@ -180,6 +185,7 @@ class PhotoAdmin(admin.ModelAdmin):
             ret = photo.photographer.get_str_from_age_range()
             ret = get_photographer_link(photo, ret)
         return ret
+
     admin_photographer_age_range.short_description = 'Age'
 
     def admin_photographer_gender(self, photo):
@@ -188,10 +194,12 @@ class PhotoAdmin(admin.ModelAdmin):
             ret = photo.photographer.get_str_from_gender()
             ret = get_photographer_link(photo, ret)
         return ret
+
     admin_photographer_gender.short_description = 'Gender'
 
     def admin_thumbnail(self, photo):
         return mark_safe(photo.get_image_tag('height-100'))
+
     admin_thumbnail.short_description = 'Thumbnail'
 
     def admin_inapproprieteness(self, photo):
@@ -200,21 +208,25 @@ class PhotoAdmin(admin.ModelAdmin):
         if open_flag_counts:
             ret = 'Flagged as inappropriate'
         return ret
+
     admin_inapproprieteness.short_description = 'Inappropriate?'
 
     def action_status_public(modeladmin, request, queryset):
         queryset.update(review_status=Photo.REVIEW_STATUS_PUBLIC)
-    action_status_public.short_description =\
+
+    action_status_public.short_description = \
         "Publish"
 
     def action_status_archived(modeladmin, request, queryset):
         queryset.update(review_status=Photo.REVIEW_STATUS_ARCHIVED)
-    action_status_archived.short_description =\
+
+    action_status_archived.short_description = \
         "Archive"
 
     def action_status_submitted(modeladmin, request, queryset):
         queryset.update(review_status=Photo.REVIEW_STATUS_SUBMITTED)
-    action_status_submitted.short_description =\
+
+    action_status_submitted.short_description = \
         "Up for review"
 
     actions = [action_status_public,
@@ -232,6 +244,6 @@ def is_moderator(user):
 class PhotographerAdmin(admin.ModelAdmin):
     # list_display = ['first_name', 'last_name', 'age_range']
     list_display = ['pk', 'first_name', 'last_name', 'age_range']
-    list_filter = ['age_range', 'gender']
+    list_filter = ['age_range', 'gender_category']
 
     search_fields = ['first_name', 'last_name', 'email', 'phone_number', 'pk']

@@ -27,9 +27,53 @@
       <!-- <input aria-label="upload photo" type="file"
       id="image" name="image"
       accept="image/png, image/jpeg" /> -->
+      {# todo: use template for fields #}
       
       {{ form.image_file.errors }}
       {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
+
+      
+      {{ form.taken_year.errors }}
+      {% form_field form.taken_year placeholder="Year taken" %}
+           
+      {{ form.taken_month.errors }}
+      {% form_field form.taken_month placeholder="Month taken" %}
+
+      {{ form.location.errors }}
+      {% form_field form.location placeholder="Month taken" %}
+
+      {# step 2 #}
+      <hr>
+
+      {{ form.author_focus_keywords.errors }}
+      {% form_field form.author_focus_keywords placeholder="" %}
+
+      {# step 3 #}
+      <hr>
+
+      {{ form.author_feeling_category.errors }}
+      {% form_field form.author_feeling_category placeholder="" %}
+
+      {{ form.author_feeling_keywords.errors }}
+      {% form_field form.author_feeling_keywords placeholder="" %}
+
+      {# step 4 #}
+      <hr>
+
+      {{ form.author_reason.errors }}
+      {% form_field form.author_reason placeholder="" %}
+
+      {# step 5 #}
+      <hr>
+
+      {{ form.age_range.errors }}
+      {% form_field form.age_range placeholder="" %}
+
+      {{ form.gender.errors }}
+      {% form_field form.gender placeholder="" %}
+
+      {{ form.gender_other.errors }}
+      {% form_field form.gender_other placeholder="" %}
 
     <div class="button-wrapper">
       <label class="back">
@@ -39,8 +83,33 @@
         Next
       </label>
     </div>
+    
   </div>
 
+  <div id="part2" class="step">
+      <h3>Step 7: Consent Information</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+
+      {{ form.consent.errors }}
+      <label>
+          {% form_field form.consent class="show" %}
+          I have read and accept the terms
+      </label>
+
+      <div class="button-wrapper">
+        <label for='step2' id="back-step2" class="back">
+          Back
+        </label>
+        <label id="continue-step3" class="next last" >
+          Submit
+          <input type="submit" value="Submit" name="Submit" class="hidden submit">
+        </label>
+      </div>
+    </div>
+
+
+{% comment %}
   <div id="part2" class="step">
        <h3>Step 2: Photo Information</h3>
        <!-- <input type="integer" name="taken_year" class="form-control" placeholder="Date"> -->
@@ -81,8 +150,6 @@
            {{ form.taken_month.errors }}
            {% form_field form.taken_month class="form-control" autocomplete="off" placeholder="Month taken" %}
            
-           {{ form.description.errors }}
-           {% form_field form.description class="form-control" autocomplete="off" placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took" %}
       -->
      <div class="button-wrapper">
       <label for='step2' id="back-step2" class="back">
@@ -192,6 +259,8 @@
         </label>
       </div>
     </div>
+{% endcomment %}
+
     </form>
   
 </div>

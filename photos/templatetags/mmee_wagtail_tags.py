@@ -49,6 +49,15 @@ def form_field(context, field, *args, **kwargs):
     Note, _ are replaced with - in the attribute names.
     '''
     kwargs = kwargs or {}
+    kwargs.update({
+        'autocomplete': 'off',
+    })
+
+    if 'class' not in kwargs:
+        kwargs['class'] = 'form-control'
+    else:
+        kwargs['class'] += ' form-control'
+
     ret = field.as_widget(
         attrs={k.replace('_', '-'): v for k, v in kwargs.items()})
     return ret

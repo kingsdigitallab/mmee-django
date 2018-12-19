@@ -150,15 +150,16 @@ class Photographer(index.Indexed, models.Model):
 
     GENDER_CHOICES = [
         (0, 'unspecified'),
-        (1, 'other'),
-        (2, 'female'),
-        (3, 'male'),
+        (1, 'female'),
+        (2, 'male'),
+        (3, 'other'),
     ]
 
-    gender = models.PositiveSmallIntegerField(
+    gender_category = models.PositiveSmallIntegerField(
         choices=GENDER_CHOICES,
         default=0
     )
+    gender_other = models.CharField(max_length=20, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -243,6 +244,15 @@ class Photo(index.Indexed, models.Model):
         (REVIEW_STATUS_SUBMITTING, 'Incomplete submission'),
     )
 
+    FEELING_POSITIVE = -1
+    FEELING_NEUTRAL = 0
+    FEELING_NEGATIVE = 1
+    FEELINGS = (
+        (FEELING_POSITIVE, 'Positive'),
+        (FEELING_NEUTRAL, 'Neutral'),
+        (FEELING_NEGATIVE, 'Negative'),
+    )
+
     photographer = models.ForeignKey(
         Photographer,
         on_delete=models.SET_NULL,
@@ -260,7 +270,9 @@ class Photo(index.Indexed, models.Model):
     )
 
     description = models.TextField(blank=True, default='')
-    comments = models.TextField(blank=True, null=True)
+    comments = models.TextField(
+        'Internal comments', blank=True, null=True
+    )
 
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -279,6 +291,27 @@ class Photo(index.Indexed, models.Model):
     review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
 
     subcategories = models.ManyToManyField(PhotoSubcategory)
+
+    # data captured by the submission form
+    author_focus_keywords = models.CharField(
+        max_length=100,
+        blank=True, null=True, default=None,
+        help_text='Author\'s main focus in three keywords'
+    )
+    author_focus = models.TextField(
+        blank=True, default='', help_text='Author\'s main focus'
+    )
+    author_feeling_category = models.IntegerField(
+        choices=FEELINGS, default=0, help_text='Author\'s feeling about photo'
+    )
+    author_feeling_keywords = models.TextField(
+        blank=True, default='Author\'s feelings about photo'
+    )
+    author_reason = models.TextField(
+        'Motivation',
+        blank=True, default='',
+        help_text='Why did the author take this picture?'
+    )
 
     panels = [
         SnippetChooserPanel('photographer'),
