@@ -1,9 +1,9 @@
 @import 'fonts';
 
 /*
-- GENERAL 
-- HEADER 
-- NAVIGATION 
+- GENERAL
+- HEADER
+- NAVIGATION
 - SEARCH RESULTS
 - PHOTO PAGE
 
@@ -18,7 +18,7 @@
 $image-crop-scale: 160%;
 
 /* Colours */
-// TO: Need to 
+// TO: Need to
 $primary-color: #257478;
 $secondary-color:#FFC800;
 $black: #000;
@@ -112,8 +112,8 @@ header{
       } /* end li */
     } /* end ul */
   }  /* end .menu-list */
-  
-  
+
+
   label {
     display:block;
     -moz-transition:all 200ms ease-in;
@@ -121,6 +121,7 @@ header{
     -o-transition:all 200ms ease-in;
     transition:all 200ms ease-in;
     z-index:500;
+    cursor: pointer;
 
     &.submit-label{
       position:fixed;
@@ -208,7 +209,7 @@ header{
     margin:0;
   }
   input#menu[type="checkbox"]:checked ~ label.menu-label{
-    
+
     span{ /* cross icon */
       background-color: transparent;
       &:before{
@@ -258,7 +259,7 @@ header{
 
 /**** SEARCH ****/
 section#search{
-  .search-field{ 
+  .search-field{
     margin-top: 60px;
     width:100%;
     text-align: center;
@@ -274,17 +275,17 @@ section#search{
         transition: 0.35s ease;
         color: #008ABF;
         &::-webkit-input-placeholder{
-          transition: opacity 0.45s ease; 
+          transition: opacity 0.45s ease;
           opacity: 0;
         }
         &::-moz-placeholder {
-          transition: opacity 0.45s ease; 
+          transition: opacity 0.45s ease;
           opacity: 0;
         }
         &:-ms-placeholder {
-         transition: opacity 0.45s ease; 
+         transition: opacity 0.45s ease;
          opacity: 0;
-       }    
+       }
      }
    }
    button.search-icon {
@@ -349,7 +350,7 @@ section#search{
         opacity: 0.6;
       }
     }
-  }/* end .search-field */ 
+  }/* end .search-field */
 
   .search-filters{
     text-align:center;
@@ -453,7 +454,7 @@ section#search{
                 margin: 1rem 0;
                 text-transform: uppercase;
                 color: $primary-color;
-                border: 1px solid $white;                
+                border: 1px solid $white;
                 &:hover{
                   background-color: $primary-color;
                   border: 1px solid $white;
@@ -466,7 +467,7 @@ section#search{
           }
       }/* end #filter */
   }/* end .search-filters */
-} /* end section #search */  
+} /* end section #search */
 
 
 
@@ -533,11 +534,11 @@ section#results{
         top: 50%;
         margin-top: -2px;
         right: 6px;
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
-        border-top: 5px solid $black; 
+        border-top: 5px solid $black;
       }*/
     }/* end .sort */
     .itemsperpage{
@@ -570,7 +571,7 @@ section#results{
       transition:all 200ms ease-in;
       &:hover{
         color: $secondary-color;
-      }   
+      }
     }
 
 
@@ -586,11 +587,11 @@ section#results{
             &:nth-child(3n+1){ /* 1st,4th,7th, 10th etc. */
               margin-right:2%;
               //border-right:1px solid $white;
-            }            
+            }
             &:nth-child(3n+3){ /* 3rd, 6th, 9th, 12th etc. */
-              margin-left:2%; 
+              margin-left:2%;
               //border-left:1px solid $white;
-            }    
+            }
             .photo-image{
               width: 100%;
               padding-bottom: 100%;
@@ -675,7 +676,7 @@ section#results{
     }
 
     &[href=''] {
-        opacity: 0;  
+        opacity: 0;
     }
 }
 
@@ -686,7 +687,7 @@ a.button.page-prev, a.button.page-next{
   &:hover{
     background: $secondary-color;
   }
-} 
+}
 
 a.button.page-prev{
   margin-right:2rem;
@@ -789,7 +790,7 @@ section#photo-map{
       margin: 0;
       font-weight: 100;
   }
-  
+
 }
 
 #map-leaflet {
@@ -811,7 +812,7 @@ section#photo-map{
     margin:10px 0;
     width:90%;
   }
-  
+
   textarea {
     min-height: 150px;
   }
@@ -882,7 +883,7 @@ section#photo-map{
 
 label {
   position: absolute;
-  top: 0; 
+  top: 0;
   left: 0;
   text-align: left;
   display: block;
@@ -899,13 +900,13 @@ label {
   transition: all .15s ease-in-out;
 }
 input:hover, input:focus { border-color: #51BBBE; }
-input:focus { 
+input:focus {
   background-position: left bottom;
   background-size: 100% 1px;
 }
-input:valid + label, input:focus + label { 
-  height: 20px; 
-  line-height: 0; 
+input:valid + label, input:focus + label {
+  height: 20px;
+  line-height: 0;
   font-size: 10px;
   color: #51BBBE;
 }
@@ -943,12 +944,12 @@ input:focus :-ms-input-placeholder { color: transparent; font-size: 0; }
 }
 
 textarea:hover, textarea:focus { border-color: #51BBBE; }
-textarea:focus { 
+textarea:focus {
   background-position: left bottom;
   background-size: 100% 1px;
 }
-textarea:valid + label, textarea:focus + label { 
-  line-height: 0; 
+textarea:valid + label, textarea:focus + label {
+  line-height: 0;
   font-size: 10px;
   color: #51BBBE;
   padding-top:0;
@@ -1149,18 +1150,18 @@ footer {
       // top: 8.6rem;
       top: 0; // keep this to 0
       padding-top: 0;
-      
+
       right: 0;
       width: 75%;
       margin-right: -82%;
-      
+
       /* GN: goes all the way down to the footer */
       height: 100%;
-      
+
       #map-leaflet {
         // GN: pushed it up a little so we can see more of the map on page load
         // also because it's not affected by the pagination and other controls
-        // on the left hand side. 
+        // on the left hand side.
         height: 40vw;
         margin: 2rem 0;
       }
@@ -1173,7 +1174,7 @@ footer {
         display: none;
       }
     }
-  
+
   }
 
   footer{
@@ -1221,27 +1222,27 @@ footer {
 // see form to flag a photo as inappropriate
 .form-flag {
     display: none;
-    
+
     border: 1px solid grey;
     padding: 1rem;
     margin: 0.5rem auto;
     max-width: 40rem;
-    
+
     textarea {
         width: 100%;
         height: 5rem;
     }
 }
- 
+
 ul.errorlist {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  
+
   li {
       color: #a94442;
       font-weight: bold;
-  }    
+  }
 }
 
 // .photo-image a {
@@ -1260,8 +1261,19 @@ ul.errorlist {
     background: rgba(0,0,0,0.1);
     color: #257478;
     z-index: 2;
-    
+
     &:hover {
         color: #FFC800;
+    }
+}
+
+#upload-preview {
+    display: none;
+    max-width: 100%;
+    max-height: 15em;
+
+    &.show {
+        display: block;
+        margin: 1rem 0;
     }
 }

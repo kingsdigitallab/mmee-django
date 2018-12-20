@@ -305,7 +305,8 @@ class Photo(index.Indexed, models.Model):
         choices=FEELINGS, default=0, help_text='Author\'s feeling about photo'
     )
     author_feeling_keywords = models.TextField(
-        blank=True, default='Author\'s feelings about photo'
+        blank=True, default='',
+        help_text='Keyword describing author\'s feelings about photo'
     )
     author_reason = models.TextField(
         'Motivation',

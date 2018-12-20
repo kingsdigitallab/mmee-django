@@ -6,6 +6,7 @@ from django.contrib.gis.db import models
 from mapwidgets.widgets import GooglePointFieldWidget
 from django.urls.base import reverse
 from django.utils.html import escape
+# from django.contrib.gis.forms.widgets import OSMWidget
 
 
 @admin.register(PhotoFlag)
@@ -176,6 +177,9 @@ class PhotoAdmin(admin.ModelAdmin):
     filter_horizontal = ('subcategories',)
 
     formfield_overrides = {
+        # models.PointField: {'widget': OSMWidget(
+        #     attrs={'map_width': 800, 'map_height': 500}
+        # )},
         models.PointField: {'widget': GooglePointFieldWidget},
     }
 

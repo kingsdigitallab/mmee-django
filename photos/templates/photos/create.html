@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load mmee_wagtail_tags %}
+{% load mmee_wagtail_tags staticfiles compress %}
 
 {% block meta_title %}Upload a Photo{% endblock %}
 
@@ -7,14 +7,15 @@
 <div class="submission-form">
   <form action="" method="POST" role="form" enctype="multipart/form-data">
     {% csrf_token %}
-    
+    {{ form.media }}
+
     {% if form.has_errors %}
         <div class="form-general-errors">
             Some fieds are invalid, please correct the errors and resubmit.
           {{ form.non_field_errors }}
         </div>
     {% endif %}
-    
+
     <input id='step2' type='checkbox'>
     <input id='step3' type='checkbox'>
     <input id='step4' type='checkbox'>
@@ -28,14 +29,15 @@
       id="image" name="image"
       accept="image/png, image/jpeg" /> -->
       {# todo: use template for fields #}
-      
+
       {{ form.image_file.errors }}
       {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
 
-      
+      <img id="upload-preview" alt="Image upload preview">
+
       {{ form.taken_year.errors }}
       {% form_field form.taken_year placeholder="Year taken" %}
-           
+
       {{ form.taken_month.errors }}
       {% form_field form.taken_month placeholder="Month taken" %}
 
@@ -76,14 +78,16 @@
       {% form_field form.gender_other placeholder="" %}
 
     <div class="button-wrapper">
-      <label class="back">
-        Cancel
-      </label>
+        <a href="/">
+          <label class="back">
+            Cancel
+          </label>
+      </a>
       <label for='step2' id="continue-step2" class="next">
         Next
       </label>
     </div>
-    
+
   </div>
 
   <div id="part2" class="step">
@@ -123,7 +127,7 @@
         <input id="form_name1" class="form-control" type="date" placeholder="Placeholder" required>
         <label for="form_name1">DATE TAKEN</label>
       </div>
-        
+
       <div class="form-field">
         <input id="form_name2" class="form-control" type="date"  placeholder="" required>
         <label for="form_name2">LOCATION</label>
@@ -135,7 +139,7 @@
       </div>
 
 
-      <div class="form-field">      
+      <div class="form-field">
       <textarea id="form_name3" class="form-control" type="text"  placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took" required></textarea>
       <label for="form_name3">TEXTAREA</label>
       </div>
@@ -146,10 +150,10 @@
 
       <!--     {{ form.taken_year.errors }}
            {% form_field form.taken_year class="form-control" autocomplete="off" placeholder="Year taken" %}
-           
+
            {{ form.taken_month.errors }}
            {% form_field form.taken_month class="form-control" autocomplete="off" placeholder="Month taken" %}
-           
+
       -->
      <div class="button-wrapper">
       <label for='step2' id="back-step2" class="back">
@@ -167,7 +171,7 @@
         <input id="form_name1" class="form-control" type="date" placeholder="Placeholder" required>
         <label for="form_name1">DATE TAKEN</label>
       </div>
-        
+
       <div class="form-field">
         <input id="form_name2" class="form-control" type="date"  placeholder="" required>
         <label for="form_name2">LOCATION</label>
@@ -262,15 +266,17 @@
 {% endcomment %}
 
     </form>
-  
+
 </div>
 {% endblock main %}
 
 {% block footer_scripts %}
     {{ block.super }}
+
+    <script src="{% static 'exif-js/exif.js' %}"></script>
     <script>
     $(function() {
-        var $form = $('.submission-form > form'); 
+        var $form = $('.submission-form > form');
         if (1) {
             $(document).on('click', '.next:not(:has(.submit))', function(e) {
                 // Don't let user go to next step if invalid inputs in current
@@ -288,6 +294,37 @@
                 }
             });
         }
+
+        $('input[type=file]').change(function() {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $preview = $('#upload-preview');
+                    $preview.attr('src', e.target.result);
+                    $preview.addClass('show');
+
+                    // https://github.com/exif-js/exif-js
+                    EXIF.getData($preview[0], function() {
+                        var exif_data = EXIF.getAllTags(this);
+                        console.log(exif_data);
+                        // DateTimeOriginal: "2018:12:20 21:15:59"
+                        var date_parts = exif_data.DateTimeOriginal.split(':');
+                        if (date_parts) {
+                            $('#id_taken_year').val(date_parts[0]);
+                            $('#id_taken_month').val(date_parts[1]);
+                        }
+
+                        $('#location-mw-overlay-latitude').val(exif_data.GPSLatitude[2].toString());
+                        $('#location-mw-overlay-longitude').val(exif_data.GPSLongitude[2].toString());
+                    });
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
     })
     </script>
 {% endblock %}

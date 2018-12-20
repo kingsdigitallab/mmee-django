@@ -13,6 +13,7 @@ from wagtail.images.models import Image
 from django.forms import ModelForm
 from photos.models import PhotoFlag, Photographer
 from django.core.exceptions import ValidationError
+from mapwidgets.widgets import GooglePointFieldWidget
 
 
 class PhotoSearchView(TemplateView):
@@ -120,6 +121,10 @@ class PhotoForm(ModelForm):
             'consent',
         ]
 
+        widgets = {
+            'location': GooglePointFieldWidget,
+        }
+
 
 class PhotoCreateView(CreateView):
     template_name = 'photos/create.html'
@@ -135,6 +140,14 @@ class PhotoCreateView(CreateView):
 
     def form_valid(self, form):
         image_file = form.cleaned_data['image_file']
+
+        photographer = Photographer(
+            age_range=form.cleaned_data['age_range'],
+            gender_category=form.cleaned_data['gender'],
+            gender_other=form.cleaned_data['gender_other'],
+        )
+        photographer.save()
+
         image = Image(
             title=image_file.name,
             file=image_file
@@ -143,6 +156,7 @@ class PhotoCreateView(CreateView):
 
         photo = form.save()
         photo.image = image
+        photo.photographer = photographer
         photo.save()
 
         print('New photo #', photo.pk, 'new image #', image.pk)
