@@ -2,6 +2,7 @@ import json as pjson
 from django import template
 from wagtail.core.models import Site
 from django.utils.safestring import mark_safe
+from django.template import loader
 
 register = template.Library()
 
@@ -48,16 +49,32 @@ def form_field(context, field, *args, **kwargs):
 
     Note, _ are replaced with - in the attribute names.
     '''
-    kwargs = kwargs or {}
-    kwargs.update({
+    context = {}
+    for var_name in ['label']:
+        val = kwargs.get(var_name, None)
+        if var_name in kwargs:
+            del kwargs[var_name]
+        context[var_name] = val
+
+    attributes = kwargs or {}
+    attributes.update({
         'autocomplete': 'off',
     })
 
-    if 'class' not in kwargs:
-        kwargs['class'] = 'form-control'
+    if 'class' not in attributes:
+        attributes['class'] = 'form-control'
     else:
-        kwargs['class'] += ' form-control'
+        attributes['class'] += ' form-control'
 
-    ret = field.as_widget(
-        attrs={k.replace('_', '-'): v for k, v in kwargs.items()})
+    field_html = field.as_widget(
+        attrs={k.replace('_', '-'): v for k, v in attributes.items()}
+    )
+
+    template = loader.get_template('mmee/form_field.html')
+    context['field'] = field_html
+    context['errors'] = field.errors
+    ret = template.render(context)
+
+    # print(ret)
+
     return ret

@@ -30,52 +30,43 @@
       accept="image/png, image/jpeg" /> -->
       {# todo: use template for fields #}
 
-      {{ form.image_file.errors }}
       {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
 
       <img id="upload-preview" alt="Image upload preview">
 
-      {{ form.taken_year.errors }}
-      {% form_field form.taken_year placeholder="Year taken" %}
+      <label class="photo-date">Date taken (month - year)<br>
+          {% form_field form.taken_month %}
+          -
+          {% form_field form.taken_year placeholder="e.g. 2018" %}
+      </label>
 
-      {{ form.taken_month.errors }}
-      {% form_field form.taken_month placeholder="Month taken" %}
-
-      {{ form.location.errors }}
-      {% form_field form.location placeholder="Month taken" %}
+      {% form_field form.location %}
 
       {# step 2 #}
       <hr>
 
-      {{ form.author_focus_keywords.errors }}
-      {% form_field form.author_focus_keywords placeholder="" %}
+      {% form_field form.author_focus_keywords placeholder="" label="In 3 keywords or less, what is the main focus in the photo you took?" %}
 
       {# step 3 #}
       <hr>
 
-      {{ form.author_feeling_category.errors }}
-      {% form_field form.author_feeling_category placeholder="" %}
+      {% form_field form.author_feeling_category placeholder="" label="How do you feel about this photo?" %}
 
-      {{ form.author_feeling_keywords.errors }}
-      {% form_field form.author_feeling_keywords placeholder="" %}
+      {% form_field form.author_feeling_keywords placeholder="" label="In 3 keywords of less, list that feeling." %}
 
       {# step 4 #}
       <hr>
 
-      {{ form.author_reason.errors }}
-      {% form_field form.author_reason placeholder="" %}
+      {% form_field form.author_reason placeholder="" label="Why did you take this photo?" %}
 
       {# step 5 #}
       <hr>
 
-      {{ form.age_range.errors }}
-      {% form_field form.age_range placeholder="" %}
+      {% form_field form.age_range placeholder="" label="What age category are you?" %}
 
-      {{ form.gender.errors }}
-      {% form_field form.gender placeholder="" %}
+      {% form_field form.gender placeholder="" label="What do you identify as?" %}
 
-      {{ form.gender_other.errors }}
-      {% form_field form.gender_other placeholder="" %}
+      {% form_field form.gender_other placeholder="" label="If other, please specify" %}
 
     <div class="button-wrapper">
         <a href="/">

@@ -12,7 +12,7 @@ from collections import OrderedDict
 from django.utils import timezone
 import datetime
 import re
-
+import calendar
 ''' TODO:
 '''
 
@@ -253,6 +253,8 @@ class Photo(index.Indexed, models.Model):
         (FEELING_NEGATIVE, 'Negative'),
     )
 
+    MONTHS = [(i + 1, name) for i, name in enumerate(calendar.month_name[1:])]
+
     photographer = models.ForeignKey(
         Photographer,
         on_delete=models.SET_NULL,
@@ -282,9 +284,13 @@ class Photo(index.Indexed, models.Model):
     taken_year = models.IntegerField(
         'Year (photo content)', blank=True, null=True, default=None)
     taken_month = models.IntegerField(
-        'Month (photo content)', blank=True, null=True, default=None)
+        'Month (photo content)',
+        choices=MONTHS,
+        blank=True, null=True, default=None
+    )
     taken_day = models.IntegerField(
-        'Day (photo content)', blank=True, null=True, default=None)
+        'Day (photo content)', blank=True, null=True, default=None
+    )
 
     location = models.PointField(blank=True, null=True)
 
@@ -302,7 +308,9 @@ class Photo(index.Indexed, models.Model):
         blank=True, default='', help_text='Author\'s main focus'
     )
     author_feeling_category = models.IntegerField(
-        choices=FEELINGS, default=0, help_text='Author\'s feeling about photo'
+        choices=FEELINGS,
+        blank=True, null=True, default=None,
+        help_text='Author\'s feeling about photo'
     )
     author_feeling_keywords = models.TextField(
         blank=True, default='',

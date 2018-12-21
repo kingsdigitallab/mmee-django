@@ -13,7 +13,9 @@ from wagtail.images.models import Image
 from django.forms import ModelForm
 from photos.models import PhotoFlag, Photographer
 from django.core.exceptions import ValidationError
-from mapwidgets.widgets import GooglePointFieldWidget
+# from mapwidgets.widgets import GooglePointFieldWidget
+from django.contrib.gis.forms.widgets import OSMWidget
+from django import forms
 
 
 class PhotoSearchView(TemplateView):
@@ -93,9 +95,11 @@ class PhotoForm(ModelForm):
 
     age_range = ChoiceField(
         choices=Photographer.AGE_RANGE_CHOICES,
+        widget=forms.RadioSelect()
     )
     gender = ChoiceField(
         choices=Photographer.GENDER_CHOICES,
+        widget=forms.RadioSelect()
     )
     gender_other = CharField(max_length=20, required=False)
 
@@ -122,7 +126,10 @@ class PhotoForm(ModelForm):
         ]
 
         widgets = {
-            'location': GooglePointFieldWidget,
+            # 'location': GooglePointFieldWidget,
+            'location': OSMWidget,
+            'author_feeling_category': forms.RadioSelect(),
+            # 'taken_month': forms.RadioSelect()
         }
 
 
