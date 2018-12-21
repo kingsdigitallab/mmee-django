@@ -296,7 +296,7 @@ class Photo(index.Indexed, models.Model):
 
     review_status = models.IntegerField(choices=REVIEW_STATUSES, default=0)
 
-    subcategories = models.ManyToManyField(PhotoSubcategory)
+    subcategories = models.ManyToManyField(PhotoSubcategory, blank=True)
 
     # data captured by the submission form
     author_focus_keywords = models.CharField(

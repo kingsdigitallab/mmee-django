@@ -3,10 +3,10 @@ from .models import Photographer, PhotoSubcategory, Photo, PhotoFlag
 from django.utils.safestring import mark_safe
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.db import models
-from mapwidgets.widgets import GooglePointFieldWidget
 from django.urls.base import reverse
 from django.utils.html import escape
-# from django.contrib.gis.forms.widgets import OSMWidget
+# from mapwidgets.widgets import GooglePointFieldWidget
+from django.contrib.gis.forms.widgets import OSMWidget
 
 
 @admin.register(PhotoFlag)
@@ -180,7 +180,7 @@ class PhotoAdmin(admin.ModelAdmin):
         # models.PointField: {'widget': OSMWidget(
         #     attrs={'map_width': 800, 'map_height': 500}
         # )},
-        models.PointField: {'widget': GooglePointFieldWidget},
+        models.PointField: {'widget': OSMWidget},
     }
 
     def admin_photographer_age_range(self, photo):
