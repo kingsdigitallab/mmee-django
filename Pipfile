@@ -4,6 +4,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+django-debug-toolbar = "*"
+fabric3 = "*"
+flake8 = "*"
+ipython = "*"
+tox = "*"
 
 [packages]
 django-extensions = "*"
