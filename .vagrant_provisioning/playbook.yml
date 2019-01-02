@@ -162,10 +162,17 @@
     tags:
       - python
 
-  - name: pip | ensure python requirements are installed to latest version
+  - name: pip | install pipenv
     pip:
-      requirements: "{{ project_root }}/{{ python.requirements }}"
+      name: pipenv
       virtualenv: "{{ python.virtualenv_location }}"
+      state: latest
+    tags:
+      - python
+
+  - name: pipenv | ensure python requirements are installed to latest version
+    chdir: "{{ project_root }}"
+    command: "{{ python.virtualenv_location }}/bin/pipenv install"
     tags:
       - python
 

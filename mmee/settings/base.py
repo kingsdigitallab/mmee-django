@@ -323,3 +323,5 @@ HAYSTACK_CONNECTIONS = {
         'BATCH_SIZE': 100,
     },
 }
+
+USE_PIPENV = True
