@@ -62,4 +62,8 @@ target/
 local.py
 #local_*.py
 logs/
-static/
+/static
+/node_modules
+
+# Private research data
+*private/

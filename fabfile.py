@@ -30,7 +30,6 @@ PROJECT_NAME = 'mmee'
 REPOSITORY = 'https://github.com/kingsdigitallab/{}-django.git'.format(
     PROJECT_NAME)
 
-
 env.gateway = 'ssh.kdl.kcl.ac.uk'
 # Host names used as deployment targets
 env.hosts = ['{}.kdl.kcl.ac.uk'.format(PROJECT_NAME)]
@@ -54,9 +53,12 @@ if FABRIC_GATEWAY:
 # Name of linux user who deploys on the remote server
 env.user = django_settings.FABRIC_USER
 
+USE_PIPENV = getattr(django_settings, 'USE_PIPENV', False)
+
 
 def server(func):
     """Wraps functions that set environment variables for servers"""
+
     @wraps(func)
     def decorated(*args, **kwargs):
         try:
@@ -65,6 +67,7 @@ def server(func):
             env.servers = [func]
 
         return func(*args, **kwargs)
+
     return decorated
 
 
@@ -149,15 +152,19 @@ def install_requirements():
 
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
-    reqs = 'requirements-{}.txt'.format(env.srvr)
+    if not USE_PIPENV:
+        reqs = 'requirements-{}.txt'.format(env.srvr)
 
-    try:
-        assert os.path.exists(reqs)
-    except AssertionError:
-        reqs = 'requirements.txt'
+        try:
+            assert os.path.exists(reqs)
+        except AssertionError:
+            reqs = 'requirements.txt'
 
     with cd(env.path), prefix(env.within_virtualenv):
-        run('pip install -q --no-cache -U -r {}'.format(reqs))
+        if USE_PIPENV:
+            run('pip install pipenv && pipenv sync')
+        else:
+            run('pip install -q --no-cache -U -r {}'.format(reqs))
 
 
 @task
@@ -165,7 +172,13 @@ def reinstall_requirement(which):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
     with cd(env.path), prefix(env.within_virtualenv):
-        run('pip uninstall {0} && pip install --no-deps {0}'.format(which))
+        if USE_PIPENV:
+            run(
+                'pip install pipenv && pipenv uninstall --all --clear '
+                '&& pip install pipenv && pipenv sync'
+            )
+        else:
+            run('pip uninstall {0} && pip install --no-deps {0}'.format(which))
 
 
 @task
@@ -291,6 +304,9 @@ def migrate(app=None):
 @task
 def collect_static(process=False):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
+
+    with cd(env.path):
+        run('npm i')
 
     if env.srvr in ['local', 'vagrant']:
         print(yellow('Do not run collect_static on local servers'))

@@ -19,7 +19,7 @@ from kdl_ldap.settings import *  # noqa
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 PROJECT_NAME = 'mmee'
-PROJECT_TITLE = 'Memory Mapping the East End'
+PROJECT_TITLE = 'Sensing Place'
 
 # -----------------------------------------------------------------------------
 # Core Settings
@@ -48,7 +48,6 @@ CACHES = {
     }
 }
 
-
 CSRF_COOKIE_SECURE = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -59,7 +58,7 @@ DEBUG = False
 # -----------------------------------------------------------------------------
 
 DEFAULT_FROM_EMAIL = 'noreply@kcl.ac.uk'
-EMAIL_HOST = 'smtp.kcl.ac.uk'
+EMAIL_HOST = 'smtp.cch.kcl.ac.uk'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
@@ -80,8 +79,7 @@ INSTALLED_APPS = [
     'compressor',
 ]
 
-INSTALLED_APPS += [    # your project apps here
-
+INSTALLED_APPS += [  # your project apps here
     'activecollab_digger',
     'django.contrib.gis',
     'kdl_ldap',
@@ -101,6 +99,8 @@ INSTALLED_APPS += [    # your project apps here
     'taggit',
     'modelcluster',
     'haystack',
+    'photos',
+    'mapwidgets',
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -174,13 +174,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-
-
-
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-
 ]
 
 ROOT_URLCONF = PROJECT_NAME + '.urls'
@@ -191,7 +186,9 @@ SECRET_KEY = ''
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -201,12 +198,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-
                 'activecollab_digger.context_processors.activecollab_digger',
-
-
-
-
             ],
         },
     },
@@ -243,7 +235,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL.strip('/'))
 if not os.path.exists(STATIC_ROOT):
     os.makedirs(STATIC_ROOT)
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'assets'),)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'node_modules'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -299,7 +294,6 @@ db_engine = 'django.db.backends.postgresql_psycopg2'
 if 'django.contrib.gis' in INSTALLED_APPS:
     db_engine = 'django.contrib.gis.db.backends.postgis'
 
-
 AC_BASE_URL = 'https://app.activecollab.com/148987'
 AC_API_URL = AC_BASE_URL + '/api/v1/'
 AC_PROJECT_ID = 954
@@ -308,17 +302,26 @@ AC_TOKEN = ''
 
 AUTH_LDAP_REQUIRE_GROUP = (
     (
-        LDAPGroupQuery('cn=kdl-staff,' + LDAP_BASE_OU) |
-        LDAPGroupQuery('cn=mmee,' + LDAP_BASE_OU)
+        LDAPGroupQuery(
+            'cn=kdl-staff,' + LDAP_BASE_OU
+        ) | LDAPGroupQuery(
+            'cn=mmee,' + LDAP_BASE_OU
+        )
     )
 )
+
 WAGTAIL_SITE_NAME = PROJECT_TITLE
-ITEMS_PER_PAGE = 10
-# Change as required
+
+ITEMS_PER_PAGE = 12
+
 HAYSTACK_CONNECTIONS = {
     'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'mmee_haystack',
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://localhost:8983/solr/default',
+        'TIMEOUT': 60 * 5,
+        'INCLUDE_SPELLING': True,
+        'BATCH_SIZE': 100,
     },
 }
+
+USE_PIPENV = True

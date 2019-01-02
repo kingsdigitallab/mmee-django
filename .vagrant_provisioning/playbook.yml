@@ -19,30 +19,15 @@
   - name: apt | install https transport for apt
     apt:
       pkg: apt-transport-https
-      state: installed
+      state: present
       update_cache: yes
     tags:
       -system
 
-  - name: apt | add elasticsearch key
-    become: yes
-    apt_key:
-      url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
-      state: present
-    tags:
-      - system
-
-  - name: apt | add elasticsearch sources
-    apt_repository:
-      repo: 'deb https://artifacts.elastic.co/packages/5.x/apt stable main'
-      state: present
-    tags:
-      - system
-
   - name: apt | install required system packages
     apt:
       pkg: '{{ item }}'
-      state: installed
+      state: present
       update_cache: yes
     with_items: '{{ system_packages }}'
     tags:
@@ -54,38 +39,43 @@
     tags:
       - system
 
-  - name: git-lfs | add git ppa
-    become: yes
-    command: add-apt-repository ppa:git-core/ppa
-    tags:
-      - system
-      - git
-
-  - name: git-lfs | download
+  - name: solr | download
     become: yes
     get_url:
-      url: '{{ git.url }}'
+      url: '{{ solr.url }}'
       dest: /tmp
-      mode: 0777
     tags:
       - system
-      - git
+      - solr
 
-  - name: git-lfs | setup
+  - name: solr | unarchive
     become: yes
-    command: /tmp/script.deb.sh
+    unarchive:
+      src: /tmp/solr-{{ solr.version}}.tgz
+      dest: /tmp
+      remote_src: yes
     tags:
       - system
-      - git
+      - solr
 
-  - name: git-lfs | install
-    apt:
-      pkg: git-lfs
-      state: installed
-      update_cache: yes
+
+  - name: solr | install
+    become: yes
+    command: /tmp/solr-{{ solr.version }}/bin/install_solr_service.sh /tmp/solr-{{ solr.version}}.tgz -f
     tags:
       - system
-      - git
+      - solr
+
+  - name: solr | set up
+    become: yes
+    become_user: solr
+    command: /opt/solr/bin/solr create -c dev
+    # ignoring errors because this fails if the core already exists
+    ignore_errors: yes
+    notify: solr | restart solr
+    tags:
+      - system
+      - solr
 
   - name: zsh | clone oh-my-zsh repo
     git: repo={{ zsh.oh_my_zsh }} dest={{ user_home }}/.oh-my-zsh
@@ -101,7 +91,7 @@
     user: name=vagrant shell=/bin/zsh
     tags:
       - system
-  
+
   - name: motd | clean existing
     become: yes
     shell: 'rm -rf /etc/update-motd.d/*'
@@ -119,6 +109,15 @@
     shell: 'chmod +x /etc/update-motd.d/*'
     tags:
       - system
+
+  handlers:
+  - name: solr | restart solr
+    become: yes
+    service:
+      name: solr
+      state: started
+    tags:
+      - db
 
 - hosts: all
   vars_files:
@@ -163,10 +162,17 @@
     tags:
       - python
 
-  - name: pip | ensure python requirements are installed to latest version
+  - name: pip | install pipenv
     pip:
-      requirements: "{{ project_root }}/{{ python.requirements }}"
+      name: pipenv
       virtualenv: "{{ python.virtualenv_location }}"
+      state: latest
+    tags:
+      - python
+
+  - name: pipenv | ensure python requirements are installed to latest version
+    chdir: "{{ project_root }}"
+    command: "{{ python.virtualenv_location }}/bin/pipenv install"
     tags:
       - python
 
@@ -212,32 +218,12 @@
     tags:
       - db
 
-  - name: elasticsearch | change JVM Heap To start at 256M
-    become: yes
-    lineinfile:
-      path: /etc/elasticsearch/jvm.options
-      backup: yes
-      regexp: "^-Xms2g$"
-      line: "-Xms256m"
-    notify:
-      - elasticsearch | restart elasticsearch
-    tags:
-      - db
-
   handlers:
   - name: postgresql | restart postgres
     become: yes
     service:
       name: postgresql
       state: restarted
-    tags:
-      - db
-
-  - name: elasticsearch | restart elasticsearch
-    become: yes
-    service:
-      name: elasticsearch
-      state: started
     tags:
       - db
 

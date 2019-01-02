@@ -1,2 +1,37 @@
-{% block main_menu %}
-{% endblock %}
+<nav>
+    <a href="/photos/create/"> 
+        <label aria-label="submit" class="submit-label" for="submit">
+            <span></span>
+        </label>
+    </a>
+
+  {% block main_menu %}
+    <input type="checkbox" id="menu" />
+    <label aria-label="Menu" class="menu-label" for="menu">
+    <span>
+    </span>
+    </label>
+    
+    <div class="menu-list">
+      <ul>
+        <li>
+          <a href="">Home</a>
+        </li>
+        <li>
+          <a href="">About</a>
+        </li>
+        <li>
+          <a href="">Another Link</a>
+        </li>
+        <li>
+          <a href="">Contact</a>
+        </li>
+        {% if request.user.is_staff %}
+          <li>
+            <a class="staff-link" href="{% url 'admin:photos_photo_changelist' %}">Manage Photos</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  {% endblock %}
+</nav>

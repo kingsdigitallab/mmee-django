@@ -4,30 +4,46 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block meta_title %}{% endblock %} | Memory Mapping the East End</title>
+  <title>{% block meta_title %}{% endblock %} | Sensing Place</title>
   <meta name="author" content="King's Digital Lab">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {# GN: remove this when we go live, only added to avoid Google popup on lorem ipsum#}
+  <meta name="google" content="notranslate">
+
+  {# TO: Need to download #}  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="{% static 'leaflet/dist/leaflet.css' %}">
 
   {% compress css %}
+  <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" >
+  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.css' %}" >
+  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.Default.css' %}" >
   <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
   {% endcompress %}
+  
 </head>
 <body>
-  <header>
+
+  <div class="wrapper">
+   
     {% include 'includes/header.html' %}
-  </header>
 
-  <nav>
     {% include 'includes/navigation.html' %}
-  </nav>
 
-  <main>
-    {% block title %}{% endblock %}
-    {% block main %}
+    {% block main-section %}
+
+    <!-- <main> -->
+      {% block title %}{% endblock %}
+      {% block main %}
+      {% endblock %}
+    <!-- </main> -->
     {% endblock %}
-  </main>
 
+
+  </div>
+  
   <footer>
     {% block footer %}
     {% include 'includes/footer.html' %}
@@ -35,19 +51,28 @@
   </footer>
 
   {% compress js %}
-  <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+
+  <script src="{% static 'leaflet/dist/leaflet.js' %}"></script>
+  <script src="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}" charset="utf-8"></script>
+  <script src="{% static 'leaflet.markercluster/dist/leaflet.markercluster.js' %}" charset="utf-8"></script>
+
+  <script src="{% static 'vue/dist/vue.js' %}"></script>
 
   <script src="{% static 'js/main.js' %}"></script>
   {% endcompress %}
 
+  {% if GA_ID %}
+      {% compress js %}
+      <script src="{% static 'js/google_analytics.js' %}"></script>
+      <script>
+        ga('create', '{{ GA_ID }}', 'auto');
+        ga('send', 'pageview');
+      </script>
+      {% endcompress %}
+  {% endif %}
+  
   {% block footer_scripts %}{% endblock %}
 
-  {% compress js %}
-  <script src="{% static 'js/google_analytics.js' %}"></script>
-  <script>
-    ga('create', '{{ GA_ID }}', 'auto');
-    ga('send', 'pageview');
-  </script>
-  {% endcompress %}
 </body>
 </html>

@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from kdl_ldap.signal_handlers import \
     register_signal_handlers as kdl_ldap_register_signal_hadlers
+from django.views.generic.base import RedirectView
 
 kdl_ldap_register_signal_hadlers()
 
@@ -14,12 +15,14 @@ urlpatterns = [
 
     path('digger/', include('activecollab_digger.urls')),
 
-
     path('wagtail/', include('wagtail.admin.urls')),
     path('documents/', include('wagtail.documents.urls')),
-    path('', include('wagtail.core.urls')),
-    path('search/', include('haystack.urls'))
-
+    path('', include('photos.urls')),
+    path('search/', include('haystack.urls')),
+    # we temporarily by pass wagtail to show search interface on home page
+    # nest increment we can implement search with proper wagtail page
+    # path('', include('wagtail.core.urls')),
+    path('', RedirectView.as_view(url='/photos/', permanent=False)),
 ]
 
 # -----------------------------------------------------------------------------

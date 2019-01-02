@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load mmee_wagtail_tags staticfiles compress %}
+
+{% block meta_title %}Upload a Photo{% endblock %}
+
+{% block main %}
+<div class="submission-form">
+  <form action="" method="POST" role="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.media }}
+
+    {% if form.has_errors %}
+        <div class="form-general-errors">
+            Some fieds are invalid, please correct the errors and resubmit.
+          {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <input id='step2' type='checkbox'>
+    <input id='step3' type='checkbox'>
+    <input id='step4' type='checkbox'>
+    <input id='step5' type='checkbox'>
+    <input id='step6' type='checkbox'>
+    <input id='step7' type='checkbox'>
+
+  <div id="part1" class="step">
+    <h3>Step 1: Upload your photo</h3>
+      <!-- <input aria-label="upload photo" type="file"
+      id="image" name="image"
+      accept="image/png, image/jpeg" /> -->
+      {# todo: use template for fields #}
+
+      {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
+
+      <img id="upload-preview" alt="Image upload preview">
+
+      <label class="photo-date">Date taken (month - year)<br>
+          {% form_field form.taken_month %}
+          -
+          {% form_field form.taken_year placeholder="e.g. 2018" %}
+      </label>
+
+      {% form_field form.location %}
+
+      {# step 2 #}
+      <hr>
+
+      {% form_field form.author_focus_keywords placeholder="" label="In 3 keywords or less, what is the main focus in the photo you took?" %}
+
+      {# step 3 #}
+      <hr>
+
+      {% form_field form.author_feeling_category placeholder="" label="How do you feel about this photo?" %}
+
+      {% form_field form.author_feeling_keywords placeholder="" label="In 3 keywords of less, list that feeling." %}
+
+      {# step 4 #}
+      <hr>
+
+      {% form_field form.author_reason placeholder="" label="Why did you take this photo?" %}
+
+      {# step 5 #}
+      <hr>
+
+      {% form_field form.age_range placeholder="" label="What age category are you?" %}
+
+      {% form_field form.gender placeholder="" label="What do you identify as?" %}
+
+      {% form_field form.gender_other placeholder="" label="If other, please specify" %}
+
+    <div class="button-wrapper">
+        <a href="/">
+          <label class="back">
+            Cancel
+          </label>
+      </a>
+      <label for='step2' id="continue-step2" class="next">
+        Next
+      </label>
+    </div>
+
+  </div>
+
+  <div id="part2" class="step">
+      <h3>Step 7: Consent Information</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+
+      {{ form.consent.errors }}
+      <label>
+          {% form_field form.consent class="show" %}
+          I have read and accept the terms
+      </label>
+
+      <div class="button-wrapper">
+        <label for='step2' id="back-step2" class="back">
+          Back
+        </label>
+        <label id="continue-step3" class="next last" >
+          Submit
+          <input type="submit" value="Submit" name="Submit" class="hidden submit">
+        </label>
+      </div>
+    </div>
+
+
+{% comment %}
+  <div id="part2" class="step">
+       <h3>Step 2: Photo Information</h3>
+       <!-- <input type="integer" name="taken_year" class="form-control" placeholder="Date"> -->
+       <!-- <input type="integer" name="taken_month" class="form-control" placeholder="/"> -->
+       <!-- <input type="text" id="city" class="form-control" placeholder="City, Country"> -->
+       <!-- <textarea name="description" id="message" class="form-control" placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took"></textarea> -->
+
+
+      <!-- TO: New html for forms with different styling -->
+      <div class="form-field">
+        <input id="form_name1" class="form-control" type="date" placeholder="Placeholder" required>
+        <label for="form_name1">DATE TAKEN</label>
+      </div>
+
+      <div class="form-field">
+        <input id="form_name2" class="form-control" type="date"  placeholder="" required>
+        <label for="form_name2">LOCATION</label>
+      </div>
+
+      <div class="form-field">
+        <input id="form_name3" class="form-control" type="date"  placeholder="In 3 keywords or less, what is the main focus in the photo you took?" required>
+        <label for="form_name3">In 3 keywords or less, what is the main focus in the photo you took?</label>
+      </div>
+
+
+      <div class="form-field">
+      <textarea id="form_name3" class="form-control" type="text"  placeholder="In your own words, write what is the main focus of your photo and how you feel about the photo you took" required></textarea>
+      <label for="form_name3">TEXTAREA</label>
+      </div>
+
+
+
+      <!-- TO: Hiding old code -->
+
+      <!--     {{ form.taken_year.errors }}
+           {% form_field form.taken_year class="form-control" autocomplete="off" placeholder="Year taken" %}
+
+           {{ form.taken_month.errors }}
+           {% form_field form.taken_month class="form-control" autocomplete="off" placeholder="Month taken" %}
+
+      -->
+     <div class="button-wrapper">
+      <label for='step2' id="back-step2" class="back">
+        Back
+      </label>
+      <label for='step3' id="continue-step3" class="next">
+        Next
+      </label>
+     </div>
+  </div>
+
+  <div id="part3" class="step">
+  <h3>Step 3: Photo Information</h3>
+      <div class="form-field">
+        <input id="form_name1" class="form-control" type="date" placeholder="Placeholder" required>
+        <label for="form_name1">DATE TAKEN</label>
+      </div>
+
+      <div class="form-field">
+        <input id="form_name2" class="form-control" type="date"  placeholder="" required>
+        <label for="form_name2">LOCATION</label>
+      </div>
+
+      <div class="form-field">
+        <input id="form_name3" class="form-control" type="date"  placeholder="In 3 keywords or less, what is the main focus in the photo you took?" required>
+        <label for="form_name3">In 3 keywords or less, what is the main focus in the photo you took?</label>
+      </div>
+
+
+    <div class="button-wrapper">
+      <label for='step3' id="back-step3" class="back">
+        Back
+      </label>
+      <label for='step4' id="continue-step4" class="next">
+        Next
+      </label>
+    </div>
+  </div>
+
+
+  <div id="part4" class="step">
+    <h3>Step 4: Photo Information</h3>
+    <div class="form-field">
+      <input id="form_name3" class="form-control" type="date"  placeholder="In 3 keywords or less, what is the main focus in the photo you took?" required>
+      <label for="form_name3">In 3 keywords or less, what is the main focus in the photo you took?</label>
+    </div>
+    <div class="button-wrapper">
+      <label for='step4' id="back-step4" class="back">
+        Back
+      </label>
+      <label for='step5' id="continue-step5" class="next">
+        Next
+      </label>
+     </div>
+  </div>
+
+  <div id="part5" class="step">
+    <h3>Step 5: Photo Information</h3>
+    <div class="form-field">
+      <input id="form_name3" class="form-control" type="date"  placeholder="In 3 keywords or less, what is the main focus in the photo you took?" required>
+      <label for="form_name3">In 3 keywords or less, what is the main focus in the photo you took?</label>
+    </div>
+    <div class="button-wrapper">
+      <label for='step5' id="back-step5" class="back">
+        Back
+      </label>
+      <label for='step6' id="continue-step6" class="next">
+        Next
+      </label>
+     </div>
+  </div>
+
+  <div id="part6" class="step">
+    <h3>Step 6: Photo Information</h3>
+    <div class="form-field">
+      <input id="form_name3" class="form-control" type="date"  placeholder="In 3 keywords or less, what is the main focus in the photo you took?" required>
+      <label for="form_name3">In 3 keywords or less, what is the main focus in the photo you took?</label>
+    </div>
+    <div class="button-wrapper">
+      <label for='step6' id="back-step6" class="back">
+        Back
+      </label>
+      <label for='step7' id="continue-step7" class="next">
+        Next
+      </label>
+     </div>
+  </div>
+
+  <div id="part7" class="step">
+      <h3>Step 7: Consent Information</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+
+      {{ form.consent.errors }}
+      <label>
+          {% form_field form.consent class="show" autocomplete="off" %}
+          I have read and accept the terms
+      </label>
+
+      <div class="button-wrapper">
+        <label for='step7' id="back-step7" class="back">
+          Back
+        </label>
+        <label id="continue-step8" class="next last" >
+          Submit
+          <input type="submit" value="Submit" name="Submit" class="hidden submit">
+        </label>
+      </div>
+    </div>
+{% endcomment %}
+
+    </form>
+
+</div>
+{% endblock main %}
+
+{% block footer_scripts %}
+    {{ block.super }}
+
+    <script src="{% static 'exif-js/exif.js' %}"></script>
+    <script>
+    $(function() {
+        var $form = $('.submission-form > form');
+        if (1) {
+            $(document).on('click', '.next:not(:has(.submit))', function(e) {
+                // Don't let user go to next step if invalid inputs in current
+                // one
+                var is_step_valid = 1;
+                $(this).parents('.step').find(':input').each(function() {
+                    is_step_valid &= this.checkValidity();
+                });
+                if (!is_step_valid) {
+                    // this forces the browser to show the error messages
+                    $form.find('.submit').click();
+                    // we don't go to next step
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+
+        $('input[type=file]').change(function() {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $preview = $('#upload-preview');
+                    $preview.attr('src', e.target.result);
+                    $preview.addClass('show');
+
+                    // https://github.com/exif-js/exif-js
+                    EXIF.getData($preview[0], function() {
+                        var exif_data = EXIF.getAllTags(this);
+                        console.log(exif_data);
+                        // DateTimeOriginal: "2018:12:20 21:15:59"
+                        var date_parts = exif_data.DateTimeOriginal.split(':');
+                        if (date_parts) {
+                            $('#id_taken_year').val(date_parts[0]);
+                            $('#id_taken_month').val(date_parts[1]);
+                        }
+
+                        $('#location-mw-overlay-latitude').val(exif_data.GPSLatitude[2].toString());
+                        $('#location-mw-overlay-longitude').val(exif_data.GPSLongitude[2].toString());
+                    });
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+    })
+    </script>
+{% endblock %}
