@@ -305,6 +305,9 @@ def migrate(app=None):
 def collect_static(process=False):
     require('srvr', 'path', 'within_virtualenv', provided_by=env.servers)
 
+    with cd(env.path):
+        run('npm i')
+
     if env.srvr in ['local', 'vagrant']:
         print(yellow('Do not run collect_static on local servers'))
         return
