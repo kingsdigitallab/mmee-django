@@ -1306,3 +1306,7 @@ ul.errorlist {
         margin: 1rem 0;
     }
 }
+
+#id_author_feeling_category li:first-child {
+    display: none;
+}
