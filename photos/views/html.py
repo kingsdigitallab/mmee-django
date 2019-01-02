@@ -95,11 +95,13 @@ class PhotoForm(ModelForm):
 
     age_range = ChoiceField(
         choices=Photographer.AGE_RANGE_CHOICES,
-        widget=forms.RadioSelect()
+        widget=forms.RadioSelect(),
+        initial=0,
     )
     gender = ChoiceField(
         choices=Photographer.GENDER_CHOICES,
-        widget=forms.RadioSelect()
+        widget=forms.RadioSelect(),
+        initial=0,
     )
     gender_other = CharField(max_length=20, required=False)
 
