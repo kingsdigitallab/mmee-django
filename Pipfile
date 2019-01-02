@@ -21,10 +21,10 @@ redis = "*"
 django-activecollab-digger = "*"
 django-haystack = "*"
 django-kdl-ldap = "*"
-wagtail = "*"
+wagtail = "<3"
 dateparser = "*"
 django-map-widgets = "*"
-Django = "<2.1"
+Django = "<3"
 django_compressor = "*"
 
 [requires]
