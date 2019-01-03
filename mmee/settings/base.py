@@ -96,11 +96,14 @@ INSTALLED_APPS += [  # your project apps here
     'wagtail.sites',
     'wagtail.contrib.routable_page',
     'wagtail.contrib.table_block',
+    'wagtail.contrib.modeladmin',
     'taggit',
     'modelcluster',
     'haystack',
     'photos',
     'mapwidgets',
+    'wagtailmenus',
+    'kdl_wagtail_page',
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -199,6 +202,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
                 'activecollab_digger.context_processors.activecollab_digger',
+                'wagtailmenus.context_processors.wagtailmenus',
             ],
         },
     },
