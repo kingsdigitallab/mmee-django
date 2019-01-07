@@ -499,52 +499,77 @@ section#results {
         }
     }
     .sort {
-        width: 10rem;
+        width: 12rem;
         float: right;
-        margin-top: 1.1rem;
+        margin-top: 0.5rem;
         position: relative;
         text-align: right;
-        /*select {
+      select {
+        font-family: "helvetica neue", helvetica;
+        font-size: 1rem;
+        font-weight: 200;
         max-width: 100%;
-        padding: 0.05rem 1.5rem 0.075rem 1rem;
+        padding: 8px 24px 8px 10px;
         border: none;
-        font-size:1rem;
-        border-radius: 0;
         background-color: transparent;
         -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        line-height: 1.7;
+           -moz-appearance: none;
+                appearance: none;
         &:active,
         &:focus {
           outline: none;
           box-shadow: none;
-          border-radius: 0;
-        }
-        &:hover{
-          color:$black;
         }
       }
       &:after {
         content: " ";
-        display: block;
         position: absolute;
         top: 50%;
         margin-top: -2px;
-        right: 6px;
-        width: 0;
-        height: 0;
+        right: 8px;
+        width: 0; 
+        height: 0; 
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
-        border-top: 5px solid $black;
-      }*/
+        border-top: 5px solid $gray;
+      }
     }
     /* end .sort */
     .itemsperpage {
-        width: 11rem;
+        width: 13rem;
         text-align: right;
         float: right;
-        margin-top: 1.1rem;
+         position: relative;
+        margin-top: 0.5rem;
+         select {
+        font-family: "helvetica neue", helvetica;
+        font-size: 1rem;
+        font-weight: 200;
+        max-width: 100%;
+        padding: 8px 24px 8px 10px;
+        border: none;
+        background-color: transparent;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        &:active,
+        &:focus {
+          outline: none;
+          box-shadow: none;
+        }
+      }
+      &:after {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        margin-top: -2px;
+        right: 8px;
+        width: 0; 
+        height: 0; 
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid $gray;
+      }
     }
     /* end .itemsperpage */
     #tab1:checked~#photo-grid,
@@ -692,6 +717,7 @@ a.button.page-next {
     padding: 0.5rem 0;
     border-top: 1px solid $lightgray;
     border-bottom: 1px solid $lightgray;
+    float: left;
     .stats {}
     .pagination {
         float: right;
@@ -1212,6 +1238,7 @@ footer {
                 display: none;
             }
         }
+
     }
     footer {
         width: 100%;
