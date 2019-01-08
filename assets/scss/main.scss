@@ -258,9 +258,10 @@ section#search {
         width: 100%;
         text-align: center;
         input {
-            width: 97%;
+            width: 100%;
             height: 55px;
             padding: 0 20px;
+            margin:0 -2%;
             font-size: 1rem;
             border: 1px solid #D0CFCE;
             outline: none;
@@ -1278,8 +1279,31 @@ footer {
         .itemsperpage {
             width: 100%;
             margin:0 0 0.4rem 0;
-        }
+        }    
+        article {
+            &#photo-grid {
+                .photo {
+                    display: inline-block;
+                    vertical-align: top;
+                    position: relative;
+                    width: 33%;
+                    margin-bottom: 0; //border-bottom:1px solid $white;
+                    &:nth-child(3n+1) {
+                        /* 1st,4th,7th, 10th etc. */
+                        margin-right: 0; //border-right:1px solid $white;
+                    }
+                    &:nth-child(3n+3) {
+                        /* 3rd, 6th, 9th, 12th etc. */
+                        margin-left: 0; //border-left:1px solid $white;
+                    }
+                }/* end .photo */
+            }/* end #content1 Grid */
+        }/* end article */
     } 
+    .page-more-wrapper {
+        margin: 0.8rem auto 1rem auto;
+    }
+
 }
 
 @media screen and (max-width: 350px) {
