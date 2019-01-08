@@ -311,31 +311,6 @@ section#search {
                 border: 1px solid #333;
             }
         }
-        /*  TO: Removed
-
-    button.location-icon{
-    cursor: pointer;
-    height: 45px;
-    width: 45px;
-    position: absolute;
-    margin: 5px 0 0 10px;
-    background-color: white;
-    border:none;
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255,0) 21px, rgb(0, 0, 0) 21px, rgb(0, 0, 0) 23px, rgba(255, 255, 255,0) 1px, rgba(255, 255, 255,0)),linear-gradient(to right, rgba(255, 255, 255,0) 21px, rgb(0, 0, 0) 21px, rgb(0, 0, 0) 23px, rgba(255, 255, 255,0) 1px, rgba(255, 255, 255,0));
-    &::before {
-      content: '';
-      height: 30px;
-      width: 30px;
-      position: absolute;
-      top: 7px;
-      left: 7px;
-      border-radius: 100%;
-      border: solid 9px white;
-      background-color: black;
-      box-shadow: 0px 0px 0px 2px;
-    }
-
-  }*/
         button {
             &:hover {
                 opacity: 0.6;
@@ -485,7 +460,7 @@ section#results {
         font-size: 18px;
         display: block;
         display: inline-block;
-        padding: 1em;
+        padding: 1rem;
         cursor: pointer;
         text-decoration: none;
         border-right: 1px solid $white;
@@ -499,9 +474,9 @@ section#results {
         }
     }
     .sort {
-        width: 12rem;
+        width: 11em;
         float: right;
-        margin-top: 0.5rem;
+        margin-top: 0.7rem;
         position: relative;
         text-align: right;
       select {
@@ -536,11 +511,11 @@ section#results {
     }
     /* end .sort */
     .itemsperpage {
-        width: 13rem;
+        width: 11rem;
         text-align: right;
         float: right;
          position: relative;
-        margin-top: 0.5rem;
+        margin-top: 0.7rem;
          select {
         font-family: "helvetica neue", helvetica;
         font-size: 1rem;
@@ -681,37 +656,9 @@ section#results {
         /* end #content2 List */
     }
     /* end article */
-} // GN: pagination
-.button {
-    cursor: pointer;
-    text-decoration: none;
-    color: $black;
-    &:hover {
-        color: $primary-color;
-    }
-    &[href=''] {
-        opacity: 0;
-    }
-}
+} 
 
-a.button.page-prev,
-a.button.page-next {
-    background: $primary-color;
-    padding: 0.5rem 1rem;
-    color: $white;
-    &:hover {
-        background: $secondary-color;
-    }
-}
-
-a.button.page-prev {
-    margin-right: 2rem;
-}
-
-a.button.page-next {
-    margin-left: 2rem;
-}
-
+// GN: pagination
 .pagination-wrapper {
     width: 100%;
     padding: 0.5rem 0;
@@ -721,6 +668,35 @@ a.button.page-next {
     .stats {}
     .pagination {
         float: right;
+    }
+    .button {
+    cursor: pointer;
+    text-decoration: none;
+    color: $black;
+    &:hover {
+        color: $primary-color;
+    }
+    &[href=''] {
+        opacity: 0;
+    }
+    }
+
+    a.button.page-prev,
+    a.button.page-next {
+        background: $primary-color;
+        padding: 0.5rem 1rem;
+        color: $white;
+        &:hover {
+            background: $secondary-color;
+        }
+    }
+
+    a.button.page-prev {
+        margin-right: 2rem;
+    }
+
+    a.button.page-next {
+        margin-left: 2rem;
     }
 }
 
@@ -735,6 +711,7 @@ a.button.page-next {
     }
     a {
         color: $white;
+        text-decoration: none;
         &:hover {
             color: $white;
         }
@@ -1245,12 +1222,70 @@ footer {
         float: left;
     }
 }
+@media screen and (max-width: 800px) {
+
+/**** SEARCH RESULTS ****/
+
+    section#results {
+        label {
+            padding: 0.7rem;
+        }
+        .sort {
+            width: 60%;
+            float: right;
+            text-align: left;
+            margin:0 0 0.8rem 0;
+          &:after {
+            left: 135px;
+          }
+        }
+        /* end .sort */
+        .itemsperpage {
+            width: 40%;
+            text-align: left;
+            float: right;
+            margin:0 0 0.8rem 0;
+          &:after {
+            left: 160px;
+          }
+      }
+  } 
+
+}
+
+@media screen and (max-width: 500px) {
+    section#results {
+        .sort {
+            width: 100%;
+            margin:0 0 0 0;
+        }
+        /* end .sort */
+        .itemsperpage {
+            width: 100%;
+            margin:0 0 0.4rem 0;
+        }
+    } 
+}
 
 @media screen and (max-width: 350px) {
     /**** HEADER ****/
     header {
         a {
             font-size: 1.5rem;
+        }
+    }
+    .pagination-wrapper {
+        a.button.page-prev,
+        a.button.page-next {
+            padding: 0.5rem 0.8rem;
+        }
+
+        a.button.page-prev {
+            margin-right: 0.2rem;
+        }
+
+        a.button.page-next {
+            margin-left: 0.2rem;
         }
     }
     footer{
