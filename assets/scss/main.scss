@@ -740,7 +740,7 @@ section#results {
 section#photo {
     margin-top: 3rem;
     .photo-image {
-        width: 50%;
+        width: 60%;
         display: inline-block;
         margin-right: 4%;
         border: 1px solid #f1f1f1;
@@ -750,7 +750,7 @@ section#photo {
         }
     }
     .photo-data {
-        width: 45%;
+        width: 35%;
         display: inline-block;
         vertical-align: top;
         font-size: 1.1rem;
@@ -775,21 +775,22 @@ section#photo {
 
 // Map on the Photo page
 section#photo-map {
+    margin-top: 3rem;
     h3 {
         color: $primary-color;
         font-size: 0.7rem;
         text-transform: uppercase;
         margin: 0 0 0.2rem 0;
-        margin: 0;
         font-weight: 100;
     }
 }
 
 #map-leaflet {
-    height: 55vh;
+    height: 25vh;
     min-height: 20rem;
     width: 100%;
     margin-bottom: 2rem;
+    border: 1px solid $lightgray;
 }
 
 // Submission Form
@@ -1250,7 +1251,21 @@ footer {
           }
       }
   } 
-
+  /**** PHOTO PAGE ****/
+    section#photo {
+        margin-top: 3rem;
+        .photo-image {
+            width: 100%;
+            margin-right: 0;
+        }
+        .photo-data {
+            width: 100%;
+            margin-top: 2rem;
+        }
+    }
+    section#photo-map {
+        margin-top: 1rem;
+    }
 }
 
 @media screen and (max-width: 500px) {
