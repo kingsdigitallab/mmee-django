@@ -1165,7 +1165,7 @@ footer {
     ul {
         display: block;
         width: 100%;
-        margin-left: 0;
+        margin-left: -20px;
         &.logo {
             >li {
                 display: inline-block;
@@ -1251,6 +1251,12 @@ footer {
     header {
         a {
             font-size: 1.5rem;
+        }
+    }
+    footer{
+        img{
+            width:90%;
+            height:auto;
         }
     }
 }
