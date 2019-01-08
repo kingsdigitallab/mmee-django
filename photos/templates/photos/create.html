@@ -24,14 +24,16 @@
     <input id='step7' type='checkbox'>
 
   <div id="part1" class="step">
-    <h3>Step 1: Upload your photo</h3>
+    <h3>Submission form</h3>
       <!-- <input aria-label="upload photo" type="file"
       id="image" name="image"
       accept="image/png, image/jpeg" /> -->
       {# todo: use template for fields #}
-
+      <div class='file-input'>
       {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
+      </div>
 
+      
       <img id="upload-preview" alt="Image upload preview">
 
       <label class="photo-date">Date taken (month - year)<br>
