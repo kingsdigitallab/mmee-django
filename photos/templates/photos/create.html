@@ -31,17 +31,15 @@
       {# todo: use template for fields #}
       <div class='file-input'>
       {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
-      </div>
-
-      
       <img id="upload-preview" alt="Image upload preview">
-
+      </div>
+      <hr>
       <label class="photo-date">Date taken (month - year)<br>
           {% form_field form.taken_month %}
           -
           {% form_field form.taken_year placeholder="e.g. 2018" %}
       </label>
-
+      <hr>
       {% form_field form.location %}
 
       {# step 2 #}
@@ -53,7 +51,7 @@
       <hr>
 
       {% form_field form.author_feeling_category placeholder="" label="How do you feel about this photo?" %}
-
+      <hr>
       {% form_field form.author_feeling_keywords placeholder="" label="In 3 keywords of less, list that feeling." %}
 
       {# step 4 #}
@@ -65,11 +63,11 @@
       <hr>
 
       {% form_field form.age_range placeholder="" label="What age category are you?" %}
-
+      <hr>
       {% form_field form.gender placeholder="" label="What do you identify as?" %}
 
       {% form_field form.gender_other placeholder="" label="If other, please specify" %}
-
+      <hr>
     <div class="button-wrapper">
         <a href="/">
           <label class="back">
