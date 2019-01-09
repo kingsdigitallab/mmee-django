@@ -764,6 +764,32 @@ section#photo {
         }
         p {
             margin: 0 0 2rem 0;
+            .flag-button{
+                padding:0.6rem 0.8rem;
+                background: lighten($lightgray, 4%);
+                text-decoration: none;
+                color: lighten($black,50%);
+                font-size: 0.8rem;
+
+                &:before{
+                    background: $white;
+                    content:"!";
+                    padding:0.2rem 0.6rem;
+                    height:auto;
+                    border-radius: 50%;
+                    color: lighten($black,50%);
+                    font-weight: bold;
+                    margin-right: 0.5rem;
+                }
+                &:hover{
+                    background: $secondary-color;
+                    color: $black;
+                    &:before{
+                        background: $white;
+                        color: $black;
+                    }
+                }
+            }
         }
         ul {
             margin: 0 0 2rem -20px;
@@ -805,6 +831,7 @@ section#photo-map {
     text-align: center;
 
     .file-input{
+
         background:$white;
         padding:1.5rem;
         input[type="file"] {
@@ -1364,6 +1391,7 @@ footer {
             margin-top: 2rem;
         }
     }
+
     section#photo-map {
         margin-top: 1rem;
     }
@@ -1464,13 +1492,40 @@ footer {
 // see form to flag a photo as inappropriate
 .form-flag {
     display: none;
-    border: 1px solid grey;
     padding: 1rem;
     margin: 0.5rem auto;
     max-width: 40rem;
+    background-color: lighten($lightgray, 7%);
+    text-align: center;
+    border-top:10px solid $secondary-color;
     textarea {
         width: 100%;
         height: 5rem;
+        border: 1px dashed $gray;
+    }
+    a{
+        background: $primary-color;
+        color: $white;
+        text-decoration: none;
+        padding:0.5rem 1rem;
+        &:hover{
+            background: $secondary-color;
+            color: $black;
+        }
+    }
+    input{
+        background: $primary-color;
+        color: $white;
+        text-decoration: none;
+        padding:0.5rem 1rem;
+        font-family: "Raleway", "helvetica neue", helvetica;
+        font-size: 1rem;
+        border: 0;
+        cursor: pointer;
+        &:hover{
+            background: $secondary-color;
+            color: $black;
+        }
     }
 }
 
