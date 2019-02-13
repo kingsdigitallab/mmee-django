@@ -18,14 +18,14 @@
         <p class="alert alert-success">
             Thank you for caring about the quality of our content.
             An editor will soon review your comment and take the
-            appropriate action. 
+            appropriate action.
         </p>
     {% else %}
         <!-- The form for a visitor to flag a photo as inappropriate-->
         <form id="form-flag" class="form-flag" action="" method="POST">
             {% csrf_token %}
             {{ form_flag.non_field_errors }}
-            
+
             {{ form_flag.flagger_comment.errors }}
             <p>{{ form_flag.flagger_comment.help_text }}</p>
             {{ form_flag.flagger_comment }}
@@ -61,7 +61,7 @@
             <h3>Data</h3>
                 <ul>
                     {% if photo.taken_year %}
-                        <li>Date taken: 
+                        <li>Date taken:
                             {{ photo.taken_month_name }}
                             {{ photo.taken_year }}
                         </li>
@@ -76,17 +76,17 @@
               <div class="photo-location">
                 <h3>Location</h3>
                 <!-- TO: GN, could you add geolocation, lat/long here please -->
-                <p>{{ photo.location }}</p> 
-                    
+                <p>{{ photo.location_nw }}</p>
+
               </div><!-- end .location -->
           {% endif %}
-                    
+
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
-    
+
     <section id="photo-map">
         <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
-        
+
         <h3>Map</h3>
         <!-- div instead of img -->
         {% if photo.location %}
@@ -95,7 +95,7 @@
         {% else %}
             <p>This photo has not yet been precisely located on a map</p>
         {% endif %}
-        
+
     </section> <!-- end #map -->
 
 </main>
@@ -131,15 +131,15 @@ $(function(){
             $form_flag.find('textarea').focus();
         }
     }
-    
+
     $('.flag-button').on('click', function() {
         show_form_flag();
     });
-    
+
     $('.form-cancel').on('click', function() {
         show_form_flag(1);
     });
-    
+
     {% if form_flag.is_bound %}
         show_form_flag();
     {% endif %}

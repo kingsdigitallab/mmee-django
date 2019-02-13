@@ -17,6 +17,25 @@ import calendar
 DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
 
 
+def get_nw_string_from_point(point):
+    '''Returns a nice string like this: 51.519°N 0.061°W
+    From a Point.
+    SRID=4326;POINT (-0.02044 51.50686)
+    '''
+    if point is None:
+        return ''
+
+    y = [point.y, 'N']
+    if y[0] < 0:
+        y = [-y[0], 'S']
+    x = [point.x, 'E']
+    if x[0] < 0:
+        x = [-x[0], 'W']
+
+    ret = '{:.3f}°{} {:.3f}°{}'.format(y[0], y[1], x[0], x[1])
+    return ret
+
+
 @register_snippet
 class PhotoFlag(models.Model):
     '''
@@ -368,6 +387,9 @@ class Photo(index.Indexed, models.Model):
             self.photographer, self.title,
             self.get_image_tag('height-50')
         ))
+
+    def location_nw(self):
+        return get_nw_string_from_point(self.location)
 
     @property
     def taken_month_name(self):
