@@ -70,10 +70,6 @@ class PhotoCategory(index.Indexed, models.Model):
     def __str__(self):
         return self.label
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.label)
-        super().save(*args, **kwargs)
-
     panels = [
         FieldPanel('label'),
     ]
@@ -97,7 +93,8 @@ class PhotoSubcategory(index.Indexed, models.Model):
         return '{}: {}'.format(self.category.label, self.label)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.label)
+        if not self.slug:
+            self.slug = slugify(self.label)
         super().save(*args, **kwargs)
 
     panels = [
@@ -460,3 +457,7 @@ class Photo(index.Indexed, models.Model):
             ])
 
         return ret
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('photo-view', args=[str(self.pk)])

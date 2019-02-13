@@ -15,7 +15,7 @@ urlpatterns = [
     path('photos/create/', PhotoCreateView.as_view()),
     path('photos/created/', TemplateView.as_view(
         template_name='photos/created.html')),
-    path('photos/<slug:pk>/', PhotoDetailView.as_view()),
+    path('photos/<slug:pk>/', PhotoDetailView.as_view(), name='photo-view'),
     path(API_ROOT + '/photos/', ApiPhotoSearchView.as_view()),
     # path(API_ROOT + '/photos/<slug:pk>/', ApiPhotoDetailView.as_view()),
 ]

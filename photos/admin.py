@@ -31,6 +31,8 @@ class PhotoSubcategoryAdmin(admin.ModelAdmin):
     list_display_links = ['label']
     search_fields = ['category__label', 'label']
 
+    prepopulated_fields = {'slug': ('label',)}
+
 
 class PhotoImageFilter(SimpleListFilter):
     title = 'Image'  # or use _('country') for translated title
