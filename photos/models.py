@@ -149,9 +149,9 @@ class Photographer(index.Indexed, models.Model):
     )
 
     GENDER_CHOICES = [
-        (0, 'unspecified'),
         (1, 'female'),
         (2, 'male'),
+        (0, 'prefer no to say'),
         (3, 'other'),
     ]
 
@@ -300,9 +300,9 @@ class Photo(index.Indexed, models.Model):
 
     # data captured by the submission form
     author_focus_keywords = models.CharField(
-        max_length=100,
+        max_length=150,
         blank=True, null=True, default=None,
-        help_text='Author\'s main focus in three keywords'
+        help_text='Author\'s main focus in a few keywords'
     )
     author_focus = models.TextField(
         blank=True, default='', help_text='Author\'s main focus'
@@ -310,16 +310,18 @@ class Photo(index.Indexed, models.Model):
     author_feeling_category = models.IntegerField(
         choices=FEELINGS,
         blank=True, null=True, default=None,
-        help_text='Author\'s feeling about photo'
+        help_text='Author\'s feeling about this photo'
     )
-    author_feeling_keywords = models.TextField(
+    author_feeling_keywords = models.CharField(
+        max_length=100,
         blank=True, default='',
-        help_text='Keyword describing author\'s feelings about photo'
+        help_text='Keyword describing author\'s feelings about this photo'
     )
     author_reason = models.TextField(
         'Motivation',
         blank=True, default='',
-        help_text='Why did the author take this picture?'
+        help_text='Why did the author take this picture?',
+        max_length=500,
     )
 
     panels = [
