@@ -156,6 +156,7 @@ class PhotoAdmin(admin.ModelAdmin):
         ('Info supplied by project team', {
             'fields': (
                 'subcategories',
+                'legacy_categories',
                 'comments'
             ),
         }),

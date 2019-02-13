@@ -13,8 +13,6 @@ from django.utils import timezone
 import datetime
 import re
 import calendar
-''' TODO:
-'''
 
 DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
 
@@ -119,7 +117,7 @@ class PhotoSubcategory(index.Indexed, models.Model):
 
 @register_snippet
 class Photographer(index.Indexed, models.Model):
-    # optional - we keep those in case but no longer needed
+    # optional - we keep those in case but NO LONGER NEEDED
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -131,7 +129,8 @@ class Photographer(index.Indexed, models.Model):
         )
     )
     phone_number = models.CharField(
-        validators=[phone_regex], max_length=11, blank=True, null=True)
+        validators=[phone_regex], max_length=11, blank=True, null=True
+    )
 
     #
     AGE_RANGE_CHOICES = [
@@ -170,9 +169,11 @@ class Photographer(index.Indexed, models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
+        if self.last_name:
+            return '{} {}'.format(self.first_name or '', self.last_name)
         return 'Photographer #{}'.format(self.pk)
 
-    # Django admin is the prefered interface to manage photographers
+    # Django admin is the preferred interface to manage photographers
     panels = [
         # FieldPanel('first_name'),
         # FieldPanel('last_name'),
@@ -182,7 +183,7 @@ class Photographer(index.Indexed, models.Model):
         FieldPanel('gender'),
     ]
 
-    # Django admin is the prefered interface to manage photographers
+    # Django admin is the preferred interface to manage photographers
     search_fields = [
         # index.SearchField('first_name', partial_match=True),
         # index.SearchField('last_name', partial_match=True),
@@ -269,6 +270,11 @@ class Photo(index.Indexed, models.Model):
         blank=True,
         on_delete=models.CASCADE,
         related_name='+'
+    )
+
+    legacy_categories = models.TextField(
+        'Legacy categories, for reference only',
+        blank=True, default=''
     )
 
     description = models.TextField(blank=True, default='')
