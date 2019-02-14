@@ -143,14 +143,16 @@ class PhotoAdmin(admin.ModelAdmin):
                    'photographer__gender_category', 'photographer__age_range'
                    ]
 
-    search_fields = ['photographer__first_name',
-                     'photographer__last_name', 'description']
+    search_fields = ['photographer__first_name', 'photographer__last_name',
+                     'description', 'reference_number']
+
+    readonly_fields = ['reference_number']
 
     inlines = [PhotoFlagInline]
 
     fieldsets = (
         ('Status', {
-            'fields': ('review_status',)
+            'fields': ('review_status', 'reference_number')
         }),
         ('Related records', {
             'fields': ('image', 'photographer',),

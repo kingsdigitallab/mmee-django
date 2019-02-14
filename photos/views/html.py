@@ -16,6 +16,7 @@ from django.core.exceptions import ValidationError
 # from mapwidgets.widgets import GooglePointFieldWidget
 from django.contrib.gis.forms.widgets import OSMWidget
 from django import forms
+from django.db import transaction
 
 
 class PhotoSearchView(TemplateView):
@@ -139,6 +140,7 @@ class PhotoCreateView(CreateView):
     template_name = 'photos/create.html'
     form_class = PhotoForm
     success_url = '/photos/created/'
+    template_name_success = 'photos/created.html'
 
     def form_invalid(self, form):
         # TODO: remove this
@@ -147,8 +149,11 @@ class PhotoCreateView(CreateView):
         print(form.errors)
         return super().form_invalid(form)
 
+    @transaction.atomic
     def form_valid(self, form):
         image_file = form.cleaned_data['image_file']
+
+        print(image_file.name)
 
         photographer = Photographer(
             age_range=form.cleaned_data['age_range'],
@@ -168,5 +173,6 @@ class PhotoCreateView(CreateView):
         photo.photographer = photographer
         photo.save()
 
-        print('New photo #', photo.pk, 'new image #', image.pk)
+        self.request.session['reference_number'] = photo.reference_number
+
         return super().form_valid(form)
