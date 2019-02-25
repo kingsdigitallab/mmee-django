@@ -111,12 +111,12 @@
                 </a>
               </div>
               <div class="photobuttons">
-                <h3>
+                <a class="view-map" href="">
                     View on map
-                </h3>
-                <h3>
+                </a>
+                <a class="view-details" href="">
                     View details
-                </h3>               
+                </a>               
               </div>
             </div>
             <p class="page-more-wrapper" v-if="link_next">
@@ -140,12 +140,12 @@
                     <h2>{{ photo.attributes.description }}</h2>
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                     <div class="photobuttons">
-                        <h3>
+                        <a class="view-map" href="">
                             View on map
-                        </h3>
-                        <h3>
+                        </a>
+                        <a class="view-details" href="">
                             View details
-                        </h3>               
+                        </a>               
                     </div>
                 </div>
                

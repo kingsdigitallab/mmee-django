@@ -621,17 +621,18 @@ section#results {
                     transition:opacity 0.3s linear;
                     text-align:center;
                     width:100%;
-                    h3{
+                    a.view-map,a.view-details{
                         text-align:center;
-                        background-color:$primary-color;
+                        background-color:rgba(37,116,120,0.7);
                         display: inline-block;
                         padding:0.3rem 0.5rem;
                         font-size:0.9rem;
                         color:$white;
                         font-weight: normal;
                         margin: 0.5rem 0.5rem;
+                        text-decoration: none;
                         &:hover{
-                            background-color:$secondary-color;
+                            background-color:rgba(255,200,0,0.7);
                             color:$black;
                             cursor: pointer;
                         }
@@ -688,7 +689,7 @@ section#results {
                     width: 71%;
                     display: inline-block;
                     vertical-align: top;
-                    h3{
+                    a.view-map,a.view-details{
                         text-align:center;
                         background-color:$primary-color;
                         display: inline-block;
@@ -697,6 +698,7 @@ section#results {
                         color:$white;
                         font-weight: normal;
                         margin:0.2rem 0.5rem 0.2rem 0;
+                        text-decoration: none;
                         &:hover{
                             background-color:$secondary-color;
                             color:$black;
@@ -1489,7 +1491,7 @@ footer {
                             margin-bottom: 0.3rem;
                         }
                     }/* end .photodata */
-                    .photobuttons{
+                    a.view-map,a.view-details{
                         width: 100%;
                     }/* end .photobuttons */
                 }/* end .photo */
