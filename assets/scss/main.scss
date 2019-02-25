@@ -613,6 +613,39 @@ section#results {
                         }
                     }
                 }
+                .photobuttons{
+                    position:absolute;
+                    top:20%;
+                    opacity:0;
+                    z-index:1000;
+                    transition:opacity 0.3s linear;
+                    text-align:center;
+                    width:100%;
+                    h3{
+                        text-align:center;
+                        background-color:$primary-color;
+                        display: inline-block;
+                        padding:0.3rem 0.5rem;
+                        font-size:0.9rem;
+                        color:$white;
+                        font-weight: normal;
+                        margin: 0.5rem 0.5rem;
+                        &:hover{
+                            background-color:$secondary-color;
+                            color:$black;
+                            cursor: pointer;
+                        }
+                    }
+                }/* end .photobuttons */
+                &:hover{
+                    .photobuttons{
+                      opacity:1;
+                      h3{
+                        opacity:1;
+                      }
+                    }
+                }
+
             }
             /* end .photo */
         }
@@ -651,12 +684,29 @@ section#results {
                     }
                 }
                 /* end .photodata */
-            }
-            /* end .photo */
-        }
-        /* end #content2 List */
-    }
-    /* end article */
+                .photobuttons{
+                    width: 71%;
+                    display: inline-block;
+                    vertical-align: top;
+                    h3{
+                        text-align:center;
+                        background-color:$primary-color;
+                        display: inline-block;
+                        padding:0.3rem 0.5rem;
+                        font-size:0.9rem;
+                        color:$white;
+                        font-weight: normal;
+                        margin:0.2rem 0.5rem 0.2rem 0;
+                        &:hover{
+                            background-color:$secondary-color;
+                            color:$black;
+                            cursor: pointer;
+                        }
+                    }
+                }/* end .photobuttons */
+            }/* end .photo */
+        }/* end #content2 List */
+    }/* end article */
 } 
 
 // GN: pagination
@@ -1426,6 +1476,24 @@ footer {
                     }
                 }/* end .photo */
             }/* end #content1 Grid */
+            &#photo-list {
+                .photo {
+                    .photo-image {
+                        width: 100%;
+                        padding-bottom: 100%;
+                        margin-top: 1rem;
+                    }
+                    .photodata {
+                        width: 100%;
+                        h2{
+                            margin-bottom: 0.3rem;
+                        }
+                    }/* end .photodata */
+                    .photobuttons{
+                        width: 100%;
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #content2 List */
         }/* end article */
     } 
     .page-more-wrapper {
