@@ -64,7 +64,6 @@ header {
 /**** NAVIGATION ****/
 
 /*nav*/
-
 nav {
     .menu-list {
         position: fixed;
@@ -122,11 +121,11 @@ nav {
         &.submit-label {
             position: fixed;
             top: 0;
-            right: 57px;
             font-size: 2em;
             background: $primary-color;
-            padding: 22px 12px;
             border: 1px solid $white;
+            right: 73px;
+            padding: 22px 20px;
             span {
                 /* plus icon */
                 position: relative;
@@ -159,7 +158,7 @@ nav {
             right: 0;
             font-size: 2em;
             background: $primary-color;
-            padding: 22px 8px;
+            padding: 22px 16px;
             border: 1px solid $white;
             span {
                 /* hamburger icon */
@@ -879,7 +878,6 @@ section#photo-map {
     padding: 2% 0;
     background-color: lighten($lightgray, 7%);
     padding: 1rem 2rem;
-    text-align: center;
 
     .file-input{
 
@@ -1354,7 +1352,7 @@ footer {
 }
 
 @media screen and (min-width: 1200px) {
-    /*nav*/
+        /*nav*/
     nav {
         label {
             &.submit-label {
@@ -1366,7 +1364,6 @@ footer {
             }
         }
     }
-    /* end nav */
     section#results {
         #photo-map {
             clear: both;
@@ -1395,7 +1392,6 @@ footer {
                 display: none;
             }
         }
-
     }
     footer {
         width: 100%;
@@ -1449,6 +1445,24 @@ footer {
 }
 
 @media screen and (max-width: 500px) {
+    body{
+        margin: 0 3%;
+        width: 94%;
+    }
+    /*nav*/
+    nav {
+        label {
+            &.submit-label {
+                right: 57px;
+                padding: 22px 10px;
+            }
+            &.menu-label {
+                padding: 22px 8px;
+
+            }
+        }
+    }
+    /* end nav */
     section#results {
         .sort {
             width: 100%;
@@ -1499,6 +1513,10 @@ footer {
     } 
     .page-more-wrapper {
         margin: 0.8rem auto 1rem auto;
+    }
+    // Submission Form
+    .submission-form {
+        padding: 0.5rem 1rem;
     }
 
 }
