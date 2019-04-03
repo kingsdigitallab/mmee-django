@@ -110,6 +110,14 @@
                 <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                 </a>
               </div>
+              <div class="photobuttons">
+                <a class="view-map" href="">
+                    View on map
+                </a>
+                <a class="view-details" href="">
+                    View details
+                </a>               
+              </div>
             </div>
             <p class="page-more-wrapper" v-if="link_next">
                 <a :href="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">
@@ -131,7 +139,16 @@
                 <div class="photodata">
                     <h2>{{ photo.attributes.description }}</h2>
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
+                    <div class="photobuttons">
+                        <a class="view-map" href="">
+                            View on map
+                        </a>
+                        <a class="view-details" href="">
+                            View details
+                        </a>               
+                    </div>
                 </div>
+               
             </div>
             <p class="page-more-wrapper">
                 <a :href="link_next" v-if="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">

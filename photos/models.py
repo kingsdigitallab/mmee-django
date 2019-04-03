@@ -18,9 +18,8 @@ DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
 
 
 def get_nw_string_from_point(point):
-    '''Returns a nice string like this: 51.519°N 0.061°W
-    From a Point.
-    SRID=4326;POINT (-0.02044 51.50686)
+    '''Returns a nice string like this: '51.519°N 0.061°W'
+    from a Point object SRID=4326;POINT (-0.06123 51.51981)
     '''
     if point is None:
         return ''
@@ -346,6 +345,10 @@ class Photo(index.Indexed, models.Model):
         max_length=500,
     )
 
+    reference_number = models.CharField(
+        'Reference number', max_length=20, blank=True, default='',
+    )
+
     panels = [
         SnippetChooserPanel('photographer'),
         FieldPanel('review_status'),
@@ -387,6 +390,12 @@ class Photo(index.Indexed, models.Model):
             self.photographer, self.title,
             self.get_image_tag('height-50')
         ))
+
+    def save(self, *args, **kwargs):
+        if not self.reference_number:
+            import time
+            self.reference_number = ('%X' % int(time.time())).replace('0', 'X')
+        super().save(*args, **kwargs)
 
     def location_nw(self):
         return get_nw_string_from_point(self.location)
