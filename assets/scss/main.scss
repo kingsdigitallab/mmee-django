@@ -134,7 +134,7 @@ nav {
                 transition: all .1s ease-in;
                 width: 35px;
                 height: 2px;
-                background-color: #fff;
+                background-color: $white;
                 display: block;
                 &:before {
                     content: '';
@@ -144,12 +144,18 @@ nav {
                     transition: all .1s ease-in;
                     width: 2px;
                     height: 35px;
-                    background-color: #fff;
+                    background-color: $white;
                     display: block
                 }
             }
             &:hover {
                 background: $secondary-color;
+                span{
+                    background-color: $black;
+                    &:before {
+                        background-color: $black;
+                    }
+                }
             }
         }
         &.menu-label {
@@ -324,12 +330,13 @@ section#search {
         margin-top: 2em;
         .filter {
             display: inline-block;
-            text-align: center;
+            text-align: left;
             width: 15rem;
             background: $primary-color;
             color: $white;
             &:hover {
                 background: $secondary-color;
+                color: $black;
             }
             input#filter-nav[type="checkbox"] {
                 display: none;
@@ -341,7 +348,7 @@ section#search {
                 content: "✕";
                 position: absolute;
                 top: 10px;
-                left: 210px;
+                left: 260px;
                 color: white;
                 z-index: 501;
                 font-size: 1.8rem;
@@ -364,7 +371,7 @@ section#search {
                 padding: 0.4rem 1rem;
                 cursor: pointer;
                 display: inline-block;
-                width: 50%;
+                width: 100%;
                 text-align: center;
                 -moz-transition: all 200ms ease-in;
                 -webkit-transition: all 200ms ease-in;
@@ -375,16 +382,16 @@ section#search {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 250px;
+                width: 300px;
                 height: 100%;
-                margin: 0 0 0 -250px;
+                margin: 0 0 0 -300px;
                 -moz-transition: all 200ms ease-in;
                 -webkit-transition: all 200ms ease-in;
                 -o-transition: all 200ms ease-in;
                 transition: all 200ms ease-in;
                 z-index: 500;
                 ul {
-                    width: 250px;
+                    width: 300px;
                     height: 100%;
                     padding: 3rem 1rem 1rem 1rem;
                     background: $primary-color;
@@ -445,11 +452,12 @@ section#search {
 /* end section #search */
 
 /**** SEARCH RESULTS ****/
-
 section#results {
     margin: 0 auto; // padding-top: 70px;
     padding-top: 40px;
     position: relative;
+    width:55%;
+    float:left;
     input,
     section,
     article {
@@ -472,6 +480,9 @@ section#results {
         transition: all 200ms ease-in;
         &:hover {
             color: $secondary-color;
+            label{
+                color:$black;
+            }
         }
     }
     .sort {
@@ -565,6 +576,7 @@ section#results {
             color: $secondary-color;
         }
     }
+
     article {
         &#photo-grid {
             .photo {
@@ -623,7 +635,7 @@ section#results {
                     width:100%;
                     a.view-map,a.view-details{
                         text-align:center;
-                        background-color:rgba(37,116,120,0.7);
+                        background-color:rgba(37,116,120,0.8);
                         display: inline-block;
                         padding:0.3rem 0.5rem;
                         font-size:0.9rem;
@@ -708,8 +720,34 @@ section#results {
                 }/* end .photobuttons */
             }/* end .photo */
         }/* end #content2 List */
+
     }/* end article */
-} 
+    #photo-map {
+        clear: both;
+        display: block;
+        position: absolute; // GN: use margin on map-leaflet instead, leave margin & padding = 0 on this element
+        // top: 8.6rem;
+        top: 0; // keep this to 0
+        padding-top: 0;
+        right: 0;
+        width: 75%;
+        margin-right: -82%;
+        /* GN: goes all the way down to the footer */
+        height: 100%;
+        #map-leaflet {
+            // GN: pushed it up a little so we can see more of the map on page load
+            // also because it's not affected by the pagination and other controls
+            // on the left hand side.
+            height: 40vh;
+            margin: 2rem 0;
+        }
+    }
+    label {
+        &[for=tab3] {
+            display: none;
+        }
+    }
+} /* end section#results */
 
 // GN: pagination
 .pagination-wrapper {
@@ -726,9 +764,9 @@ section#results {
     cursor: pointer;
     text-decoration: none;
     color: $black;
-    &:hover {
-        color: $primary-color;
-    }
+        &:hover {
+            color: $primary-color;
+        }
     &[href=''] {
         opacity: 0;
     }
@@ -741,6 +779,7 @@ section#results {
         color: $white;
         &:hover {
             background: $secondary-color;
+            color: $black;
         }
     }
 
@@ -1312,9 +1351,9 @@ section#photo-map {
 
 // Footer
 footer {
-    // GN
+    width: 100%;
+    float: left;
     margin-top: 1rem;
-
     background: $white;
     border-top: 1px solid black;
     ul {
@@ -1351,53 +1390,33 @@ footer {
     }
 }
 
-@media screen and (min-width: 1200px) {
-        /*nav*/
-    nav {
-        label {
-            &.submit-label {
-                right: 73px;
-                padding: 22px 20px !important;
-            }
-            &.menu-label {
-                padding: 22px 16px;
-            }
-        }
-    }
+@media screen and (max-width: 1200px) {
     section#results {
+        width:100%;
+        float:left;
         #photo-map {
-            clear: both;
-            display: block;
-            position: absolute; // GN: use margin on map-leaflet instead, leave margin & padding = 0 on this element
-            // top: 8.6rem;
-            top: 0; // keep this to 0
-            padding-top: 0;
-            right: 0;
-            width: 75%;
-            margin-right: -82%;
-            /* GN: goes all the way down to the footer */
-            height: 100%;
+            position: relative; // GN: use margin on map-leaflet instead, leave margin & padding = 0 on this element
+            padding-top:0.2rem;
+            width: 100%;
+            margin-right: 0;
+            display:none;
             #map-leaflet {
-                // GN: pushed it up a little so we can see more of the map on page load
-                // also because it's not affected by the pagination and other controls
-                // on the left hand side.
-                height: 40vw;
-                margin: 2rem 0;
+                width: 100%;
+                margin-bottom: 2rem;
             }
         }
-        width:55%;
-        float:left;
         label {
             &[for=tab3] {
-                display: none;
+                display:inline-block;
             }
         }
-    }
-    footer {
-        width: 100%;
-        float: left;
-    }
-}
+    }/* end section#results */
+ 
+}/* end @media screen and (min-width: 1200px) */
+
+
+
+
 @media screen and (max-width: 800px) {
 
 /**** SEARCH RESULTS ****/
@@ -1508,9 +1527,9 @@ footer {
                         width: 100%;
                     }/* end .photobuttons */
                 }/* end .photo */
-            }/* end #content2 List */
+            }/* end #photo-list */
         }/* end article */
-    } 
+    } /*end section#results */
     .page-more-wrapper {
         margin: 0.8rem auto 1rem auto;
     }

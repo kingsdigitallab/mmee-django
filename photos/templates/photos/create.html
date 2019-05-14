@@ -18,10 +18,6 @@
 
     <input id='step2' type='checkbox'>
     <input id='step3' type='checkbox'>
-    <input id='step4' type='checkbox'>
-    <input id='step5' type='checkbox'>
-    <input id='step6' type='checkbox'>
-    <input id='step7' type='checkbox'>
 
   <div id="part1" class="step">
     <h3>Submission form</h3>
@@ -31,7 +27,7 @@
       </div>
 
       <hr>
-      <label class="photo-date">Date taken (month - year)<br>
+      <label class="photo-date">Month and Year photo was taken<br>
           {% form_field form.taken_month %}
           <span> - </span>
           {% form_field form.taken_year placeholder="e.g. 2019" %}
@@ -74,8 +70,8 @@
   </div>
 
   <div id="part2" class="step">
-      <h3>Step 7: Consent Information</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      <h3>Consent Information</h3>
+      <p>I understand that this image will only be used by Sensing Place, and by uploading this photograph and associated information, I confirm that this image and associated text will not cause any offence, embarrassment or distress. I understand that the image and/or text may not be made public if it seemed inappropriate by the moderators. By uploading this image and associated text, I give permission for Sensing Place to use them on their public website, and for research purposes related to this website.
       </p>
 
       {{ form.consent.errors }}
