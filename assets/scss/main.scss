@@ -398,7 +398,9 @@ section#search {
                     color: white;
                     margin: 0;
                     list-style: none;
-                    overflow: scroll;
+                    // overflow: scroll;
+                    // GN: to hide horiz scrollbar when not needed (Chrome)
+                    overflow: auto;
                     li {
                         margin: 0;
                     }
