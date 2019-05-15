@@ -105,18 +105,18 @@
         </div>
 
         <article id="photo-grid" class="tab-content">
-            <div v-for="photo in photos" class="photo">
-              <div class="photo-image" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+            <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+              <div class="photo-image">
                 <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                 </a>
               </div>
               <div class="photobuttons">
-                <a class="view-map" href="">
+                <a class="view-map" href="#">
                     View on map
                 </a>
-                <a class="view-details" href="">
+                <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
                     View details
-                </a>               
+                </a>
               </div>
             </div>
             <p class="page-more-wrapper" v-if="link_next">
@@ -131,8 +131,8 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab maxime fugiat perspiciatis.</p>
     </div>-->
         <article id="photo-list" class="tab-content">
-            <div v-for="photo in photos" class="photo">
-                <div class="photo-image" :data-photoid="photo.id">
+            <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+                <div class="photo-image">
                   <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                   </a>
                 </div>
@@ -140,15 +140,15 @@
                     <h2>{{ photo.attributes.description }}</h2>
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                     <div class="photobuttons">
-                        <a class="view-map" href="">
+                        <a class="view-map" href="#">
                             View on map
                         </a>
-                        <a class="view-details" href="">
+                        <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
                             View details
-                        </a>               
+                        </a>
                     </div>
                 </div>
-               
+
             </div>
             <p class="page-more-wrapper">
                 <a :href="link_next" v-if="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">
