@@ -27,12 +27,13 @@
       </div>
 
       <hr>
-      <label class="photo-date">Month and Year photo was taken<br>
+      <h4>Date photo was taken</h4>
+      <label class="photo-date">Month
           {% form_field form.taken_month %}
-          <span> - </span>
+      </label>
+      <label class="photo-date">Year
           {% form_field form.taken_year placeholder="e.g. 2019" %}
       </label>
-
       <hr>
       {% form_field form.location %}
 

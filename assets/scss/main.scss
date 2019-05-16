@@ -976,8 +976,10 @@ section#photo-map {
         font-size: 17px;
         border: 1px dashed $gray;
         border-radius: 5px;
-        background-color: #fff;
+        background-color: $white;
         box-shadow: none;
+        border-radius: 0;
+        -webkit-border-radius: 0px;
     }
     .button-wrapper {
         width: 100%;
@@ -1041,6 +1043,9 @@ section#photo-map {
             border-color: transparent darken($primary-color, 15%) transparent transparent;
         }*/
     }
+    h4{
+        margin:0;
+    }
     ul{
         margin-left: -40px;
         li{
@@ -1070,15 +1075,32 @@ section#photo-map {
         font-size: 17px;
         border: 1px dashed $gray;
         border-radius: 5px;
-        background-color: #fff;
+        background-color: $white;
         box-shadow: none;
-      }
-
+        border-radius: 0;
+        -webkit-border-radius: 0px;
+        }
     }
     .photo-date {
-      input {
-        width: 5rem;
-      }
+        display:inline-block;
+        width:49%;
+      input,select {
+        width: 70%;
+        border: 1px dashed $gray;
+        height: 2rem;
+        padding: 0.3rem;
+        margin:0 2%;
+        }
+        select{
+            border-radius: 0;
+            -webkit-appearance: none;
+            -webkit-border-radius: 0px;
+            background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+            background-size: 5px 5px, 5px 5px, 1px 1.5em;
+            background-repeat: no-repeat;
+            -moz-appearance: none;
+          }
     }
 
     /* Form label and placeholder */
@@ -1558,7 +1580,21 @@ footer {
     // Submission Form
     .submission-form {
         padding: 0.5rem 1rem;
-    }
+        label{
+            margin:0.5rem 0;
+        }
+        ul{
+            margin: 0 0 1rem -40px;
+        }
+        .photo-date {
+            display:inline-block;
+            width:100%;
+            input, select{
+                float: right;
+                margin:0;
+            }
+        }/* end .photo-data */
+    }/* end .submission-form */
 }/* end @media screen and (max-width: 500px) */
 
 @media screen and (max-width: 350px) {
