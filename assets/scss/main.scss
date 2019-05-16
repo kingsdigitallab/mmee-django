@@ -1568,8 +1568,11 @@ footer {
                             margin-bottom: 0.3rem;
                         }
                     }/* end .photodata */
-                    a.view-map,a.view-details{
-                        width: 50%;
+                    .photobuttons{
+                        width:100%;
+                        a.view-map,a.view-details{
+                            width: 45%;
+                        }
                     }/* end .photobuttons */
                 }/* end .photo */
             }/* end #photo-list */
