@@ -886,7 +886,7 @@ section#photo {
             }
         }
         ul {
-            margin: 0 0 2rem -20px;
+            margin: 0 0 2rem -40px;
             li {
                 list-style-type: square;
             }
@@ -1398,6 +1398,7 @@ footer {
     }
     a {
         color: $primary-color;
+        text-decoration: none;
         &:hover {
             color: lighten($primary-color, 25%);
         }

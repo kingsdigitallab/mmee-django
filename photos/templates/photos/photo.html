@@ -58,23 +58,24 @@
           </div><!-- end #photo-description -->
 
           <div class="photo-photograph">
+            <h3>Date</h3>
+              <ul>
+                  {% if photo.taken_year %}
+                          {{ photo.taken_month_name }}
+                          {{ photo.taken_year }}
+                  {% endif %}
+              </ul>
+            {% for subcat in photo.subcategories.all %}
             <h3>Data</h3>
-                <ul>
-                    {% if photo.taken_year %}
-                        <li>Date taken:
-                            {{ photo.taken_month_name }}
-                            {{ photo.taken_year }}
-                        </li>
-                    {% endif %}
-                  {% for subcat in photo.subcategories.all %}
-                      <li>{{ subcat }}</li>
-                  {% endfor %}
-                </ul>
+              <ul>
+                <li>{{ subcat }}</li>
+              </ul>
+            {% endfor %}
           </div><!-- end .photograph-data -->
 
           {% if photo.location %}
               <div class="photo-location">
-                <h3>Location</h3>
+                <h3>Location Coordinates</h3>
                 <!-- TO: GN, could you add geolocation, lat/long here please -->
                 <p>{{ photo.location_nw }}</p>
 
