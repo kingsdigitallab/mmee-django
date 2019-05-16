@@ -629,22 +629,25 @@ section#results {
                 }
                 .photobuttons{
                     position:absolute;
-                    top:20%;
+                    top:7vw;
                     opacity:0;
                     z-index:1000;
                     transition:opacity 0.3s linear;
                     text-align:center;
                     width:100%;
+                    margin-bottom: 0; //border-bottom:1px solid $white;
+                   
                     a.view-map,a.view-details{
                         text-align:center;
                         background-color:rgba(37,116,120,0.8);
                         display: inline-block;
-                        padding:0.3rem 0.5rem;
-                        font-size:0.9rem;
+                        padding:0.5rem 0.5rem;
+                        font-size:1rem;
                         color:$white;
                         font-weight: normal;
-                        margin: 0.5rem 0.5rem;
+                        margin:2vw 0.5rem;
                         text-decoration: none;
+                        width:80%;
                         &:hover{
                             background-color:rgba(255,200,0,0.7);
                             color:$black;
@@ -1413,7 +1416,6 @@ footer {
             }
         }
     }/* end section#results */
-
 }/* end @media screen and (min-width: 1200px) */
 
 
@@ -1446,6 +1448,15 @@ footer {
             left: 160px;
           }
       }
+      article {
+            &#photo-grid {
+                .photo {
+                    .photobuttons{
+                        top:5vw;
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #content1 Grid */
+        }/* end article */
   }
   /**** PHOTO PAGE ****/
     section#photo {
@@ -1463,7 +1474,7 @@ footer {
     section#photo-map {
         margin-top: 1rem;
     }
-}
+}/* end @media screen and (max-width: 800px) */
 
 @media screen and (max-width: 500px) {
     body{
@@ -1501,7 +1512,6 @@ footer {
                     vertical-align: top;
                     position: relative;
                     width: 33%;
-                    margin-bottom: 0; //border-bottom:1px solid $white;
                     &:nth-child(3n+1) {
                         /* 1st,4th,7th, 10th etc. */
                         margin-right: 0; //border-right:1px solid $white;
@@ -1510,14 +1520,24 @@ footer {
                         /* 3rd, 6th, 9th, 12th etc. */
                         margin-left: 0; //border-left:1px solid $white;
                     }
+                    .photobuttons{
+                        top:5vw;
+                        a.view-map,a.view-details{
+                            width: 90%;
+                            font-size:0.8rem;
+                            margin:0.3rem 0;
+                        }
+                    }/* end .photobuttons */
                 }/* end .photo */
             }/* end #content1 Grid */
             &#photo-list {
                 .photo {
+
                     .photo-image {
                         width: 100%;
                         padding-bottom: 100%;
                         margin-top: 1rem;
+
                     }
                     .photodata {
                         width: 100%;
@@ -1526,7 +1546,7 @@ footer {
                         }
                     }/* end .photodata */
                     a.view-map,a.view-details{
-                        width: 100%;
+                        width: 50%;
                     }/* end .photobuttons */
                 }/* end .photo */
             }/* end #photo-list */
@@ -1539,8 +1559,7 @@ footer {
     .submission-form {
         padding: 0.5rem 1rem;
     }
-
-}
+}/* end @media screen and (max-width: 500px) */
 
 @media screen and (max-width: 350px) {
     /**** HEADER ****/
@@ -1549,6 +1568,33 @@ footer {
             font-size: 1.5rem;
         }
     }
+    section#results {
+        label {
+            padding:2vw;
+            font-size: 1rem;
+        }
+        article {
+            &#photo-grid {
+                .photo {
+                    .photobuttons{
+                        top:2.5vw;
+                        a.view-map,a.view-details{
+                            font-size:0.7rem;
+                            margin:0.3rem 0;
+                            padding:0.5rem 0;
+                        }
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #content1 Grid */
+            &#photo-list {
+                .photo {
+                    a.view-map,a.view-details{
+                        width: 50%;
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #photo-list */
+        }/* end article */
+    } /*end section#results */
     .pagination-wrapper {
         a.button.page-prev,
         a.button.page-next {
@@ -1569,7 +1615,28 @@ footer {
             height:auto;
         }
     }
-}
+} /* end @media screen and (max-width: 350px) */
+
+@media screen and (max-width: 270px) {
+    section#results {
+        article {
+            &#photo-grid {
+                .photo {
+                    .photobuttons{
+                        display:none;
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #content1 Grid */
+        }/* end article */
+    } /*end section#results */
+}/* end @media screen and (max-width: 270px) */
+
+@media (hover: none) {
+   a:link {
+      color: red;
+   }
+}/* end @media (hover: none) */
+
 
 // GN - front-end flash message box to provide feedback to user actions
 .alert {
