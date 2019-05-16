@@ -348,7 +348,7 @@ section#search {
                 content: "✕";
                 position: absolute;
                 top: 10px;
-                left: 260px;
+                left: 235px;
                 color: white;
                 z-index: 501;
                 font-size: 1.8rem;
@@ -382,16 +382,16 @@ section#search {
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 300px;
+                width: 270px;
                 height: 100%;
-                margin: 0 0 0 -300px;
+                margin: 0 0 0 -270px;
                 -moz-transition: all 200ms ease-in;
                 -webkit-transition: all 200ms ease-in;
                 -o-transition: all 200ms ease-in;
                 transition: all 200ms ease-in;
                 z-index: 500;
                 ul {
-                    width: 300px;
+                    width: 270px;
                     height: 100%;
                     padding: 3rem 1rem 1rem 1rem;
                     background: $primary-color;
