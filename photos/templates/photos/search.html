@@ -24,30 +24,23 @@
                     All Filters
                 </label>
                 <div class="filter-list">
-                  <ul>
-                    <li>
                       <h2>Filters</h2>
-                      <form action="">
-                        <h3>Categories</h3>
-
+                      <button aria-label="clear filters">Clear All</button>
+                      <form action="">    
                         <template v-for="facet in meta.facets">
-                            <h4>{{ facet[0] }}</h4>
-                            <div v-for="option in facet[1]">
+                            <h4>Function{{ facet[0] }}</h4>
+                            <ul>
+                            <li v-for="option in facet[1]">
                                 <label>
                                     <input type="checkbox"
                                         v-bind:name="option[0]+':'+option[1]"
                                         value="1" v-bind:checked="option[4]"
                                         v-on:click="on_change_option(option, $event)">
                                     {{ option[2] }} ({{ option[3] }})
-                                </label>
-                            </div>
-
+                                </li>
+                            </ul>
                         </template>
-
-                        <button aria-label="clear filters">Clear filters</button>
                       </form>
-                    </li>
-                  </ul>
                 </div>
             </div>
 

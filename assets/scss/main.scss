@@ -400,22 +400,10 @@ section#search {
                 -o-transition: all 200ms ease-in;
                 transition: all 200ms ease-in;
                 z-index: 500;
-                ul {
-                    width: 270px;
-                    height: 100%;
-                    padding: 3rem 1rem 1rem 1rem;
+                padding: 3rem 1rem 1rem 1rem;
                     background: $primary-color;
                     color: white;
-                    margin: 0;
-                    list-style: none;
-                    // overflow: scroll;
-                    // GN: to hide horiz scrollbar when not needed (Chrome)
                     overflow: auto;
-                    li {
-                        margin: 0;
-                    }
-                    /* end li*/
-                }/* end ul*/
                 label {
                     display: block;
                     -moz-transition: all 200ms ease-in;
@@ -428,10 +416,17 @@ section#search {
                         font-size: 1rem;
                         text-align: center;
                     }/* end filter-label */
+                    span{
+                        font-size:0.8rem;
+                    }
+
                 }/* end label */
                 h2{
                     width:5.5rem;
                     display: inline-block;
+                }
+                h4{
+                    margin:0.5rem 0;
                 }
                 button {
                     font-size: 0.6rem;
@@ -446,8 +441,26 @@ section#search {
                     &:hover {
                         border-bottom: 1px solid $white;
                     }
+                }/* end button */
+                ul{
+                    li{
+                        list-style-type: none;
+                        margin:0.5rem 0 0.5rem -30px;
+                        input{
+                            -webkit-appearance: none;
+                            -moz-appearance: none;
+                            border-radius: 5px;
+                            background-color: $white;
+                            box-shadow: none;
+                            border-radius: 0;
+                            width: 15px;
+                            height: 15px;
+                            vertical-align: bottom;
+                            -webkit-border-radius: 0px;
+                            outline: 0;
+                        }
+                    }
                 }
-                /* end button */
             }/* end .filter-list */
             .multi-select {
                 display: none;
