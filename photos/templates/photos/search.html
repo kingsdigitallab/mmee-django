@@ -25,7 +25,7 @@
                 </label>
                 <div class="filter-list">
                       <h2>Filters</h2>
-                      <button aria-label="clear filters">Clear All</button>
+                      <button aria-label="clear filters" v-on:click="on_clear_filters()">Clear All</button>
                       <form action="">
                         <template v-for="facet in meta.facets">
                             <h4>{{ facet[0] }}</h4>

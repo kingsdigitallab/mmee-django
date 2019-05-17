@@ -123,6 +123,9 @@ var photo_search = function(g_initial_query) {
                 option[4] = event.target.checked ? 1: 0;
                 this.call_api({page: 1});
             },
+            on_clear_filters: function() {
+                this.call_api({page: 1, facets: ''});
+            },
             on_phrase_submit: function() {
                 // don't use a 'watch: phrase' otherwise all keydown will
                 // generate a new query.
@@ -153,7 +156,7 @@ var photo_search = function(g_initial_query) {
                 this.meta.query.
 
                 If query_string is provided (?page=1), it will be used instead
-                of this.data.query and aquery.
+                of this.meta.query and aquery.
 
                 this.data is updated with the API response. Including this.meta.query.
 

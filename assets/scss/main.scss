@@ -447,8 +447,10 @@ section#search {
                         list-style-type: none;
                         margin:0.5rem 0 0.5rem -30px;
                         input{
-                            -webkit-appearance: none;
-                            -moz-appearance: none;
+                            // GN: temporarily removed this otherwise I
+                            // can't see whether a checkbox is ticked or not!
+                            // -webkit-appearance: none;
+                            // -moz-appearance: none;
                             border-radius: 5px;
                             background-color: $white;
                             box-shadow: none;
