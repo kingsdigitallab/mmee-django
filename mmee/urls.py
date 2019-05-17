@@ -15,8 +15,6 @@ admin.autodiscover()
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('digger/', include('activecollab_digger.urls')),
-
     re_path('wagtail/', include(wagtailadmin_urls)),
 
     # re_path('documents/', include('wagtail.documents.urls')),
