@@ -19,6 +19,9 @@
             Thank you for caring about the quality of our content.
             An editor will soon review your comment and take the
             appropriate action.
+            {% if moderation_page %}
+                <a href="{{ moderation_page.get_url }}" target="_blank">Moderation policy</a>
+            {% endif %}
         </p>
     {% else %}
         <!-- The form for a visitor to flag a photo as inappropriate-->
@@ -27,11 +30,15 @@
             {{ form_flag.non_field_errors }}
 
             {{ form_flag.flagger_comment.errors }}
-            <p>{{ form_flag.flagger_comment.help_text }}</p>
+            <p>{{ form_flag.flagger_comment.help_text }}
+                {% if moderation_page %}
+                    <a href="{{ moderation_page.get_url }}" target="_blank">Moderation policy</a>
+                {% endif %}
+            </p>
             {{ form_flag.flagger_comment }}
             <p>
-                <a href="#" class="form-cancel">Cancel</a>
-                <input type="submit" name="submit" value="Submit" class="form-submit">
+                <a href="#" class="form-cancel btn">Cancel</a>
+                <input type="submit" name="submit" value="Submit" class="form-submit btn">
             </p>
         </form>
     {% endif %}
@@ -50,27 +57,35 @@
               </p>
           {% endif %}
 
-          <div class="photo-description">
-            <h3>Description</h3>
-            <p>
-              {{ photo.description }}
-            </p>
-          </div><!-- end #photo-description -->
+          {% if photo.description %}
+              <div class="photo-description">
+                <h3>Description</h3>
+                <p>
+                  {{ photo.description }}
+                </p>
+              </div><!-- end #photo-description -->
+          {% endif %}
 
           <div class="photo-photograph">
-            <h3>Date</h3>
-              <ul>
-                  {% if photo.taken_year %}
-                          {{ photo.taken_month_name }}
-                          {{ photo.taken_year }}
-                  {% endif %}
-              </ul>
-            {% for subcat in photo.subcategories.all %}
-            <h3>Data</h3>
-              <ul>
-                <li>{{ subcat }}</li>
-              </ul>
-            {% endfor %}
+            {% if photo.taken_year %}
+                <h3>Date</h3>
+                  <ul>
+                      {% if photo.taken_year %}
+                              {{ photo.taken_month_name }}
+                              {{ photo.taken_year }}
+                      {% endif %}
+                  </ul>
+            {% endif %}
+            {% with photo.subcategories.all as subcats %}
+                {% if subcats %}
+                    <h3>Data</h3>
+                    <ul>
+                        {% for subcat in photo.subcategories.all %}
+                            <li>{{ subcat }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
           </div><!-- end .photograph-data -->
 
           {% if photo.location %}

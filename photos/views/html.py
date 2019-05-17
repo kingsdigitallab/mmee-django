@@ -17,6 +17,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.gis.forms.widgets import OSMWidget
 from django import forms
 from django.db import transaction
+from wagtail.core.models import Page
+from django.conf import settings
 
 
 class PhotoSearchView(TemplateView):
@@ -32,6 +34,9 @@ class PhotoSearchView(TemplateView):
 
 
 class PhotoFlagForm(ModelForm):
+    '''
+    Web Form for public users to report an issue with a photo
+    '''
 
     class Meta:
         model = PhotoFlag
@@ -70,6 +75,10 @@ class PhotoDetailView(DetailView):
         context['form_flag'] = self.form_flag
         # a new, saved PhotoFlag just posted by the user, None otherwise
         context['photo_flag'] = self.photo_flag
+
+        context['moderation_page'] = Page.objects.filter(
+            slug=settings.MODERATION_POLICY_PAGE_SLUG
+        ).first()
 
         return context
 

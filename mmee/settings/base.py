@@ -80,7 +80,6 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += [  # your project apps here
-    'activecollab_digger',
     'django.contrib.gis',
     'kdl_ldap',
     'rest_framework',
@@ -97,9 +96,10 @@ INSTALLED_APPS += [  # your project apps here
     'wagtail.contrib.routable_page',
     'wagtail.contrib.table_block',
     'wagtail.contrib.modeladmin',
+    'wagtail.search',
+    'wagtail.contrib.postgres_search',
     'taggit',
     'modelcluster',
-    'haystack',
     'photos',
     'mapwidgets',
     'wagtailmenus',
@@ -318,14 +318,23 @@ WAGTAIL_SITE_NAME = PROJECT_TITLE
 
 ITEMS_PER_PAGE = 12
 
-HAYSTACK_CONNECTIONS = {
+USE_PIPENV = True
+
+# http://docs.wagtail.io/en/v2.5.1/topics/search/backends.html
+WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://localhost:8983/solr/default',
-        'TIMEOUT': 60 * 5,
-        'INCLUDE_SPELLING': True,
-        'BATCH_SIZE': 100,
-    },
+        # default and postgres have limited support for facets
+        # default: use the db, dev only, update_index not needed
+        # 'BACKEND': 'wagtail.search.backends.db',
+        # postgres: for production, also better text search (with stemming)
+        # 'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        #
+        'BACKEND': 'wagtail.search.backends.elasticsearch5',
+        'AUTO_UPDATE': True,
+        'ATOMIC_REBUILD': True,
+    }
 }
 
-USE_PIPENV = True
+# The slug of the Wagtail page which contains the moderation policy.
+# Linked from the report-issue form on the Photo Page.
+MODERATION_POLICY_PAGE_SLUG = 'moderation-policy'

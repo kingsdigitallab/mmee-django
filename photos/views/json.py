@@ -156,17 +156,10 @@ class ApiPhotoSearchView(View):
         # serialise Photos into JSON-like dictionaries
         imgspecs = request.GET.get('imgspecs', 'height-500')
         t0_3 = time.time()
-        if 1:
-            t0_3 = time.time()
-            ret['data'] = [
-                item.get_json_dic(imgspecs=imgspecs, geo_only=geo_only)
-                for item in ret['data']
-            ]
-        else:
-            ret['data'] = [
-                item.get_json_dic(imgspecs=imgspecs)
-                for item in ret['data']
-            ]
+        ret['data'] = [
+            item.get_json_dic(imgspecs=imgspecs, geo_only=geo_only)
+            for item in ret['data']
+        ]
 
         t1 = time.time()
         ret['meta']['debug'] = {
@@ -236,10 +229,12 @@ class ApiPhotoSearchView(View):
         selected_facet_options: selected options
         '''
         facets = []
+
         # https://docs.wagtail.io/en/latest/topics/search/searching.html
         # #faceted-search
         # format: [(PK, COUNT), ...]
         options = items.facet('subcategories__pk')
+
         subs = PhotoSubcategory.objects.filter(
             pk__in=[option for option in options.keys()]
         ).values_list(
@@ -260,9 +255,13 @@ class ApiPhotoSearchView(View):
             selected = '{}:{}'.format(
                 facet_name, sub[0]) in selected_facet_options
 
+            option_count = options.get(int(sub[0]), None)
+            if option_count is None:
+                option_count = options.get(str(sub[0]), None)
+
             ops.append([
                 facet_name, sub[0], sub[1],
-                options[sub[0]], selected
+                option_count, selected
             ])
 
         return facets

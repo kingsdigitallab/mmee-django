@@ -93,7 +93,7 @@ class PhotoCategory(index.Indexed, models.Model):
     ]
 
     search_fields = [
-        index.SearchField('label', partial_match=True),
+        index.SearchField('label'),
     ]
 
     class Meta:
@@ -121,7 +121,7 @@ class PhotoSubcategory(index.Indexed, models.Model):
     ]
 
     search_fields = [
-        index.SearchField('label', partial_match=True),
+        index.SearchField('label'),
     ]
 
     class Meta:
@@ -364,16 +364,30 @@ class Photo(index.Indexed, models.Model):
     search_fields = [
         index.FilterField('id'),
         index.FilterField('review_status'),
-        index.FilterField('subcategories__pk'),
+        # index.FilterField('subcategories__pk'),
         # index.SearchField('subcategories__pk'),
-        index.FilterField('photosubcategory_id'),
+        # index.FilterField('photosubcategory_id'),
         index.FilterField('image_id'),
-        index.SearchField('description', partial_match=True),
-        #         index.RelatedFields('photographer', [
-        #             index.SearchField('first_name', partial_match=True),
-        #             index.SearchField('last_name', partial_match=True),
+        index.SearchField('description'),
+        #         index.RelatedFields('subcategories', [
+        #             index.FilterField('id'),
         #         ]),
+
+        # two filters with the content...
+        # this one is mandatory for all types of backends (filter())
+        index.FilterField('photosubcategory_id'),
+        # this one is mandatory for default backend (facet())
+        index.FilterField('subcategories__pk'),
     ]
+
+    def photosubcategory_id(self):
+        """
+        https://stackoverflow.com/questions/43082438/how-do-you-filter-search-results-in-wagtail-based-on-a-manytomanyfield
+        """
+        return list(self.subcategories.all().values_list('id', flat=True))
+
+    def subcategories__pk(self):
+        return self.photosubcategory_id()
 
     class Meta:
         ordering = ['-created_at']

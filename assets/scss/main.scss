@@ -655,7 +655,7 @@ section#results {
                     text-align:center;
                     width:100%;
                     margin-bottom: 0; //border-bottom:1px solid $white;
-                   
+
                     a.view-map,a.view-details{
                         text-align:center;
                         background-color:rgba(37,116,120,0.8);
@@ -1723,6 +1723,23 @@ footer {
     border-color: #faebcc;
 }
 
+// GN: to make it explicit that we want a button,
+// otherwise all a or input on the form-flag is a button!
+.btn{
+    background: $primary-color;
+    color: $white;
+    text-decoration: none;
+    padding:0.5rem 1rem;
+    &:hover{
+        background: $secondary-color;
+        color: $black;
+    }
+    font-family: "Raleway", "helvetica neue", helvetica;
+    font-size: 1rem;
+    border: 0;
+    cursor: pointer;
+}
+
 // see form to flag a photo as inappropriate
 .form-flag {
     display: none;
@@ -1736,30 +1753,6 @@ footer {
         width: 100%;
         height: 5rem;
         border: 1px dashed $gray;
-    }
-    a{
-        background: $primary-color;
-        color: $white;
-        text-decoration: none;
-        padding:0.5rem 1rem;
-        &:hover{
-            background: $secondary-color;
-            color: $black;
-        }
-    }
-    input{
-        background: $primary-color;
-        color: $white;
-        text-decoration: none;
-        padding:0.5rem 1rem;
-        font-family: "Raleway", "helvetica neue", helvetica;
-        font-size: 1rem;
-        border: 0;
-        cursor: pointer;
-        &:hover{
-            background: $secondary-color;
-            color: $black;
-        }
     }
 }
 

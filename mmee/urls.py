@@ -22,11 +22,11 @@ urlpatterns = [
     # re_path('documents/', include('wagtail.documents.urls')),
 
     path('', include('photos.urls')),
-    path('search/', include('haystack.urls')),
+    # path('search/', include('haystack.urls')),
 
     # we temporarily by pass wagtail to show search interface on home page
     # nest increment we can implement search with proper wagtail page
-    re_path('^/?$', RedirectView.as_view(url='/photos/', permanent=False)),
+    path('', RedirectView.as_view(url='/photos/', permanent=False)),
 
     re_path('', include('wagtail.core.urls')),
 
