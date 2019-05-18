@@ -10,19 +10,36 @@
 
     <section id="search">
 
-       <div class="search-field">
+        <div class="search-field">
             <input v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
 
             <button class="search-icon" v-on:click="on_phrase_submit"></button>
             <!--<button class="location-icon"></button>-->
 
         </div>
+
+        <div class="search-summary">
+            <template v-for="facet in meta.facets">
+                <template v-for="option in facet[1]">
+                    <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}">
+                        <input type="checkbox"
+                            v-bind:name="option[0]+':'+option[1]"
+                            value="1" v-bind:checked="option[4]"
+                            v-bind:disabled="option[3] < 1"
+                            v-on:click="on_change_option(option, $event)">
+                            {{ option[2] }} ({{ option[3] }})
+                    </label>
+                </template>
+            </template>
+        </div>
+
         <div class="search-filters">
             <div class="filter">
                 <input type="checkbox" id="filter-nav" />
                 <label aria-label="Filter list" class="filter-label" for="filter-nav">
                     All Filters
                 </label>
+
                 <div class="filter-list">
                       <h2>Filters</h2>
                       <button aria-label="clear filters" v-on:click="on_clear_filters()">Clear All</button>
@@ -30,13 +47,15 @@
                         <template v-for="facet in meta.facets">
                             <h4>{{ facet[0] }}</h4>
                             <ul>
-                            <li v-for="option in facet[1]">
-                                <label>
-                                    <input type="checkbox"
-                                        v-bind:name="option[0]+':'+option[1]"
-                                        value="1" v-bind:checked="option[4]"
-                                        v-on:click="on_change_option(option, $event)">
-                                    {{ option[2] }} ({{ option[3] }})
+                                <li v-for="option in facet[1]">
+                                    <label :class="{'disabled': (option[3] < 1)}">
+                                        <input type="checkbox"
+                                            v-bind:name="option[0]+':'+option[1]"
+                                            value="1" v-bind:checked="option[4]"
+                                            v-bind:disabled="option[3] < 1"
+                                            v-on:click="on_change_option(option, $event)">
+                                        {{ option[2] }} ({{ option[3] }})
+                                    </label>
                                 </li>
                             </ul>
                         </template>
@@ -60,6 +79,7 @@
             <li>Try using our filters to find your product</li>
         </ul>
     </section>
+
     <section id="results" v-else>
         View:
         <template v-for="view in views">

@@ -128,8 +128,11 @@ class ApiPhotoSearchView(View):
         t0_1 = time.time()
 
         facets = []
+        facet_info = {}
         if not geo_only:
-            facets = self.get_facets_from_items(items, selected_facet_options)
+            facets = self.get_facets_from_items(
+                items, selected_facet_options, facet_info
+            )
 
         # Create response dictionary
         meta = OrderedDict([
@@ -167,6 +170,8 @@ class ApiPhotoSearchView(View):
             'd1': t0_1 - t0,
             'd2': t0_2 - t0_1,
             'd3': t0_3 - t0_2,
+            'type': str(type(items)),
+            'cache': facet_info.get('cache', 'unused'),
         }
 
         return ret
@@ -221,47 +226,61 @@ class ApiPhotoSearchView(View):
         ])
         return ret
 
-    def get_facets_from_items(self, items, selected_facet_options):
-        '''
-        Returns a dictionary of facet and options from search results.
+    def get_facets_from_items(self, items, selected_facet_options, facet_info):
+        ret = []
 
-        items: result object returned by wagtail search()
-        selected_facet_options: selected options
-        '''
-        facets = []
+        facet_info['cache'] = 'unused'
 
-        # https://docs.wagtail.io/en/latest/topics/search/searching.html
-        # #faceted-search
-        # format: [(PK, COUNT), ...]
-        options = items.facet('subcategories__pk')
+        subcats_all = self._get_all_subcats(facet_info)
+        subcats_filtered = {
+            sc[0]: sc
+            for sc in
+            self._get_subcats_from_items(items)
+        }
 
-        subs = PhotoSubcategory.objects.filter(
-            pk__in=[option for option in options.keys()]
-        ).values_list(
-            'pk', 'label', 'category__label'
-        ).order_by('category__label', 'label')
+        facet_name = None
+        for subcat in subcats_all:
+            if facet_name != subcat[3]:
+                facet_name = subcat[3]
+                options = []
+                ret.append([facet_name, options])
 
-        cat = None
-        ops = []
-        facet_name = 'cat'
-        for sub in subs:
-            facet = sub[2]
+            subcat_filtered = subcats_filtered.get(subcat[0], None)
+            c = 0
+            if subcat_filtered:
+                c = subcat_filtered[2]
+            selected = 'cat:{}'.format(subcat[0]) in selected_facet_options
 
-            if facet != cat:
-                cat = facet
-                ops = []
-                facets.append([facet, ops])
-
-            selected = '{}:{}'.format(
-                facet_name, sub[0]) in selected_facet_options
-
-            option_count = options.get(int(sub[0]), None)
-            if option_count is None:
-                option_count = options.get(str(sub[0]), None)
-
-            ops.append([
-                facet_name, sub[0], sub[1],
-                option_count, selected
+            options.append([
+                'cat',
+                subcat[0],
+                subcat[1],
+                c,
+                selected
             ])
 
-        return facets
+        return ret
+
+    def _get_all_subcats(self, facet_info):
+        cache_key = 'subcats_all'
+        from django.core.cache import cache
+        ret = cache.get(cache_key, None)
+        duration = settings.FACETS_CACHE_DURATION_MINS
+        if duration <= 0 or ret is None:
+            ret = self._get_subcats_from_items(Photo.objects.all())
+            cache.set(cache_key, ret, 60 * settings.FACETS_CACHE_DURATION_MINS)
+            facet_info['cache'] = 'miss'
+        else:
+            facet_info['cache'] = 'hit'
+
+        return ret
+
+    def _get_subcats_from_items(self, items):
+        from django.db.models import Count
+        ret = PhotoSubcategory.objects.filter(
+            photo__in=items
+        ).annotate(item_count=Count('photo')).values_list(
+            'pk', 'label', 'item_count', 'category__label'
+        ).order_by('category__label', 'label')
+
+        return list(ret)
