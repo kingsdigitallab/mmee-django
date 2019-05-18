@@ -419,7 +419,10 @@ section#search {
                     span{
                         font-size:0.8rem;
                     }
-
+                    cursor: pointer;
+                    &.disabled {
+                        cursor: default;
+                    }
                 }/* end label */
                 h2{
                     width:5.5rem;

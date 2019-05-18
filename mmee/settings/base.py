@@ -326,9 +326,9 @@ WAGTAILSEARCH_BACKENDS = {
         # default: use the db, dev only, update_index not needed
         # 'BACKEND': 'wagtail.search.backends.db',
         # postgres: for production, also better text search (with stemming)
-        # 'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        'BACKEND': 'wagtail.contrib.postgres_search.backend',
         #
-        'BACKEND': 'wagtail.search.backends.elasticsearch5',
+        # 'BACKEND': 'wagtail.search.backends.elasticsearch5',
         'AUTO_UPDATE': True,
         'ATOMIC_REBUILD': True,
     }
@@ -337,3 +337,5 @@ WAGTAILSEARCH_BACKENDS = {
 # The slug of the Wagtail page which contains the moderation policy.
 # Linked from the report-issue form on the Photo Page.
 MODERATION_POLICY_PAGE_SLUG = 'moderation-policy'
+
+FACETS_CACHE_DURATION_MINS = 60

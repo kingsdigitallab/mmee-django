@@ -164,7 +164,8 @@ var photo_search = function(g_initial_query) {
 
                 * One request for the showing a paginated list of images
 
-                * Another optional request for showing all (i.e. unpaginated) the photo markers on the map.
+                * Another optional request for showing all (i.e. unpaginated)
+                  photo markers on the map.
 
                 Both are query dependent (i.e. depend on search phrase, facets).
                 */
