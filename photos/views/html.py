@@ -118,6 +118,11 @@ class PhotoForm(ModelForm):
     consent = BooleanField()
 
     class Meta:
+        fields_required = [
+            'taken_year',
+            'author_focus_keywords',
+            'author_reason',
+        ]
         model = Photo
         fields = [
             'image_file',
@@ -139,10 +144,24 @@ class PhotoForm(ModelForm):
 
         widgets = {
             # 'location': GooglePointFieldWidget,
-            'location': OSMWidget,
+            #     default_lon = 5
+            #     default_lat = 47
+            #     default_zoom = 12
+            'location': OSMWidget(dict(
+                default_lon=-0.13,
+                default_lat=51.5,
+                map_width='auto'
+            )),
             'author_feeling_category': forms.RadioSelect(),
             # 'taken_month': forms.RadioSelect()
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        fields_required = getattr(self.Meta, 'fields_required', [])
+        for key in fields_required:
+            self.fields[key].required = True
 
 
 class PhotoCreateView(CreateView):

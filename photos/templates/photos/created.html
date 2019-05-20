@@ -3,12 +3,23 @@
 {% block main %}
 <div class="submission-form">
   <div id="part1">
+    <p>Your reference number: <strong>{{ request.session.reference_number }}</strong></p>
 
-    <p>Thank you for submitting a photograph with associated text to Sensing Place. It will now go to moderation and until moderation is completed your photograph will not be made public. Photographs of identifiable people cannot be made public due to Data Protection legislation, and images and/or text that could cause offense, embarrassment or distress will also not be made public.
+    <p>Thank you for submitting a photograph with associated text to
+      Sensing Place. It will now go to moderation and until moderation is
+      completed your photograph will not be made public. Photographs of
+      identifiable people cannot be made public due to Data Protection
+      legislation, and images and/or text that could cause offense,
+      embarrassment or distress will also not be made public.
     </p>
-  <p>Moderation will be done as soon as possible, and your photograph should be made public within a couple of weeks.</p>
-  <p>Reference number: <strong>{{ request.session.reference_number }}</strong></p>
-  <p>If you would like to contact the moderators to check the progress of your photograph, please provide details on the uploaded photograph and the reference number above to sensingplace@winchester.ac.uk</p>
+
+    <p>Moderation will be done as soon as possible, and your photograph should
+      be made public within a couple of weeks.
+    </p>
+
+    <p>If you would like to contact the moderators to check the progress of your
+      photograph, please provide details on the uploaded photograph and the
+      reference number above to sensingplace@winchester.ac.uk</p>
     </p>
   </div>
 </div>
