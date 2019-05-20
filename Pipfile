@@ -26,6 +26,7 @@ django_compressor = "*"
 wagtailmenus = "*"
 kdl-wagtail-page = "*"
 elasticsearch = ">=5.0.0,<6.0.0"
+taggit-selectize = "*"
 
 [requires]
 python_version = "3.5"

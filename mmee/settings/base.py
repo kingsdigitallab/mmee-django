@@ -99,6 +99,7 @@ INSTALLED_APPS += [  # your project apps here
     'wagtail.search',
     'wagtail.contrib.postgres_search',
     'taggit',
+    'taggit_selectize',
     'modelcluster',
     'photos',
     'mapwidgets',
@@ -287,6 +288,13 @@ FABRIC_USER = getpass.getuser()
 
 # Google Analytics ID
 GA_ID = ''
+
+# TAGGIT AUTO-COMPLETE IN ADMIN
+# https://github.com/chhantyal/taggit-selectize
+
+TAGGIT_TAGS_FROM_STRING = 'taggit_selectize.utils.parse_tags'
+TAGGIT_STRING_FROM_TAGS = 'taggit_selectize.utils.join_tags'
+
 
 # -----------------------------------------------------------------------------
 # Automatically generated settings

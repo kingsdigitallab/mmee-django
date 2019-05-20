@@ -78,7 +78,7 @@
             {% endif %}
             {% with photo.subcategories.all as subcats %}
                 {% if subcats %}
-                    <h3>Data</h3>
+                    <h3>Categories</h3>
                     <ul>
                         {% for subcat in photo.subcategories.all %}
                             <li>{{ subcat }}</li>
@@ -87,6 +87,19 @@
                 {% endif %}
             {% endwith %}
           </div><!-- end .photograph-data -->
+
+          {% with photo.tags.all as tags %}
+            {% if tags %}
+              <div class="photo-tags">
+                <h3>Tags</h3>
+                <ul>
+                    {% for tag in tags %}
+                        <li><a href="/photos/?phrase={{tag}}">{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+              </div><!-- end .location -->
+            {% endif %}
+          {% endwith %}
 
           {% if photo.location %}
               <div class="photo-location">

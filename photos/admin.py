@@ -171,7 +171,8 @@ class PhotoAdmin(admin.ModelAdmin):
             'fields': (
                 'subcategories',
                 'legacy_categories',
-                'comments'
+                'comments',
+                'tags'
             ),
         }),
         ('Information supplied by photographer', {

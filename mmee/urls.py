@@ -13,6 +13,7 @@ kdl_ldap_register_signal_hadlers()
 admin.autodiscover()
 
 urlpatterns = [
+    path('taggit/', include('taggit_selectize.urls')),
     path('admin/', admin.site.urls),
 
     re_path('wagtail/', include(wagtailadmin_urls)),

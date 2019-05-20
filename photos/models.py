@@ -13,6 +13,8 @@ from django.utils import timezone
 import datetime
 import re
 import calendar
+from taggit.models import TaggedItemBase
+from taggit_selectize.managers import TaggableManager
 
 DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
 
@@ -246,6 +248,13 @@ class Photographer(index.Indexed, models.Model):
         return dict(self.GENDER_CHOICES).get(self.gender, '')
 
 
+class PhotoTag(TaggedItemBase):
+    content_object = models.ForeignKey(
+        'photos.Photo', on_delete=models.CASCADE,
+        related_name='tagged_items'
+    )
+
+
 @register_snippet
 class Photo(index.Indexed, models.Model):
 
@@ -349,6 +358,8 @@ class Photo(index.Indexed, models.Model):
         'Reference number', max_length=20, blank=True, default='',
     )
 
+    tags = TaggableManager(through=PhotoTag, blank=True)
+
     panels = [
         SnippetChooserPanel('photographer'),
         FieldPanel('review_status'),
@@ -359,6 +370,7 @@ class Photo(index.Indexed, models.Model):
         FieldPanel('comments'),
         FieldPanel('date'),
         FieldPanel('location'),
+        FieldPanel('tags'),
     ]
 
     search_fields = [
@@ -369,10 +381,13 @@ class Photo(index.Indexed, models.Model):
         # index.FilterField('photosubcategory_id'),
         index.FilterField('image_id'),
         index.SearchField('description'),
+        index.SearchField('tags__name'),
         #         index.RelatedFields('subcategories', [
         #             index.FilterField('id'),
         #         ]),
-
+        index.RelatedFields('tags', [
+            index.SearchField('name'),
+        ]),
         # two filters with the content...
         # this one is mandatory for all types of backends (filter())
         index.FilterField('photosubcategory_id'),
