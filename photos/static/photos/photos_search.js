@@ -7,7 +7,7 @@ var photo_search = function(g_initial_query) {
         $X  : a jquery element
     */
 
-    // constents
+    // constants
     var g_image_size_increment = 75;
     var g_image_size_max = 500;
     var g_map_image_size = 2 * g_image_size_increment;

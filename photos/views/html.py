@@ -143,14 +143,9 @@ class PhotoForm(ModelForm):
         ]
 
         widgets = {
-            # 'location': GooglePointFieldWidget,
-            #     default_lon = 5
-            #     default_lat = 47
-            #     default_zoom = 12
             'location': OSMWidget(dict(
                 default_lon=-0.13,
                 default_lat=51.5,
-                map_width='auto'
             )),
             'author_feeling_category': forms.RadioSelect(),
             # 'taken_month': forms.RadioSelect()

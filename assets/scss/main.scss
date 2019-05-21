@@ -1812,6 +1812,14 @@ img.richtext-image {
     height: auto;
 }
 
-#id_location_map {
+div#id_location_map {
     width: auto;
+}
+
+div#id_location_div_map {
+    float: none;
+}
+
+.clear_features {
+    display: none;
 }
