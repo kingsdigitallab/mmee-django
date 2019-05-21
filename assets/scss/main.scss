@@ -654,7 +654,7 @@ section#results {
                 }
                 .photobuttons{
                     position:absolute;
-                    top:7vw;
+                    top:3vw;
                     opacity:0;
                     transition:opacity 0.3s linear;
                     text-align:center;
@@ -669,7 +669,7 @@ section#results {
                         font-size:1rem;
                         color:$white;
                         font-weight: normal;
-                        margin:2vw 0.5rem;
+                        margin:1vw 0.5rem;
                         text-decoration: none;
                         width:80%;
                         &:hover{
@@ -1443,9 +1443,23 @@ footer {
 }
 
 @media screen and (max-width: 1200px) {
-    section#results {
-        width:100%;
-        float:left;
+section#results {
+    width:100%;
+    float:left;
+      
+    article {
+        &#photo-grid {
+            .photo {
+                .photobuttons{
+                    top:7vw;
+                    a.view-map,a.view-details{
+                        margin:2vw 0.5rem;
+                    }
+                }/* end .photobuttons */
+            }/* end .photo */
+        }
+        /* end #content1 Grid */
+    }/* end article */
         #photo-map {
             position: relative; // GN: use margin on map-leaflet instead, leave margin & padding = 0 on this element
             padding-top:0.2rem;
@@ -1462,7 +1476,9 @@ footer {
                 display:inline-block;
             }
         }
-    }/* end section#results */
+} /* end section#results */
+
+
 }/* end @media screen and (min-width: 1200px) */
 
 
@@ -1696,9 +1712,17 @@ footer {
 }/* end @media screen and (max-width: 270px) */
 
 @media (hover: none) {
-   a:link {
-      color: red;
-   }
+    section#results {
+        article {
+            &#photo-grid {
+                .photo {
+                    .photobuttons{
+                        display:none;
+                    }/* end .photobuttons */
+                }/* end .photo */
+            }/* end #content1 Grid */
+        }/* end article */
+    } /*end section#results */
 }/* end @media (hover: none) */
 
 
