@@ -141,30 +141,49 @@
         function image_loaded() {
             $preview.addClass('show');
 
+            var year = '';
+            var month = 0;
+
             // https://github.com/exif-js/exif-js
+            $preview[0].exifdata = null;
             EXIF.getData($preview[0], function() {
-                var exif_data = EXIF.getAllTags(this);
+                var exif_data = EXIF.getAllTags($preview[0]);
                 // console.log(exif_data);
                 // DateTimeOriginal: "2018:12:20 21:15:59"
                 var date = exif_data.DateTimeOriginal;
                 if (date) {
                     date_parts = date.split(':');
-                    $('#id_taken_year').val(date_parts[0]);
-                    $('#id_taken_month').val(parseInt(date_parts[1]));
-                } else {
-                    $('#id_taken_year').val('');
-                    $('#id_taken_month').val(0);
+                    year = date_parts[0];
+                    month = parseInt(date_parts[1]);
                 }
 
-                var lat = exif_data.GPSLatitude;
+                // center map on Image GPS coordinates
+                // also add a point there.
                 var lon = exif_data.GPSLongitude;
-                if (0 && lat && lon) {
-                    geodjango_location.clearFeatures();
-                    geodjango_location.options.default_lon = parseFloat(lon[2].toString());
-                    geodjango_location.options.default_lat = parseFloat(lat[2].toString());
-                    geodjango_location.map.getView().setCenter(geodjango_location.defaultCenter());
+                var lat = exif_data.GPSLatitude;
+                var photo_location_is_working = true;
+                geodjango_location.clearFeatures();
+                if (photo_location_is_working && lat && lon) {
+                    // deg, min, sec => float
+                    var coord = [lon, lat].map(function(v) {
+                        return parseFloat(v[0].toString())
+                            + parseFloat(v[1].toString()) / 60.0
+                            + parseFloat(v[2].toString()) / 60.0 / 60.0;
+                    });
+                    // coord = [1, 53]; coord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857'); geodjango_location.map.getView().setCenter(coord);
+                    if (exif_data.GPSLongitudeRef == 'W') coord[0] = -coord[0];
+                    if (exif_data.GPSLatitudeRef == 'S') coord[1] = -coord[1];
+                    coord = ol.proj.transform(coord, 'EPSG:4326', 'EPSG:3857');
+                    geodjango_location.map.getView().setCenter(coord);
+                    geodjango_location.map.getView().setZoom(15);
+                    geodjango_location.featureCollection.push(new ol.Feature({
+                        geometry: new ol.geom.Point(coord)
+                    }));
                 }
             });
+
+            $('#id_taken_year').val(year);
+            $('#id_taken_month').val(month);
         };
 
         $('input[type=file]').change(function() {
