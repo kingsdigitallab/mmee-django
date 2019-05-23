@@ -324,6 +324,11 @@ section#search {
         }
     }
     /* end .search-field */
+    .search-summary{
+        
+    }
+
+
     .search-filters {
         text-align: center;
         width: 100%;
@@ -349,7 +354,7 @@ section#search {
                     content: "✕";
                     position: fixed;
                     top: 10px;
-                    left: 220px;
+                    left: 215px;
                     color: $primary-color;
                     z-index: 501;
                     font-size: 1.3rem;
@@ -449,7 +454,7 @@ section#search {
                     li{
                         list-style-type: none;
                         margin:0.5rem 0 0.5rem -30px;
-                        input{
+                        /*input{
                             // GN: temporarily removed this otherwise I
                             // can't see whether a checkbox is ticked or not!
                             // -webkit-appearance: none;
@@ -463,7 +468,78 @@ section#search {
                             vertical-align: bottom;
                             -webkit-border-radius: 0px;
                             outline: 0;
+                        }*/
+                        input {
+                          position: absolute; // take it out of document flow
+                          opacity: 0; // hide it
+
+                          & + label {
+                            position: relative;
+                            cursor: pointer;
+                            padding: 0;
+                          }
+
+                          // Box.
+                          & + label:before {
+                            content: '';
+                            margin-right: 10px;
+                            display: inline-block;
+                            vertical-align: text-top;
+                            width: 20px;
+                            height: 20px;
+                            background: white;
+                          }
+
+                          // Box hover
+                          &:hover + label:before {
+                            background: $secondary-color;
+                          }
+                          
+                          // Box focus
+                          &:focus + label:before {
+                            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+                          }
+
+                          // Box checked
+                          &:checked + label:before {
+                            background: $secondary-color;
+                          }
+                          
+                          // Disabled state label.
+                          &:disabled + label {
+                            color: $lightgray;
+                            cursor: auto;
+                            opacity: 0.5;
+                          }
+
+                          // Disabled box.
+                          &:disabled + label:before {
+                            box-shadow: none;
+                            background: $lightgray;
+                            opacity: 0.7;
+                          }
+
+                          // Checkmark. Could be replaced with an image
+                          &:checked + label:after {
+                            content: '';
+                            position: absolute;
+                            left: 5px;
+                            top: 9px;
+                            background: $black;
+                            width: 2px;
+                            height: 2px;
+                            box-shadow: 
+                              2px 0 0 $black,
+                              4px 0 0 $black,
+                              4px -2px 0 $black,
+                              4px -4px 0 $black,
+                              4px -6px 0 $black,
+                              4px -8px 0 $black;
+                            transform: rotate(45deg);
+                          }
                         }
+
+
                     }
                 }
             }/* end .filter-list */
