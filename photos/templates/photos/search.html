@@ -21,12 +21,14 @@
         <div class="search-summary">
             <template v-for="facet in meta.facets">
                 <template v-for="option in facet[1]">
-                    <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}">
-                        <input type="checkbox"
-                            v-bind:name="option[0]+':'+option[1]"
-                            value="1" v-bind:checked="option[4]"
-                            v-bind:disabled="option[3] < 1"
-                            v-on:click="on_change_option(option, $event)">
+                     <input type="checkbox"
+                        v-bind:id="option[0]+':'+option[1]"
+                        v-bind:name="option[0]+':'+option[1]"
+                        value="1" v-bind:checked="option[4]"
+                        v-bind:disabled="option[3] < 1"
+                        v-on:click="on_change_option(option, $event)">
+                    <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
+                   
                             {{ option[2] }} ({{ option[3] }})
                     </label>
                 </template>

@@ -325,7 +325,45 @@ section#search {
     }
     /* end .search-field */
     .search-summary{
-        
+        margin-top:5px;
+        input {
+          position: absolute; // take it out of document flow
+          opacity: 0; // hide it
+          &:checked + label {
+            position: relative;
+            cursor: pointer;
+            padding: 2px 25px 2px 4px;
+            margin: 5px 5px 0 0;
+            display: inline-block;
+            border: 1px solid lighten($lightgray,8%);
+            background: lighten($lightgray,8%);
+            &:after {  // Cross
+            font-size:0.7rem;
+            content: '✕';
+            position: absolute;
+            right: 4px;
+            top: 3px;
+            width:18px;
+            height:18px;
+            padding:2px 0 0 0;
+            display: inline-block;
+            vertical-align: text-top;
+            text-align: center;
+            color: lighten($lightgray,4%);
+            border-radius: 50%;
+            }
+            &:hover{
+                border: 1px solid $secondary-color;
+                background: $white;
+                &:after { 
+                    background: $secondary-color;
+                    color: $black;
+                }
+            }
+          }
+        }/* input */
+
+
     }
 
 
@@ -454,21 +492,6 @@ section#search {
                     li{
                         list-style-type: none;
                         margin:0.5rem 0 0.5rem -30px;
-                        /*input{
-                            // GN: temporarily removed this otherwise I
-                            // can't see whether a checkbox is ticked or not!
-                            // -webkit-appearance: none;
-                            // -moz-appearance: none;
-                            border-radius: 5px;
-                            background-color: $white;
-                            box-shadow: none;
-                            border-radius: 0;
-                            width: 15px;
-                            height: 15px;
-                            vertical-align: bottom;
-                            -webkit-border-radius: 0px;
-                            outline: 0;
-                        }*/
                         input {
                           position: absolute; // take it out of document flow
                           opacity: 0; // hide it
@@ -537,9 +560,7 @@ section#search {
                               4px -8px 0 $black;
                             transform: rotate(45deg);
                           }
-                        }
-
-
+                        }/* input */
                     }
                 }
             }/* end .filter-list */
