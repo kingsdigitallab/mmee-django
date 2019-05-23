@@ -268,12 +268,12 @@ section#search {
             padding: 0 20px;
             margin:0 -2%;
             font-size: 1rem;
-            border: 1px solid #D0CFCE;
+            border: 1px solid $lightgray;
             outline: none;
             &:focus {
-                border: 1px solid #008ABF;
+                border: 1px solid $primary-color;
                 transition: 0.35s ease;
-                color: #008ABF;
+                color: $black;
                 &::-webkit-input-placeholder {
                     transition: opacity 0.45s ease;
                     opacity: 0;
@@ -1010,6 +1010,14 @@ section#photo {
             margin: 0 0 2rem -40px;
             li {
                 list-style-type: square;
+                margin-left: 20px;
+                a{
+                    color: $primary-color;
+                    text-decoration: none;
+                    &:hover{
+                       text-decoration: underline; 
+                    }
+                }
             }
         }
     }
