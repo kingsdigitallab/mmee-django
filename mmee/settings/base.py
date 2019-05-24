@@ -287,7 +287,7 @@ FABRIC_USER = getpass.getuser()
 # -----------------------------------------------------------------------------
 
 # Google Analytics ID
-GA_ID = ''
+GA_ID = 'UA-67707155-10'
 
 # TAGGIT AUTO-COMPLETE IN ADMIN
 # https://github.com/chhantyal/taggit-selectize
