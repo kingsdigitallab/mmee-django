@@ -12,7 +12,7 @@
 
         <div class="search-field">
             <form>
-                <input type="text" name="focus" required v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
+                <input type="search" name="focus" required v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
                 <button class="close-icon" type="reset"></button>
                 <button class="search-icon" v-on:click="on_phrase_submit"></button>
                 <!--<button class="location-icon"></button>-->
