@@ -11,11 +11,12 @@
     <section id="search">
 
         <div class="search-field">
-            <input v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
-
-            <button class="search-icon" v-on:click="on_phrase_submit"></button>
-            <!--<button class="location-icon"></button>-->
-
+            <form>
+                <input type="text" name="focus" required v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
+                <button class="close-icon" type="reset"></button>
+                <button class="search-icon" v-on:click="on_phrase_submit"></button>
+                <!--<button class="location-icon"></button>-->
+            </form> 
         </div>
 
         <div class="search-summary">
