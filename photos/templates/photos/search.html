@@ -10,44 +10,61 @@
 
     <section id="search">
 
-       <div class="search-field">
-            <input v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
-
-            <button class="search-icon" v-on:click="on_phrase_submit"></button>
-            <!--<button class="location-icon"></button>-->
-
+        <div class="search-field">
+            <form>
+                <input type="search" name="focus" required v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
+                <button class="close-icon" type="reset"></button>
+                <button class="search-icon" v-on:click="on_phrase_submit"></button>
+                <!--<button class="location-icon"></button>-->
+            </form> 
         </div>
+
+        <div class="search-summary">
+            <template v-for="facet in meta.facets">
+                <template v-for="option in facet[1]">
+                     <input type="checkbox"
+                        v-bind:id="option[0]+':'+option[1]"
+                        v-bind:name="option[0]+':'+option[1]"
+                        value="1" v-bind:checked="option[4]"
+                        v-bind:disabled="option[3] < 1"
+                        v-on:click="on_change_option(option, $event)">
+                    <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
+                   
+                            {{ option[2] }} ({{ option[3] }})
+                    </label>
+                </template>
+            </template>
+        </div>
+
         <div class="search-filters">
             <div class="filter">
                 <input type="checkbox" id="filter-nav" />
                 <label aria-label="Filter list" class="filter-label" for="filter-nav">
                     All Filters
                 </label>
-                <div class="filter-list">
-                  <ul>
-                    <li>
-                      <h2>Filters</h2>
-                      <form action="">
-                        <h3>Categories</h3>
 
+                <div class="filter-list">
+                      <h2>Filters</h2>
+                      <button aria-label="clear filters" v-on:click="on_clear_filters()">Clear All</button>
+                      <form action="">
                         <template v-for="facet in meta.facets">
                             <h4>{{ facet[0] }}</h4>
-                            <div v-for="option in facet[1]">
-                                <label>
-                                    <input type="checkbox"
-                                        v-bind:name="option[0]+':'+option[1]"
-                                        value="1" v-bind:checked="option[4]"
-                                        v-on:click="on_change_option(option, $event)">
-                                    {{ option[2] }} ({{ option[3] }})
-                                </label>
-                            </div>
+                            <ul>
+                                <li v-for="option in facet[1]">
+                                    
+                                        <input type="checkbox" v-bind:id="option[0]+':'+option[1]"
+                                            v-bind:name="option[0]+':'+option[1]"
+                                            value="1" v-bind:checked="option[4]"
+                                            v-bind:disabled="option[3] < 1"
+                                            v-on:click="on_change_option(option, $event)">
+                                            <label :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
+                                        {{ option[2] }} ({{ option[3] }})
 
+                                    </label>
+                                </li>
+                            </ul>
                         </template>
-
-                        <button aria-label="clear filters">Clear filters</button>
                       </form>
-                    </li>
-                  </ul>
                 </div>
             </div>
 
@@ -67,6 +84,7 @@
             <li>Try using our filters to find your product</li>
         </ul>
     </section>
+
     <section id="results" v-else>
         View:
         <template v-for="view in views">
@@ -105,9 +123,17 @@
         </div>
 
         <article id="photo-grid" class="tab-content">
-            <div v-for="photo in photos" class="photo">
-              <div class="photo-image" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+            <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+              <div class="photo-image">
                 <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
+                </a>
+              </div>
+              <div class="photobuttons">
+                <a class="view-map" href="#">
+                    View on map
+                </a>
+                <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
+                    View details
                 </a>
               </div>
             </div>
@@ -123,15 +149,24 @@
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab maxime fugiat perspiciatis.</p>
     </div>-->
         <article id="photo-list" class="tab-content">
-            <div v-for="photo in photos" class="photo">
-                <div class="photo-image" :data-photoid="photo.id">
+            <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
+                <div class="photo-image">
                   <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                   </a>
                 </div>
                 <div class="photodata">
                     <h2>{{ photo.attributes.description }}</h2>
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
+                    <div class="photobuttons">
+                        <a class="view-map" href="#">
+                            View on map
+                        </a>
+                        <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
+                            View details
+                        </a>
+                    </div>
                 </div>
+
             </div>
             <p class="page-more-wrapper">
                 <a :href="link_next" v-if="link_next" v-on:click.prevent="on_click_link($event, 1)" class="button page-more">
@@ -142,7 +177,6 @@
 
         <article id="photo-map" class="tab-content">
             <div id="sticky-map" class="sticky">
-                <!-- p>Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p -->
             </div>
         </article>
 

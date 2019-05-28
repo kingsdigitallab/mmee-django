@@ -1,5 +1,7 @@
+{% load menu_tags %}
+
 <nav>
-    <a href="/photos/create/"> 
+    <a href="/photos/create/">
         <label aria-label="submit" class="submit-label" for="submit">
             <span></span>
         </label>
@@ -11,21 +13,10 @@
     <span>
     </span>
     </label>
-    
+
     <div class="menu-list">
       <ul>
-        <li>
-          <a href="">Home</a>
-        </li>
-        <li>
-          <a href="">About</a>
-        </li>
-        <li>
-          <a href="">Another Link</a>
-        </li>
-        <li>
-          <a href="">Contact</a>
-        </li>
+        {% main_menu template="menus/main_menu.html" %}
         {% if request.user.is_staff %}
           <li>
             <a class="staff-link" href="{% url 'admin:photos_photo_changelist' %}">Manage Photos</a>
@@ -33,5 +24,6 @@
         {% endif %}
       </ul>
     </div>
+
   {% endblock %}
 </nav>

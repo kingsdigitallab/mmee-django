@@ -2,17 +2,17 @@ var photo_search = function(g_initial_query) {
 
     /*
     notations:
-        
+
         g_X : variable shared among all functions
-        $X  : a jquery element  
+        $X  : a jquery element
     */
 
-    // constents
+    // constants
     var g_image_size_increment = 75;
     var g_image_size_max = 500;
     var g_map_image_size = 2 * g_image_size_increment;
 
-    // dependencies 
+    // dependencies
     var L = window.L;
     var Vue = window.Vue;
     var console = window.console;
@@ -26,7 +26,7 @@ var photo_search = function(g_initial_query) {
             $('#sticky-map').append(window.$map);
         }
     });
-        
+
     // the Vue.js logic for the whole search interface
     var g_search_app = new Vue({
         el: '#search-screen',
@@ -88,11 +88,11 @@ var photo_search = function(g_initial_query) {
                 }
             },
             'meta.query.view': function() {
-                // do things in next tick to make sure vue's redrawn with map 
+                // do things in next tick to make sure vue's redrawn with map
                 this.$nextTick(function () {
                     // this is to show initial results
                     if (this.meta.query.view == 'map') {
-                        this.resize_map();                    
+                        this.resize_map();
                     }
                     this.call_api();
                 });
@@ -103,10 +103,10 @@ var photo_search = function(g_initial_query) {
                 return this.get_html_link_from_api_link(this.links.first);
             },
             link_last: function() {
-                return this.get_html_link_from_api_link(this.links.last);                
+                return this.get_html_link_from_api_link(this.links.last);
             },
             link_next: function() {
-                return this.get_html_link_from_api_link(this.links.next);                
+                return this.get_html_link_from_api_link(this.links.next);
             },
             link_prev: function() {
                 return this.get_html_link_from_api_link(this.links.prev);
@@ -123,15 +123,18 @@ var photo_search = function(g_initial_query) {
                 option[4] = event.target.checked ? 1: 0;
                 this.call_api({page: 1});
             },
+            on_clear_filters: function() {
+                this.call_api({page: 1, facets: ''});
+            },
             on_phrase_submit: function() {
                 // don't use a 'watch: phrase' otherwise all keydown will
-                // generate a new query. 
+                // generate a new query.
                 this.call_api({page: 1, facets: ''});
             },
             on_click_link: function(event, load_more) {
                 // we call the api with the query string from the clicked hyperlink
                 // to avoid doing a page reload.
-                this.call_api({}, event.target.getAttribute('href'), load_more); 
+                this.call_api({}, event.target.getAttribute('href'), load_more);
             },
             get_html_link_from_api_link: function(link) {
                 return link ? link.replace(/[^?]+[?]?/, '?') : '';
@@ -148,40 +151,41 @@ var photo_search = function(g_initial_query) {
             call_api: function(aquery, query_string, load_more) {
                 /*
                 Calls the API with parameters found in this.meta.query.
-                
-                If aquery is provided, its parameters will override 
+
+                If aquery is provided, its parameters will override
                 this.meta.query.
-                
+
                 If query_string is provided (?page=1), it will be used instead
-                of this.data.query and aquery.
-                
+                of this.meta.query and aquery.
+
                 this.data is updated with the API response. Including this.meta.query.
-                
+
                 IMPORTANT: this function makes up to two requests to the API:
-                
+
                 * One request for the showing a paginated list of images
-                
-                * Another optional request for showing all (i.e. unpaginated) the photo markers on the map.
-                
+
+                * Another optional request for showing all (i.e. unpaginated)
+                  photo markers on the map.
+
                 Both are query dependent (i.e. depend on search phrase, facets).
                 */
-                
+
                 // build the query
                 var self = this;
-                
+
                 if (self.updating_from_response) {
                     console.log('Skip API call due to changes made in last response.');
                     return;
                 }
-                
+
                 var query = {};
                 self.searching = 1;
-                
+
                 if (query_string) {
                     query = mmee.get_dict_from_query_string(query_string);
                 } else {
                     query_string = '';
-                                        
+
                     query = $.extend(
                         {}, // Important: without this {}, we get all the getters and setters from self.meta.query
                         self.meta.query,
@@ -191,17 +195,17 @@ var photo_search = function(g_initial_query) {
                         aquery
                     );
                 }
-                
+
                 query.imgspecs = this.get_image_spec(3, g_image_size_increment);
-                                
+
                 if (this.$options.request) {
                     // In case user paginates or pan maps multiple times quickly
                     // no need to continue processing last request.
                     // Also a good way to avoid infinite loops.
-                    // e.g. ?order=nearest&perpage=60&geo=51.524,-0.048,0&page=1&phrase=sign&view=grid 
+                    // e.g. ?order=nearest&perpage=60&geo=51.524,-0.048,0&page=1&phrase=sign&view=grid
                     this.$options.request.abort();
                 }
-                                
+
                 // request for the photo result (list of images)
                 this.$options.request = $.getJSON('/api/1.0/photos/', query);
                 this.$options.request.done(function(data) {
@@ -209,12 +213,12 @@ var photo_search = function(g_initial_query) {
                         Vue.set(self, 'photos', []);
                     }
                     Array.prototype.push.apply(self.photos, data.data);
-                    
+
                     self.updating_from_response = 1;
                     // console.log('' + query.geo + ' -> ' + data.meta.query.geo);
                     Vue.set(self, 'meta', data.meta);
                     Vue.set(self, 'links', data.links);
-                    
+
                     mmee.replace_query_string(data.meta.qs);
                     self.searching = 0;
                 });
@@ -291,34 +295,17 @@ var photo_search = function(g_initial_query) {
     g_leaflet.map.on('moveend', function () {
         set_query_centre_from_map_centre();
     });
-    
-    var $g_btn_show_on_map = null;
-    $('div.wrapper').on('mouseenter mouseleave', '.photo-image', function(e) {
-        // photo image interactions.
-        // hover on photo => show pin button on top
-        // click pin button => focus the map on that photo's marker
-        if (!$g_btn_show_on_map) {
-            $g_btn_show_on_map = $('<a href="#" class="btn-show-on-map"><i class="fas fa-map-pin"></i></a>');
-            $g_btn_show_on_map.on('click', function() {
-                var geo = $(this).parents('.photo-image').data('geo');
-                if (geo) {
-                    geo = geo.split(',');
-                    var bounds = L.latLngBounds([geo.map(function(v) {return parseFloat(v);})]);
-                    g_search_app.show_map_bounds(bounds);
-                }
-                return false;
-            });
+
+    $('div.wrapper').on('click', '.view-map', function(e) {
+        var geo = $(this).parents('.photo').data('geo');
+        if (geo) {
+            geo = geo.split(',');
+            var bounds = L.latLngBounds([geo.map(function(v) {return parseFloat(v);})]);
+            g_search_app.show_map_bounds(bounds);
         }
-        if (e.type == 'mouseleave') {
-            $g_btn_show_on_map.detach();
-        } else {
-            var geo = $(this).data('geo');
-            if (geo) {
-                $(e.currentTarget).prepend($g_btn_show_on_map);
-            }
-        }
+        return false;
     });
-    
+
     return {
         'app': g_search_app,
         'leaflet': g_leaflet,

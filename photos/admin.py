@@ -1,5 +1,6 @@
 from django.contrib.gis import admin
-from .models import Photographer, PhotoSubcategory, Photo, PhotoFlag
+from .models import (Photographer, PhotoSubcategory,
+                     Photo, PhotoFlag, PhotoCategory)
 from django.utils.safestring import mark_safe
 from django.contrib.admin import SimpleListFilter
 from django.contrib.gis.db import models
@@ -31,11 +32,17 @@ class PhotoSubcategoryAdmin(admin.ModelAdmin):
     list_display_links = ['label']
     search_fields = ['category__label', 'label']
 
+    prepopulated_fields = {'slug': ('label',)}
+
+
 @admin.register(PhotoCategory)
 class PhotoCategoryAdmin(admin.ModelAdmin):
-    list_display = ['label',]
-    list_display_links = ['label',]
-    search_fields = ['label',]
+    list_display = ['label', ]
+    list_display_links = ['label', ]
+    search_fields = ['label', ]
+
+    prepopulated_fields = {'slug': ('label',)}
+
 
 class PhotoImageFilter(SimpleListFilter):
     title = 'Image'  # or use _('country') for translated title
@@ -146,14 +153,16 @@ class PhotoAdmin(admin.ModelAdmin):
                    'photographer__gender_category', 'photographer__age_range'
                    ]
 
-    search_fields = ['photographer__first_name',
-                     'photographer__last_name', 'description']
+    search_fields = ['photographer__first_name', 'photographer__last_name',
+                     'description', 'reference_number']
+
+    readonly_fields = ['reference_number']
 
     inlines = [PhotoFlagInline]
 
     fieldsets = (
         ('Status', {
-            'fields': ('review_status',)
+            'fields': ('review_status', 'reference_number')
         }),
         ('Related records', {
             'fields': ('image', 'photographer',),
@@ -161,7 +170,9 @@ class PhotoAdmin(admin.ModelAdmin):
         ('Info supplied by project team', {
             'fields': (
                 'subcategories',
-                'comments'
+                'legacy_categories',
+                'comments',
+                'tags'
             ),
         }),
         ('Information supplied by photographer', {

@@ -13,10 +13,28 @@ from django.utils import timezone
 import datetime
 import re
 import calendar
-''' TODO:
-'''
+from taggit.models import TaggedItemBase
+from taggit_selectize.managers import TaggableManager
 
 DEFAULT_CREATED_AT = timezone.make_aware(datetime.datetime(1980, 1, 1))
+
+
+def get_nw_string_from_point(point):
+    '''Returns a nice string like this: '51.519°N 0.061°W'
+    from a Point object SRID=4326;POINT (-0.06123 51.51981)
+    '''
+    if point is None:
+        return ''
+
+    y = [point.y, 'N']
+    if y[0] < 0:
+        y = [-y[0], 'S']
+    x = [point.x, 'E']
+    if x[0] < 0:
+        x = [-x[0], 'W']
+
+    ret = '{:.3f}°{} {:.3f}°{}'.format(y[0], y[1], x[0], x[1])
+    return ret
 
 
 @register_snippet
@@ -72,16 +90,12 @@ class PhotoCategory(index.Indexed, models.Model):
     def __str__(self):
         return self.label
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.label)
-        super().save(*args, **kwargs)
-
     panels = [
         FieldPanel('label'),
     ]
 
     search_fields = [
-        index.SearchField('label', partial_match=True),
+        index.SearchField('label'),
     ]
 
     class Meta:
@@ -99,7 +113,8 @@ class PhotoSubcategory(index.Indexed, models.Model):
         return '{}: {}'.format(self.category.label, self.label)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.label)
+        if not self.slug:
+            self.slug = slugify(self.label)
         super().save(*args, **kwargs)
 
     panels = [
@@ -108,7 +123,7 @@ class PhotoSubcategory(index.Indexed, models.Model):
     ]
 
     search_fields = [
-        index.SearchField('label', partial_match=True),
+        index.SearchField('label'),
     ]
 
     class Meta:
@@ -119,7 +134,7 @@ class PhotoSubcategory(index.Indexed, models.Model):
 
 @register_snippet
 class Photographer(index.Indexed, models.Model):
-    # optional - we keep those in case but no longer needed
+    # optional - we keep those in case but NO LONGER NEEDED
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -131,7 +146,8 @@ class Photographer(index.Indexed, models.Model):
         )
     )
     phone_number = models.CharField(
-        validators=[phone_regex], max_length=11, blank=True, null=True)
+        validators=[phone_regex], max_length=11, blank=True, null=True
+    )
 
     #
     AGE_RANGE_CHOICES = [
@@ -149,9 +165,9 @@ class Photographer(index.Indexed, models.Model):
     )
 
     GENDER_CHOICES = [
-        (0, 'unspecified'),
         (1, 'female'),
         (2, 'male'),
+        (0, 'prefer no to say'),
         (3, 'other'),
     ]
 
@@ -170,9 +186,11 @@ class Photographer(index.Indexed, models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
+        if self.last_name:
+            return '{} {}'.format(self.first_name or '', self.last_name)
         return 'Photographer #{}'.format(self.pk)
 
-    # Django admin is the prefered interface to manage photographers
+    # Django admin is the preferred interface to manage photographers
     panels = [
         # FieldPanel('first_name'),
         # FieldPanel('last_name'),
@@ -182,7 +200,7 @@ class Photographer(index.Indexed, models.Model):
         FieldPanel('gender'),
     ]
 
-    # Django admin is the prefered interface to manage photographers
+    # Django admin is the preferred interface to manage photographers
     search_fields = [
         # index.SearchField('first_name', partial_match=True),
         # index.SearchField('last_name', partial_match=True),
@@ -230,6 +248,13 @@ class Photographer(index.Indexed, models.Model):
         return dict(self.GENDER_CHOICES).get(self.gender, '')
 
 
+class PhotoTag(TaggedItemBase):
+    content_object = models.ForeignKey(
+        'photos.Photo', on_delete=models.CASCADE,
+        related_name='tagged_items'
+    )
+
+
 @register_snippet
 class Photo(index.Indexed, models.Model):
 
@@ -271,6 +296,11 @@ class Photo(index.Indexed, models.Model):
         related_name='+'
     )
 
+    legacy_categories = models.TextField(
+        'Legacy categories, for reference only',
+        blank=True, default=''
+    )
+
     description = models.TextField(blank=True, default='')
     comments = models.TextField(
         'Internal comments', blank=True, null=True
@@ -300,9 +330,9 @@ class Photo(index.Indexed, models.Model):
 
     # data captured by the submission form
     author_focus_keywords = models.CharField(
-        max_length=100,
+        max_length=150,
         blank=True, null=True, default=None,
-        help_text='Author\'s main focus in three keywords'
+        help_text='Author\'s main focus in a few keywords'
     )
     author_focus = models.TextField(
         blank=True, default='', help_text='Author\'s main focus'
@@ -310,17 +340,25 @@ class Photo(index.Indexed, models.Model):
     author_feeling_category = models.IntegerField(
         choices=FEELINGS,
         blank=True, null=True, default=None,
-        help_text='Author\'s feeling about photo'
+        help_text='Author\'s feeling about this photo'
     )
-    author_feeling_keywords = models.TextField(
+    author_feeling_keywords = models.CharField(
+        max_length=100,
         blank=True, default='',
-        help_text='Keyword describing author\'s feelings about photo'
+        help_text='Keyword describing author\'s feelings about this photo'
     )
     author_reason = models.TextField(
         'Motivation',
         blank=True, default='',
-        help_text='Why did the author take this picture?'
+        help_text='Why did the author take this picture?',
+        max_length=500,
     )
+
+    reference_number = models.CharField(
+        'Reference number', max_length=20, blank=True, default='',
+    )
+
+    tags = TaggableManager(through=PhotoTag, blank=True)
 
     panels = [
         SnippetChooserPanel('photographer'),
@@ -332,21 +370,39 @@ class Photo(index.Indexed, models.Model):
         FieldPanel('comments'),
         FieldPanel('date'),
         FieldPanel('location'),
+        FieldPanel('tags'),
     ]
 
     search_fields = [
         index.FilterField('id'),
         index.FilterField('review_status'),
-        index.FilterField('subcategories__pk'),
+        # index.FilterField('subcategories__pk'),
         # index.SearchField('subcategories__pk'),
-        index.FilterField('photosubcategory_id'),
+        # index.FilterField('photosubcategory_id'),
         index.FilterField('image_id'),
-        index.SearchField('description', partial_match=True),
-        #         index.RelatedFields('photographer', [
-        #             index.SearchField('first_name', partial_match=True),
-        #             index.SearchField('last_name', partial_match=True),
+        index.SearchField('description'),
+        index.SearchField('tags__name'),
+        #         index.RelatedFields('subcategories', [
+        #             index.FilterField('id'),
         #         ]),
+        index.RelatedFields('tags', [
+            index.SearchField('name'),
+        ]),
+        # two filters with the content...
+        # this one is mandatory for all types of backends (filter())
+        index.FilterField('photosubcategory_id'),
+        # this one is mandatory for default backend (facet())
+        index.FilterField('subcategories__pk'),
     ]
+
+    def photosubcategory_id(self):
+        """
+        https://stackoverflow.com/questions/43082438/how-do-you-filter-search-results-in-wagtail-based-on-a-manytomanyfield
+        """
+        return list(self.subcategories.all().values_list('id', flat=True))
+
+    def subcategories__pk(self):
+        return self.photosubcategory_id()
 
     class Meta:
         ordering = ['-created_at']
@@ -363,6 +419,15 @@ class Photo(index.Indexed, models.Model):
             self.photographer, self.title,
             self.get_image_tag('height-50')
         ))
+
+    def save(self, *args, **kwargs):
+        if not self.reference_number:
+            import time
+            self.reference_number = ('%X' % int(time.time())).replace('0', 'X')
+        super().save(*args, **kwargs)
+
+    def location_nw(self):
+        return get_nw_string_from_point(self.location)
 
     @property
     def taken_month_name(self):
@@ -452,3 +517,7 @@ class Photo(index.Indexed, models.Model):
             ])
 
         return ret
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('photo-view', args=[str(self.pk)])

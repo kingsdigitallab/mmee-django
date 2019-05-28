@@ -80,7 +80,6 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += [  # your project apps here
-    'activecollab_digger',
     'django.contrib.gis',
     'kdl_ldap',
     'rest_framework',
@@ -96,11 +95,16 @@ INSTALLED_APPS += [  # your project apps here
     'wagtail.sites',
     'wagtail.contrib.routable_page',
     'wagtail.contrib.table_block',
+    'wagtail.contrib.modeladmin',
+    'wagtail.search',
+    'wagtail.contrib.postgres_search',
     'taggit',
+    'taggit_selectize',
     'modelcluster',
-    'haystack',
     'photos',
     'mapwidgets',
+    'wagtailmenus',
+    'kdl_wagtail_page',
 ]
 
 INTERNAL_IPS = ['127.0.0.1']
@@ -198,7 +202,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-                'activecollab_digger.context_processors.activecollab_digger',
+                'wagtailmenus.context_processors.wagtailmenus',
             ],
         },
     },
@@ -246,7 +250,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-MEDIA_URL = STATIC_URL + 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
 
 if not os.path.exists(MEDIA_ROOT):
@@ -283,7 +287,14 @@ FABRIC_USER = getpass.getuser()
 # -----------------------------------------------------------------------------
 
 # Google Analytics ID
-GA_ID = ''
+GA_ID = 'UA-67707155-10'
+
+# TAGGIT AUTO-COMPLETE IN ADMIN
+# https://github.com/chhantyal/taggit-selectize
+
+TAGGIT_TAGS_FROM_STRING = 'taggit_selectize.utils.parse_tags'
+TAGGIT_STRING_FROM_TAGS = 'taggit_selectize.utils.join_tags'
+
 
 # -----------------------------------------------------------------------------
 # Automatically generated settings
@@ -314,14 +325,25 @@ WAGTAIL_SITE_NAME = PROJECT_TITLE
 
 ITEMS_PER_PAGE = 12
 
-HAYSTACK_CONNECTIONS = {
+USE_PIPENV = True
+
+# http://docs.wagtail.io/en/v2.5.1/topics/search/backends.html
+WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://localhost:8983/solr/default',
-        'TIMEOUT': 60 * 5,
-        'INCLUDE_SPELLING': True,
-        'BATCH_SIZE': 100,
-    },
+        # default and postgres have limited support for facets
+        # default: use the db, dev only, update_index not needed
+        # 'BACKEND': 'wagtail.search.backends.db',
+        # postgres: for production, also better text search (with stemming)
+        'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        #
+        # 'BACKEND': 'wagtail.search.backends.elasticsearch5',
+        'AUTO_UPDATE': True,
+        'ATOMIC_REBUILD': True,
+    }
 }
 
-USE_PIPENV = True
+# The slug of the Wagtail page which contains the moderation policy.
+# Linked from the report-issue form on the Photo Page.
+MODERATION_POLICY_PAGE_SLUG = 'moderation-policy'
+
+FACETS_CACHE_DURATION_MINS = 60

@@ -16,6 +16,9 @@ from django.core.exceptions import ValidationError
 # from mapwidgets.widgets import GooglePointFieldWidget
 from django.contrib.gis.forms.widgets import OSMWidget
 from django import forms
+from django.db import transaction
+from wagtail.core.models import Page
+from django.conf import settings
 
 
 class PhotoSearchView(TemplateView):
@@ -31,6 +34,9 @@ class PhotoSearchView(TemplateView):
 
 
 class PhotoFlagForm(ModelForm):
+    '''
+    Web Form for public users to report an issue with a photo
+    '''
 
     class Meta:
         model = PhotoFlag
@@ -70,6 +76,10 @@ class PhotoDetailView(DetailView):
         # a new, saved PhotoFlag just posted by the user, None otherwise
         context['photo_flag'] = self.photo_flag
 
+        context['moderation_page'] = Page.objects.filter(
+            slug=settings.MODERATION_POLICY_PAGE_SLUG
+        ).first()
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -108,6 +118,11 @@ class PhotoForm(ModelForm):
     consent = BooleanField()
 
     class Meta:
+        fields_required = [
+            'taken_year',
+            'author_focus_keywords',
+            'author_reason',
+        ]
         model = Photo
         fields = [
             'image_file',
@@ -128,17 +143,27 @@ class PhotoForm(ModelForm):
         ]
 
         widgets = {
-            # 'location': GooglePointFieldWidget,
-            'location': OSMWidget,
+            'location': OSMWidget(dict(
+                default_lon=-0.13,
+                default_lat=51.5,
+            )),
             'author_feeling_category': forms.RadioSelect(),
             # 'taken_month': forms.RadioSelect()
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        fields_required = getattr(self.Meta, 'fields_required', [])
+        for key in fields_required:
+            self.fields[key].required = True
 
 
 class PhotoCreateView(CreateView):
     template_name = 'photos/create.html'
     form_class = PhotoForm
     success_url = '/photos/created/'
+    template_name_success = 'photos/created.html'
 
     def form_invalid(self, form):
         # TODO: remove this
@@ -147,8 +172,11 @@ class PhotoCreateView(CreateView):
         print(form.errors)
         return super().form_invalid(form)
 
+    @transaction.atomic
     def form_valid(self, form):
         image_file = form.cleaned_data['image_file']
+
+        print(image_file.name)
 
         photographer = Photographer(
             age_range=form.cleaned_data['age_range'],
@@ -168,5 +196,6 @@ class PhotoCreateView(CreateView):
         photo.photographer = photographer
         photo.save()
 
-        print('New photo #', photo.pk, 'new image #', image.pk)
+        self.request.session['reference_number'] = photo.reference_number
+
         return super().form_valid(form)
