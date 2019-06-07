@@ -270,6 +270,7 @@ section#search {
             font-size: 1rem;
             border: 1px solid $lightgray;
             outline: none;
+            -webkit-appearance: none;
             &:focus {
                 border: 1px solid $primary-color;
                 transition: 0.35s ease;
@@ -301,7 +302,7 @@ section#search {
             vertical-align: middle;
             outline: 0;
             cursor: pointer;
-            &:after {
+            /*&:after {
                 content: "✕";
                 display: block;
                 width: 27px;
@@ -320,11 +321,11 @@ section#search {
                 cursor: pointer;
                 opacity: 1;
                 border-radius: 50%;
-                }
+                }*/
         }/* end button.close-icon */
         button.search-icon {
             top: -70px;
-            right: -46%;
+            right: -43%;
             position: relative;
             width: 65px;
             margin: 0 auto;
@@ -602,10 +603,8 @@ section#search {
             .multi-select {
                 display: none;
             }
-        }
-        /* end #filter */
-    }
-    /* end .search-filters */
+        }/* end #filter */
+    }/* end .search-filters */
 }
 
 /* end section #search */
@@ -1626,6 +1625,13 @@ section#results {
 
 @media screen and (max-width: 800px) {
 
+section#search {
+    .search-field {
+        button.search-icon {
+            right: -41%;
+        }
+    }
+}
 /**** SEARCH RESULTS ****/
 
     section#results {
@@ -1698,6 +1704,13 @@ section#results {
         }
     }
     /* end nav */
+    section#search {
+        .search-field {
+            button.search-icon {
+                right: -38%;
+            }
+        }
+    }
     section#results {
         .sort {
             width: 100%;
@@ -1786,6 +1799,13 @@ section#results {
     header {
         a {
             font-size: 1.5rem;
+        }
+    }
+    section#search {
+        .search-field {
+            button.search-icon {
+                right: -36%;
+            }
         }
     }
     section#results {
