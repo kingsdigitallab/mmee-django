@@ -22,7 +22,6 @@ var photo_search = function(g_initial_query) {
     var g_leaflet = window.search_map(L, g_map_image_size, function() {
         if (!window.$map) {
             window.$map = $('#map-leaflet').detach();
-            // $('#photo-map').append($map);
             $('#sticky-map').append(window.$map);
         }
     });
@@ -126,15 +125,21 @@ var photo_search = function(g_initial_query) {
             on_clear_filters: function() {
                 this.call_api({page: 1, facets: ''});
             },
+            on_phrase_reset: function() {
+                this.call_api({page: 1, facets: '', phrase: ''});
+                return false;
+            },
             on_phrase_submit: function() {
                 // don't use a 'watch: phrase' otherwise all keydown will
                 // generate a new query.
                 this.call_api({page: 1, facets: ''});
+                return false;
             },
             on_click_link: function(event, load_more) {
                 // we call the api with the query string from the clicked hyperlink
                 // to avoid doing a page reload.
                 this.call_api({}, event.target.getAttribute('href'), load_more);
+                return false;
             },
             get_html_link_from_api_link: function(link) {
                 return link ? link.replace(/[^?]+[?]?/, '?') : '';
@@ -235,7 +240,7 @@ var photo_search = function(g_initial_query) {
                     query.geo_only = 1;
                     var geo_query_hash = this.get_hash_from_geo_query(query);
                     if (geo_query_hash !== self.last_geo_query_hash) {
-                        console.log('GEO ONLY QUERY ' + geo_query_hash);
+                        // console.log('GEO ONLY QUERY ' + geo_query_hash);
                         var req_geo_only = $.getJSON('/api/1.0/photos/', query);
                         req_geo_only.done(function(data) {
                             self.last_geo_query_hash = self.get_hash_from_geo_query(data.meta.query);
