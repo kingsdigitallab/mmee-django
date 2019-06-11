@@ -176,7 +176,7 @@ class PhotoCreateView(CreateView):
     def form_valid(self, form):
         image_file = form.cleaned_data['image_file']
 
-        print(image_file.name)
+        # print(image_file.name)
 
         photographer = Photographer(
             age_range=form.cleaned_data['age_range'],
