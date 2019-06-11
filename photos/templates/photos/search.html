@@ -10,26 +10,22 @@
 
     <section id="search">
 
-        <div class="search-field">
-            <form>
-                <input type="search" name="focus" required v-model="meta.query.phrase" @keyup.enter="on_phrase_submit">
-                <button class="close-icon" type="reset"></button>
-                <button class="search-icon" v-on:click="on_phrase_submit"></button>
-                <!--<button class="location-icon"></button>-->
-            </form> 
-        </div>
+        <form @submit.stop.prevent="on_phrase_submit" class="search-field">
+            <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off">
+            <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
+            <button class="search-icon" type="submit"></button>
+        </form>
 
         <div class="search-summary">
             <template v-for="facet in meta.facets">
                 <template v-for="option in facet[1]">
-                     <input type="checkbox"
+                    <input type="checkbox"
                         v-bind:id="option[0]+':'+option[1]"
                         v-bind:name="option[0]+':'+option[1]"
                         value="1" v-bind:checked="option[4]"
                         v-bind:disabled="option[3] < 1"
-                        v-on:click="on_change_option(option, $event)">
+                        @click="on_change_option(option, $event)">
                     <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
-                   
                             {{ option[2] }} ({{ option[3] }})
                     </label>
                 </template>
@@ -45,21 +41,20 @@
 
                 <div class="filter-list">
                       <h2>Filters</h2>
-                      <button aria-label="clear filters" v-on:click="on_clear_filters()">Clear All</button>
+                      <button aria-label="clear filters" @click="on_clear_filters()">Clear All</button>
                       <form action="">
                         <template v-for="facet in meta.facets">
                             <h4>{{ facet[0] }}</h4>
                             <ul>
                                 <li v-for="option in facet[1]">
-                                    
-                                        <input type="checkbox" v-bind:id="option[0]+':'+option[1]"
-                                            v-bind:name="option[0]+':'+option[1]"
-                                            value="1" v-bind:checked="option[4]"
-                                            v-bind:disabled="option[3] < 1"
-                                            v-on:click="on_change_option(option, $event)">
-                                            <label :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
-                                        {{ option[2] }} ({{ option[3] }})
 
+                                    <input type="checkbox" v-bind:id="option[0]+':'+option[1]"
+                                        v-bind:name="option[0]+':'+option[1]"
+                                        value="1" v-bind:checked="option[4]"
+                                        v-bind:disabled="option[3] < 1"
+                                        @click="on_change_option(option, $event)">
+                                    <label :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
+                                        {{ option[2] }} ({{ option[3] }})
                                     </label>
                                 </li>
                             </ul>
@@ -73,7 +68,7 @@
 
     <section id="results" v-if="meta.pagination.count < 1">
         <p>No results were found for your search.
-            <a href="?" v-on:click.prevent="on_click_link">Show all Photos</a>.
+            <a href="?" @click.prevent="on_click_link">Show all Photos</a>.
         </p>
 
         <p>Search tips:</p>
@@ -129,7 +124,7 @@
                 </a>
               </div>
               <div class="photobuttons">
-                <a class="view-map" href="#">
+                <a class="view-map" href="#" v-if="photo.attributes.location">
                     View on map
                 </a>
                 <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
