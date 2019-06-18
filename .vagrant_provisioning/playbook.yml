@@ -108,6 +108,25 @@
       tags:
         - system
 
+    - name: python | install pipenv
+      pip:
+        name: pipenv
+        state: latest
+      tags:
+        - python
+
+    - name: npm | upgrade node.js and npm
+      npm:
+        name: 'n'
+        global: true
+      tags:
+        - system
+        - javascript
+    - command: 'n stable'
+      tags:
+        - system
+        - javascript
+
   handlers:
     - name: solr | restart solr
       become: yes
@@ -118,62 +137,45 @@
         - db
 
 - hosts: all
+# Python and Javascript Package Managers
+# run as vagrant
+- hosts: all
   vars_files:
     - vars.yml
   gather_facts: false
+
   tasks:
-    - name: python | make python3 default version
-      become: yes
-      alternatives:
-        link: /usr/bin/python
-        name: python
-        path: /usr/bin/python3
-        priority: 10
-
-    - name: pip | install virtualenv
-      become: yes
-      pip:
-        name: virtualenv
-        state: latest
-      tags:
-        - python
-
-    - name: pip | setup virtualenv
-      file: path={{ python.virtualenv_location }} state=directory
-    - command: virtualenv {{ python.virtualenv_location }}
-      tags:
-        - python
-
-    - name: pip | update setuptools
-      pip:
-        name: setuptools
-        virtualenv: '{{ python.virtualenv_location }}'
-        state: latest
-      tags:
-        - python
-
-    - name: pip | update pip
-      pip:
-        name: pip
-        virtualenv: '{{ python.virtualenv_location }}'
-        state: latest
-      tags:
-        - python
-
-    - name: pip | install pipenv
-      pip:
-        name: pipenv
-        virtualenv: '{{ python.virtualenv_location }}'
-        state: latest
-      tags:
-        - python
-
-    - name: pipenv | ensure python requirements are installed to latest version
-      command: '{{ python.virtualenv_location }}/bin/pipenv install'
+    - name: python | install packages from Pipfile
+      command: 'pipenv install -d'
       args:
         chdir: '{{ project_root }}'
       tags:
         - python
+
+    - name: npm | create dummy package.json
+      # this creates a dummy package.json. Needed for all other npm commands.
+      command: 'npm init -y'
+      args:
+        chdir: '{{ project_root }}'
+        creates: '{{ project_root }}/package.json'
+      tags:
+        - javascript
+
+    - name: npm | install original javascript packages from vars.yml
+      # only for the initial setup of the repository
+      # it will install packages selected during bare-bone bootstrap
+      command: 'npm i {{ npm.original_packages }}'
+      args:
+        chdir: '{{ project_root }}'
+        creates: '{{ project_root }}/package-lock.json'
+      tags:
+        - javascript
+
+    - name: npm | install javascript packages from package.json
+      npm:
+        path: '{{ project_root }}'
+      tags:
+        - javascript
 
 - hosts: all
   vars_files:
@@ -314,13 +316,19 @@
         - django
 
     - name: django | migrations
-      command: '{{ user_home }}/venv/bin/python {{ project_root }}/manage.py makemigrations'
-    - command: '{{ user_home }}/venv/bin/python {{ project_root }}/manage.py migrate'
+      command: 'pipenv run python manage.py makemigrations'
+      args:
+        chdir: '{{ project_root }}'
+    - command: 'pipenv run python manage.py migrate'
+      args:
+        chdir: '{{ project_root }}'
       tags:
         - django
 
     - name: django | add default (vagrant/vagrant) superuser
-      command: '{{ user_home }}/venv/bin/python {{ project_root }}/manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser(''vagrant'', ''vagrant@localhost'', ''vagrant'')"'
+      command: 'pipenv run python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser(''vagrant'', ''vagrant@localhost'', ''vagrant'')"'
+      args:
+        chdir: '{{ project_root }}'
       ignore_errors: yes # The user may already exist
       tags:
         - django
@@ -337,7 +345,7 @@
         - git
 
     - name: git | flake8 pre-commit hook
-      command: '{{ user_home }}/venv/bin/flake8 --install-hook=git'
+      command: 'pipenv run flake8 --install-hook=git'
       ignore_errors: yes # Stop errors if it already exists
       args:
         chdir: '{{ project_root }}'
