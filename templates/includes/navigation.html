@@ -10,13 +10,20 @@
   {% block main_menu %}
     <input type="checkbox" id="menu" />
     <label aria-label="Menu" class="menu-label" for="menu">
-    <span>
-    </span>
+        <span>
+        </span>
     </label>
 
     <div class="menu-list">
       <ul>
-        {% main_menu template="menus/main_menu.html" %}
+        {% if request %}
+            {% main_menu template="menus/main_menu.html" %}
+        {% else %}
+          {# most likely a 500 error, we don't have a request #}
+          <li>
+            <a href="/">Home Page</a>
+          </li>
+        {% endif %}
         {% if request.user.is_staff %}
           <li>
             <a class="staff-link" href="{% url 'admin:photos_photo_changelist' %}">Manage Photos</a>
