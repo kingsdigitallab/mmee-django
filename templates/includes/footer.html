@@ -11,6 +11,9 @@
         <p>
             Designed, developed and maintained by <a href="//www.kdl.kcl.ac.uk/" title="King's Digital Lab">King's Digital Lab</a>
         </p>
+        {% if FOOTER_HTML %}
+            {{ FOOTER_HTML|safe }}
+        {% endif %}
     </li>
 </ul>
 

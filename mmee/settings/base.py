@@ -203,6 +203,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
                 'wagtailmenus.context_processors.wagtailmenus',
+                'mmee.context_processors.project_settings',
             ],
         },
     },
@@ -347,3 +348,12 @@ WAGTAILSEARCH_BACKENDS = {
 MODERATION_POLICY_PAGE_SLUG = 'moderation-policy'
 
 FACETS_CACHE_DURATION_MINS = 60
+
+FOOTER_HTML = '''
+<p>
+    <a href="/cookie-use">Cookies policy</a> -
+    <a href="/accessibility-statement">Accessibility statement</a>
+</p>
+'''
+
+SETTINGS_VARS_IN_CONTEXT = ['GA_ID', 'FOOTER_HTML']
