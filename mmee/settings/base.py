@@ -349,4 +349,11 @@ MODERATION_POLICY_PAGE_SLUG = 'moderation-policy'
 
 FACETS_CACHE_DURATION_MINS = 60
 
-SETTINGS_VARS_IN_CONTEXT = ['GA_ID']
+FOOTER_HTML = '''
+<p>
+    <a href="/cookie-use">Cookies policy</a> -
+    <a href="/accessibility-statement">Accessibility statement</a>
+</p>
+'''
+
+SETTINGS_VARS_IN_CONTEXT = ['GA_ID', 'FOOTER_HTML']
