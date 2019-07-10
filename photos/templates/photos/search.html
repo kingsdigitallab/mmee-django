@@ -150,9 +150,8 @@
                   </a>
                 </div>
                 <div class="photodata">
-                    {% if photo.attributes.description %}
-                        <h2>{{ photo.attributes.description }}</h2>
-                    {% endif %}
+                    <h2 v-if="photo.attributes.description">{{ photo.attributes.description }}</h2>
+                    
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                     <div class="photobuttons">
                         <a class="view-map" href="#">
