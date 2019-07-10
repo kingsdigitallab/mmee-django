@@ -971,7 +971,6 @@ section#results {
     a {
         color: $white;
         text-decoration: none;
-        text-decoration: none;
         background: $primary-color;
         padding: 0.4rem 1rem;
         &:hover {
@@ -1028,9 +1027,9 @@ section#photo {
             margin: 0 0 2rem 0;
             .flag-button{
                 padding:0.6rem 0.8rem;
-                background: lighten($lightgray, 4%);
+                background: #FAFAFA;
                 text-decoration: none;
-                color: lighten($black,50%);
+                color: $primary-color;
                 font-size: 0.8rem;
 
                 &:before{
@@ -1039,7 +1038,7 @@ section#photo {
                     padding:0.2rem 0.6rem;
                     height:auto;
                     border-radius: 50%;
-                    color: lighten($black,50%);
+                    color: $primary-color;
                     font-weight: bold;
                     margin-right: 0.5rem;
                 }
