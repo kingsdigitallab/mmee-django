@@ -28,9 +28,8 @@
   
 </head>
 <body>
-
   <div class="wrapper">
-   
+      <a href="#maincontent" class="accessibility-label">Skip to main content</a>
     {% include 'includes/header.html' %}
 
     {% include 'includes/navigation.html' %}
@@ -38,9 +37,10 @@
     {% block main-section %}
 
     <!-- <main> -->
+    <div id="maincontent">
       {% block title %}{% endblock %}
-      {% block main %}
-      {% endblock %}
+      {% block main %}{% endblock %}
+    </div>
     <!-- </main> -->
     {% endblock %}
 
