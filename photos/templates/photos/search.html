@@ -128,7 +128,7 @@
                     View on map
                 </a>
                 <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
-                    View details
+                    View details <span class="accessibility-label">{{ photo.id}}</span>
                 </a>
               </div>
             </div>
@@ -158,7 +158,7 @@
                             View on map
                         </a>
                         <a class="view-details" v-bind:href="photo.attributes.url+'?'+meta.qs">
-                            View details
+                            View details <span class="accessibility-label">{{ photo.id}}</span>
                         </a>
                     </div>
                 </div>
