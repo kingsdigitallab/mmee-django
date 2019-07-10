@@ -16,11 +16,11 @@
         </div>
     {% endif %}
 
-    <input id='step2' type='checkbox'>
-    <input id='step3' type='checkbox'>
+    <input id='step2' type='checkbox' aria-label="step 2">
+    <input id='step3' type='checkbox' aria-label="step 3">
 
   <div id="part1" class="step">
-    <h3>Submission form</h3>
+    <h1>Submission form</h1>
       <div class='file-input'>
         {% form_field form.image_file accept="image/png, image/jpeg, image/jpg" aria_label="upload photo" autocomplete="off" %}
         <img id="upload-preview" alt="Image upload preview">
