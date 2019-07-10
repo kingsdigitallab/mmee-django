@@ -15,12 +15,12 @@ $image-crop-scale: 160%;
 /* Colours */
 
 // TO: Need to
-$primary-color: #257478;
+$primary-color: #1F5E6B;
 $secondary-color:#FFC800;
 $black: #000;
 $white: #fff;
 $lightgray:#E1E1E1;
-$gray:#C2C1C1;
+$gray:#575757;
 html {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -118,46 +118,6 @@ nav {
         transition: all 200ms ease-in;
         z-index: 500;
         cursor: pointer;
-        &.submit-label {
-            position: fixed;
-            top: 0;
-            font-size: 2em;
-            background: $primary-color;
-            border: 1px solid $white;
-            right: 73px;
-            padding: 22px 20px;
-            span {
-                /* plus icon */
-                position: relative;
-                margin: 12px auto;
-                text-indent: -9999px;
-                transition: all .1s ease-in;
-                width: 35px;
-                height: 2px;
-                background-color: $white;
-                display: block;
-                &:before {
-                    content: '';
-                    position: absolute;
-                    top: -17px;
-                    right: 17px;
-                    transition: all .1s ease-in;
-                    width: 2px;
-                    height: 35px;
-                    background-color: $white;
-                    display: block
-                }
-            }
-            &:hover {
-                background: $secondary-color;
-                span{
-                    background-color: $black;
-                    &:before {
-                        background-color: $black;
-                    }
-                }
-            }
-        }
         &.menu-label {
             position: fixed;
             top: 0;
@@ -199,6 +159,46 @@ nav {
                     &:after {
                         background-color: $black;
                     }
+                }
+            }
+        }
+    }
+    .submit-button {
+        position: fixed;
+        top: 0;
+        font-size: 2em;
+        background: $primary-color;
+        border: 1px solid $white;
+        right: 73px;
+        padding: 22px 20px;
+        span {
+            /* plus icon */
+            position: relative;
+            margin: 12px auto;
+            text-indent: -9999px;
+            transition: all .1s ease-in;
+            width: 35px;
+            height: 2px;
+            background-color: $white;
+            display: block;
+            &:before {
+                content: '';
+                position: absolute;
+                top: -17px;
+                right: 17px;
+                transition: all .1s ease-in;
+                width: 2px;
+                height: 35px;
+                background-color: $white;
+                display: block
+            }
+        }
+        &:hover {
+            background: $secondary-color;
+            span{
+                background-color: $black;
+                &:before {
+                    background-color: $black;
                 }
             }
         }
@@ -304,6 +304,9 @@ section#search {
 
             &:hover {
                 opacity: 0.6;
+            }
+            &:focus {
+                background-color: $lightgray;
             }
             &.close-icon {
                 border:1px solid transparent;
@@ -650,35 +653,38 @@ section#results {
         margin-top: 0.7rem;
         position: relative;
         text-align: right;
-      select {
-        font-family: "helvetica neue", helvetica;
-        font-size: 1rem;
-        font-weight: 200;
-        max-width: 100%;
-        padding: 8px 24px 8px 10px;
-        border: none;
-        background-color: transparent;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        &:active,
-        &:focus {
-          outline: none;
-          box-shadow: none;
+        select {
+            font-family: "helvetica neue", helvetica;
+            font-size: 1rem;
+            font-weight: 200;
+            max-width: 100%;
+            padding: 8px 24px 8px 10px;
+            border: none;
+            background-color: transparent;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+                    appearance: none;
+            &:active,
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+            &:focus {
+                background-color: $lightgray;
+            }
         }
-      }
-      &:after {
-        content: " ";
-        position: absolute;
-        top: 50%;
-        margin-top: -2px;
-        right: 8px;
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid $gray;
-      }
+        &:after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            margin-top: -2px;
+            right: 8px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid $gray;
+        }
     }
     /* end .sort */
     .itemsperpage {
@@ -687,35 +693,38 @@ section#results {
         float: right;
          position: relative;
         margin-top: 0.7rem;
-         select {
-        font-family: "helvetica neue", helvetica;
-        font-size: 1rem;
-        font-weight: 200;
-        max-width: 100%;
-        padding: 8px 24px 8px 10px;
-        border: none;
-        background-color: transparent;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        &:active,
-        &:focus {
-          outline: none;
-          box-shadow: none;
+        select {
+            font-family: "helvetica neue", helvetica;
+            font-size: 1rem;
+            font-weight: 200;
+            max-width: 100%;
+            padding: 8px 24px 8px 10px;
+            border: none;
+            background-color: transparent;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+                    appearance: none;
+            &:active,
+            &:focus {
+            outline: none;
+            box-shadow: none;
+            }
+            &:focus {
+                background-color: $lightgray;
+            }
         }
-      }
-      &:after {
-        content: " ";
-        position: absolute;
-        top: 50%;
-        margin-top: -2px;
-        right: 8px;
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid $gray;
-      }
+        &:after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            margin-top: -2px;
+            right: 8px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid $gray;
+        }
     }
     /* end .itemsperpage */
     #tab1:checked~#photo-grid,
@@ -901,6 +910,9 @@ section#results {
             // on the left hand side.
             height: 40vh;
             margin: 2rem 0;
+            &:focus {
+                background-color: $lightgray;
+            }
         }
     }
     label {

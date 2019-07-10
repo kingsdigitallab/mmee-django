@@ -1,10 +1,8 @@
 {% load menu_tags %}
 
 <nav>
-    <a href="/photos/create/">
-        <label aria-label="submit" class="submit-label" for="submit">
-            <span></span>
-        </label>
+    <a href="/photos/create/" class="submit-button">
+      <span></span>
     </a>
 
   {% block main_menu %}
@@ -12,6 +10,7 @@
     <label aria-label="Menu" class="menu-label" for="menu">
         <span>
         </span>
+        <span style="display: none">Menu</span>
     </label>
 
     <div class="menu-list">

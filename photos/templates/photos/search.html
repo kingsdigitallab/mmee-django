@@ -8,8 +8,8 @@
 {% verbatim %}
 <main id="search-screen">
 
-    <section id="search">
-
+    <section id="search" aria-label="search">
+        <h1>Search location</h1>
         <form @submit.stop.prevent="on_phrase_submit" class="search-field">
             <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off">
             <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
@@ -66,7 +66,7 @@
         </div> <!-- end .search-filters -->
     </section> <!-- end #search -->
 
-    <section id="results" v-if="meta.pagination.count < 1">
+    <section id="results" v-if="meta.pagination.count < 1" aria-label="no results">
         <p>No results were found for your search.
             <a href="?" @click.prevent="on_click_link">Show all Photos</a>.
         </p>
@@ -80,7 +80,7 @@
         </ul>
     </section>
 
-    <section id="results" v-else>
+    <section id="results" v-else aria-label="results">
         View:
         <template v-for="view in views">
             <input :id="view.id" type="radio" v-model="meta.query.view" :value="view.key" >
@@ -117,7 +117,7 @@
             </span>
         </div>
 
-        <article id="photo-grid" class="tab-content">
+        <article id="photo-grid" class="tab-content" aria-label="photo-grid">
             <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
               <div class="photo-image">
                 <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
@@ -143,14 +143,16 @@
       <h3>Sidebar</h3>
       <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab maxime fugiat perspiciatis.</p>
     </div>-->
-        <article id="photo-list" class="tab-content">
+        <article id="photo-list" class="tab-content" aria-label="photo-list">
             <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
                 <div class="photo-image">
                   <a v-bind:href="photo.attributes.url+'?'+meta.qs" v-html="photo.attributes.image">
                   </a>
                 </div>
                 <div class="photodata">
-                    <h2>{{ photo.attributes.description }}</h2>
+                    {% if photo.attributes.description %}
+                        <h2>{{ photo.attributes.description }}</h2>
+                    {% endif %}
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                     <div class="photobuttons">
                         <a class="view-map" href="#">
@@ -170,7 +172,7 @@
             </p>
         </article>
 
-        <article id="photo-map" class="tab-content">
+        <article id="photo-map" class="tab-content"  aria-label="photo-map">
             <div id="sticky-map" class="sticky">
             </div>
         </article>
