@@ -1087,6 +1087,9 @@ section#photo-map {
     width: 100%;
     margin-bottom: 2rem;
     border: 1px solid $lightgray;
+    &:focus {
+        background-color: $lightgray;
+    }
 }
 
 // Submission Form
