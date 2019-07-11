@@ -5,7 +5,7 @@
 
 {% block main %}
 <main>
-    <section id="search">
+    <section id="search" aria-label="search">
        <div class="search-field">
             <form action="/photos/">
                 <input name="phrase" value="{{ phrase }}">
@@ -43,7 +43,7 @@
         </form>
     {% endif %}
 
-    <section id="photo">
+    <section id="photo" aria-label="photo">
         <div class="photo-image">
           {% image photo.image height-700 height="" width="" %}
         </div> <!-- end #photo -->
@@ -113,7 +113,7 @@
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
 
-    <section id="photo-map">
+    <section id="photo-map" aria-label="photo map">
         <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
 
         <h3>Map</h3>
