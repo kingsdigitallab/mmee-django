@@ -3,17 +3,18 @@
 
 {% block meta_title %}Search{% endblock %}
 
+{% block title %}Search{% endblock %}
+
 {% block main %}
 
 {% verbatim %}
 <main id="search-screen">
 
     <section id="search" aria-label="search">
-        <h1>Search location</h1>
         <form @submit.stop.prevent="on_phrase_submit" class="search-field">
             <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off">
             <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
-            <button class="search-icon" type="submit"></button>
+            <button aria-label="Search" class="search-icon" type="submit"></button>
         </form>
 
         <div class="search-summary">
@@ -26,42 +27,41 @@
                         v-bind:disabled="option[3] < 1"
                         @click="on_change_option(option, $event)">
                     <label v-if="option[4]" :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
-                            {{ option[2] }} ({{ option[3] }})
+                        {{ option[2] }} ({{ option[3] }})
                     </label>
                 </template>
             </template>
         </div>
 
         <div class="search-filters">
-            <div class="filter">
-                <input type="checkbox" id="filter-nav" />
-                <label aria-label="Filter list" class="filter-label" for="filter-nav">
-                    All Filters
-                </label>
+          <div class="filter">
+            <input type="checkbox" id="filter-nav" />
+            <label aria-label="Filter list" class="filter-label" for="filter-nav">
+              All Filters
+            </label>
 
-                <div class="filter-list">
-                      <h2>Filters</h2>
-                      <button aria-label="clear filters" @click="on_clear_filters()">Clear All</button>
-                      <div>
-                        <template v-for="facet in meta.facets">
-                            <h4>{{ facet[0] }}</h4>
-                            <ul>
-                                <li v-for="option in facet[1]">
-
-                                    <input type="checkbox" v-bind:id="option[0]+':'+option[1]"
-                                        v-bind:name="option[0]+':'+option[1]"
-                                        value="1" v-bind:checked="option[4]"
-                                        v-bind:disabled="option[3] < 1"
-                                        @click="on_change_option(option, $event)">
-                                    <label :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
-                                        {{ option[2] }} ({{ option[3] }})
-                                    </label>
-                                </li>
-                            </ul>
-                        </template>
-                        </div>
-                </div>
+            <div class="filter-list">
+              <h2>Filters</h2>
+              <button aria-label="clear filters" @click="on_clear_filters()">Clear All</button>
+              <div>
+                <template v-for="facet in meta.facets">
+                  <h4>{{ facet[0] }}</h4>
+                  <ul>
+                    <li v-for="option in facet[1]">
+                        <input type="checkbox" v-bind:id="option[0]+':'+option[1]"
+                            v-bind:name="option[0]+':'+option[1]"
+                            value="1" v-bind:checked="option[4]"
+                            v-bind:disabled="option[3] < 1"
+                            @click="on_change_option(option, $event)">
+                        <label :class="{'disabled': (option[3] < 1)}" v-bind:for="option[0]+':'+option[1]">
+                            {{ option[2] }} ({{ option[3] }})
+                        </label>
+                    </li>
+                  </ul>
+                </template>
+              </div>
             </div>
+          </div>
 
         </div> <!-- end .search-filters -->
     </section> <!-- end #search -->
@@ -139,10 +139,7 @@
                 </a>
             </p>
         </article>
-  <!--<div class="breadcrumb ">
-      <h3>Sidebar</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab maxime fugiat perspiciatis.</p>
-    </div>-->
+
         <article id="photo-list" class="tab-content" aria-label="photo-list">
             <div v-for="photo in photos" class="photo" :data-photoid="photo.id" :data-geo="photo.attributes.location">
                 <div class="photo-image">
@@ -151,7 +148,7 @@
                 </div>
                 <div class="photodata">
                     <h2 v-if="photo.attributes.description">{{ photo.attributes.description }}</h2>
-                    
+
                     <p v-if="photo.attributes.date">Date taken: {{ photo.attributes.date }}</p>
                     <div class="photobuttons">
                         <a class="view-map" href="#">

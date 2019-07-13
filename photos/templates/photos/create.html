@@ -3,6 +3,7 @@
 
 {% block meta_title %}Upload a Photo{% endblock %}
 
+{% block h1 %}{% endblock %}
 {% block main %}
 <div class="submission-form">
   <form action="" method="POST" enctype="multipart/form-data">
@@ -49,8 +50,12 @@
       {# step 3 #}
       <hr>
 
-      {% form_field form.author_feeling_category placeholder="" label="How do you feel about this photo?" %}
+      <fieldset>
+        <legend><h4>How do you feel about this photo?</h4></legend>
+        {% form_field form.author_feeling_category placeholder=""  %}
+      </fieldset>
       <hr>
+
       {% form_field form.author_feeling_keywords placeholder="" label="In three keywords or less, describe that feeling." autocomplete="off" %}
 
       {# step 4 #}
@@ -61,9 +66,16 @@
       {# step 5 #}
       <hr>
 
-      {% form_field form.age_range placeholder="" label="What age category are you?" %}
+      <fieldset>
+        <legend><h4>What age category are you?</h4></legend>
+        {% form_field form.age_range placeholder="" %}
+      </fieldset>
       <hr>
-      {% form_field form.gender placeholder="" label="What do you identify as?" %}
+
+      <fieldset>
+        <legend><h4>What do you identify as?</h4></legend>
+        {% form_field form.gender placeholder="" %}
+      </fieldset>
 
       {% form_field form.gender_other placeholder="" label="If other, please specify" autocomplete="off" %}
       <hr>

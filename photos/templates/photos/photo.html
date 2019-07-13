@@ -3,15 +3,22 @@
 
 {% block meta_title %}Photo: "{{photo.title}}"{% endblock %}
 
+{% block title %}
+  {% if photo.title %}
+    "{{photo.title}}"
+  {% else %}
+    Photo details
+  {% endif %}
+{% endblock %}
+
 {% block main %}
 <main>
+
     <section id="search" aria-label="search">
-       <div class="search-field">
-            <form action="/photos/">
-                <input name="phrase" value="{{ phrase }}">
-                <button class="search-icon"></button>
-            </form>
-        </div>
+        <form action="/photos/" class="search-field">
+            <input type="text" name="phrase" value="{{ phrase }}" autocomplete="off">
+            <button aria-label="Search" class="search-icon" type="submit"></button>
+        </form>
     </section> <!-- end .search -->
 
     {% if photo_flag %}

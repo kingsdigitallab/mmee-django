@@ -167,9 +167,9 @@ class PhotoCreateView(CreateView):
 
     def form_invalid(self, form):
         # TODO: remove this
-        print('INVALID')
-        print(self.request.FILES)
-        print(form.errors)
+        # print('INVALID')
+        # print(self.request.FILES)
+        # print(form.errors)
         return super().form_invalid(form)
 
     @transaction.atomic
