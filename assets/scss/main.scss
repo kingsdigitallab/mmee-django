@@ -985,7 +985,10 @@ section#results {
 }
 
 .accessibility-label {
-    font-size:0px;
+    font-size: 1px;
+    position: absolute;
+    top: -10px;
+    left: -10px;
     display: inline-block;
 }
 
