@@ -301,8 +301,8 @@ section#search {
             position: absolute;
             padding: 0;
             cursor: pointer;
-            margin-top: -3.4rem;
-
+            // margin-top: -3.4rem;
+            top: 0;
             &:hover {
                 opacity: 0.6;
             }
