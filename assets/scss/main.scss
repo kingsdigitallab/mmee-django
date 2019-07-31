@@ -171,6 +171,7 @@ nav {
         border: 1px solid $white;
         right: 73px;
         padding: 22px 20px;
+        z-index: 99;
         span {
             /* plus icon */
             position: relative;
@@ -314,6 +315,9 @@ section#search {
                 vertical-align: middle;
                 outline: 0;
                 right: 2.5rem;
+                &:focus {
+                    background-color: $gray;
+                }
                 &:after {
                     content: "✕";
                     display: block;

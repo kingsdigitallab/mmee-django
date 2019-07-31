@@ -12,7 +12,7 @@
 
     <section id="search" aria-label="search">
         <form @submit.stop.prevent="on_phrase_submit" class="search-field">
-            <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off">
+            <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off" aria-label="search">
             <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
             <button aria-label="Search" class="search-icon" type="submit"></button>
         </form>
