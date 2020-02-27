@@ -62,12 +62,12 @@ def form_field(context, field, *args, **kwargs):
     })
 
     if 'class' not in attributes:
-        attributes['class'] = 'form-control'
-    else:
-        attributes['class'] += ' form-control'
+        attributes['class'] = ''
+
+    attributes['class'] += ' form-control'
 
     field_html = field.as_widget(
-        attrs={k.replace('_', '-'): v for k, v in attributes.items()}
+        attrs={k.replace('_', '-'): v.strip() for k, v in attributes.items()}
     )
 
     template = loader.get_template('mmee/form_field.html')

@@ -1,6 +1,6 @@
 {% load staticfiles compress  %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,48 +8,45 @@
   <meta name="author" content="King's Digital Lab">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {# GN: remove this when we go live, only added to avoid Google popup on lorem ipsum#}
-  <meta name="google" content="notranslate">
 
   <link rel="icon" type="image/png" href="{% static 'images/sensingplace-favicon.png' %}">
 
 
-  {# TO: Need to download #}  
+  {# TO: Need to download #}
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
   <link rel="stylesheet" href="{% static 'leaflet/dist/leaflet.css' %}">
 
   {% compress css %}
-  <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" >
-  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.css' %}" >
-  <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.Default.css' %}" >
-  <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
+    <link rel="stylesheet" href="{% static 'leaflet.locatecontrol/dist/L.Control.Locate.css' %}" >
+    <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.css' %}" >
+    <link rel="stylesheet" href="{% static 'leaflet.markercluster/dist/MarkerCluster.Default.css' %}" >
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'scss/main.scss' %}">
   {% endcompress %}
-  
+
 </head>
 <body>
-
   <div class="wrapper">
-   
+    <a href="#maincontent" class="accessibility-label">Skip to main content</a>
     {% include 'includes/header.html' %}
 
     {% include 'includes/navigation.html' %}
 
     {% block main-section %}
 
-    <!-- <main> -->
-      {% block title %}{% endblock %}
-      {% block main %}
-      {% endblock %}
-    <!-- </main> -->
+      <!-- <main> -->
+      <div id="maincontent">
+        {% block h1 %}<h1>{% block title %}{% endblock %}</h1>{% endblock %}
+        {% block main %}{% endblock %}
+      </div>
+      <!-- </main> -->
+
     {% endblock %}
-
-
   </div>
-  
+
   <footer>
     {% block footer %}
-    {% include 'includes/footer.html' %}
+      {% include 'includes/footer.html' %}
     {% endblock %}
   </footer>
 
@@ -74,7 +71,7 @@
       </script>
       {% endcompress %}
   {% endif %}
-  
+
   {% block footer_scripts %}{% endblock %}
 
 </body>
