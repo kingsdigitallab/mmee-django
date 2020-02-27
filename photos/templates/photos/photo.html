@@ -3,15 +3,22 @@
 
 {% block meta_title %}Photo: "{{photo.title}}"{% endblock %}
 
+{% block title %}
+  {% if photo.title %}
+    "{{photo.title}}"
+  {% else %}
+    Photo details
+  {% endif %}
+{% endblock %}
+
 {% block main %}
 <main>
-    <section id="search">
-       <div class="search-field">
-            <form action="/photos/">
-                <input name="phrase" value="{{ phrase }}">
-                <button class="search-icon"></button>
-            </form>
-        </div>
+
+    <section id="search" aria-label="search">
+        <form action="/photos/" class="search-field">
+            <input type="text" name="phrase" value="{{ phrase }}" autocomplete="off">
+            <button aria-label="Search" class="search-icon" type="submit"></button>
+        </form>
     </section> <!-- end .search -->
 
     {% if photo_flag %}
@@ -43,7 +50,7 @@
         </form>
     {% endif %}
 
-    <section id="photo">
+    <section id="photo" aria-label="photo">
         <div class="photo-image">
           {% image photo.image height-700 height="" width="" %}
         </div> <!-- end #photo -->
@@ -113,7 +120,7 @@
         </div><!-- end .photo-data -->
     </section> <!-- end .photo -->
 
-    <section id="photo-map">
+    <section id="photo-map" aria-label="photo map">
         <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
 
         <h3>Map</h3>
