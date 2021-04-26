@@ -154,7 +154,9 @@ class PhotoAdmin(admin.ModelAdmin):
                    ]
 
     search_fields = ['photographer__first_name', 'photographer__last_name',
-                     'description', 'reference_number']
+                     'description', 'reference_number', 
+                     'author_focus_keywords', 'author_feeling_keywords',
+                    ]
 
     readonly_fields = ['reference_number']
 
