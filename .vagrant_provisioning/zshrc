@@ -33,9 +33,11 @@ if [[ -o login ]]
 then
     export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:$PATH"
 
+    source /home/vagrant/.nvm/nvm.sh
+
     # Change to the project directory
     cd /vagrant
 
     # and activate the virtual environment
-    pipenv shell
+    source /home/vagrant/venv/bin/activate
 fi

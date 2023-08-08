@@ -25,55 +25,17 @@
 
     - name: apt | install required system packages
       apt:
-        pkg: '{{ item }}'
+        pkg: '{{ system_packages }}'
         state: present
         update_cache: yes
-      with_items: '{{ system_packages }}'
       tags:
         - system
 
     - name: Upgrade all packages to the latest version
       apt:
-        upgrade: yes
+        upgrade: 'yes'
       tags:
         - system
-
-    - name: solr | download
-      become: yes
-      get_url:
-        url: '{{ solr.url }}'
-        dest: /tmp
-      tags:
-        - system
-        - solr
-
-    - name: solr | unarchive
-      become: yes
-      unarchive:
-        src: /tmp/solr-{{ solr.version}}.tgz
-        dest: /tmp
-        remote_src: yes
-      tags:
-        - system
-        - solr
-
-    - name: solr | install
-      become: yes
-      command: /tmp/solr-{{ solr.version }}/bin/install_solr_service.sh /tmp/solr-{{ solr.version}}.tgz -f
-      tags:
-        - system
-        - solr
-
-    - name: solr | set up
-      become: yes
-      become_user: solr
-      command: /opt/solr/bin/solr create -c dev
-      # ignoring errors because this fails if the core already exists
-      ignore_errors: yes
-      notify: solr | restart solr
-      tags:
-        - system
-        - solr
 
     - name: zsh | clone oh-my-zsh repo
       git: repo={{ zsh.oh_my_zsh }} dest={{ user_home }}/.oh-my-zsh
@@ -93,6 +55,8 @@
     - name: motd | clean existing
       become: yes
       shell: 'rm -rf /etc/update-motd.d/*'
+      args:
+        warn: false
       tags:
         - system
 
@@ -108,74 +72,53 @@
       tags:
         - system
 
-    - name: python | install pipenv
-      pip:
-        name: pipenv
-        state: latest
-      tags:
-        - python
-
-    - name: npm | upgrade node.js and npm
-      npm:
-        name: 'n'
-        global: true
-      tags:
-        - system
-        - javascript
-    - command: 'n stable'
-      tags:
-        - system
-        - javascript
-
-  handlers:
-    - name: solr | restart solr
-      become: yes
-      service:
-        name: solr
-        state: started
-      tags:
-        - db
-
-- hosts: all
-# Python and Javascript Package Managers
-# run as vagrant
-- hosts: all
+- name: Install python packages
+  hosts: all
   vars_files:
     - vars.yml
   gather_facts: false
 
   tasks:
-    - name: python | install packages from Pipfile
-      command: 'pipenv install -d'
-      args:
-        chdir: '{{ project_root }}'
+    - name: python | create venv
+      command: 'python3 -m venv {{ python.virtualenv_location }}'
       tags:
         - python
 
-    - name: npm | create dummy package.json
-      # this creates a dummy package.json. Needed for all other npm commands.
-      command: 'npm init -y'
-      args:
-        chdir: '{{ project_root }}'
-        creates: '{{ project_root }}/package.json'
+    - name: python | upgrade pip
+      command: '{{ python.pip }} install "pip==19.1.1"'
       tags:
-        - javascript
+        - python
 
-    - name: npm | install original javascript packages from vars.yml
-      # only for the initial setup of the repository
-      # it will install packages selected during bare-bone bootstrap
-      command: 'npm i {{ npm.original_packages }}'
+    - name: python | install packages
+      command: '{{ python.pip }} install -r {{ python.requirements }}'
       args:
-        chdir: '{{ project_root }}'
-        creates: '{{ project_root }}/package-lock.json'
+        chdir: "{{ project_root }}"
       tags:
-        - javascript
+        - python
 
-    - name: npm | install javascript packages from package.json
-      npm:
-        path: '{{ project_root }}'
-      tags:
-        - javascript
+- name: Install Javascript packages
+  hosts: all
+  vars_files:
+    - vars.yml
+  gather_facts: false
+
+  tasks:
+    - name: Install nvm
+      ansible.builtin.shell: >
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.4/install.sh | bash
+      args:
+        executable: /bin/bash
+        chdir: "$HOME"
+        creates: "$HOME/.nvm/nvm.sh"
+
+    - name: Install node
+      shell: '. {{ user_home }}/.nvm/nvm.sh && nvm install {{ item }} && nvm use {{ item }} && npm ci'
+      args:
+        executable: /bin/bash
+        chdir: '{{ project_root }}'
+        creates: "{{ user_home }}/.nvm/versions/{{ item }}"
+      loop:
+        - 16
 
 - hosts: all
   vars_files:
@@ -316,17 +259,17 @@
         - django
 
     - name: django | migrations
-      command: 'pipenv run python manage.py makemigrations'
+      command: '{{ python.python }} manage.py makemigrations'
       args:
         chdir: '{{ project_root }}'
-    - command: 'pipenv run python manage.py migrate'
+    - command: '{{ python.python }} manage.py migrate'
       args:
         chdir: '{{ project_root }}'
       tags:
         - django
 
     - name: django | add default (vagrant/vagrant) superuser
-      command: 'pipenv run python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser(''vagrant'', ''vagrant@localhost'', ''vagrant'')"'
+      command: '{{ python.python }} manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser(''vagrant'', ''vagrant@localhost'', ''vagrant'')"'
       args:
         chdir: '{{ project_root }}'
       ignore_errors: yes # The user may already exist
@@ -345,7 +288,7 @@
         - git
 
     - name: git | flake8 pre-commit hook
-      command: 'pipenv run flake8 --install-hook=git'
+      command: '{{ python.python }} flake8 --install-hook=git'
       ignore_errors: yes # Stop errors if it already exists
       args:
         chdir: '{{ project_root }}'
