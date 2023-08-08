@@ -17,7 +17,12 @@ var search_map = function(L, g_map_image_size, on_map_created) {
         L.control.locate().addTo(ret);
 
         // Create tilelayer and add to map
-        var tile_layer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(ret);
+        var tile_layer = L.tileLayer(
+            // "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png", {
+            "https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png", {
+                attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> <a href="https://stamen.com/" target="_blank">&copy; Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/about" target="_blank">OpenStreetMap</a> contributors',
+            }
+        ).addTo(ret);
 
         tile_layer.on('load', function() {
             $('#initial-map-container').hide();
