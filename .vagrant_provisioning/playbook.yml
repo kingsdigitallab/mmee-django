@@ -55,8 +55,6 @@
     - name: motd | clean existing
       become: yes
       shell: 'rm -rf /etc/update-motd.d/*'
-      args:
-        warn: false
       tags:
         - system
 
@@ -123,7 +121,6 @@
 - hosts: all
   vars_files:
     - vars.yml
-  # gather_facts: false
   tasks:
     - name: postgresql | setup gb locale
       become: yes

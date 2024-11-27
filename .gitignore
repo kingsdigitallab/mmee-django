@@ -67,3 +67,6 @@ logs/
 
 # Private research data
 *private/
+
+# project
+/server
