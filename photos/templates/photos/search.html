@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load wagtailimages_tags mmee_wagtail_tags staticfiles %}
 
-{% block meta_title %}Search{% endblock %}
+{% block meta_title %}Browse{% endblock %}
 
-{% block title %}Search{% endblock %}
+{% block title %}Browse{% endblock %}
 
 {% block main %}
 
@@ -11,11 +11,13 @@
 <main id="search-screen">
 
     <section id="search" aria-label="search">
-        <form @submit.stop.prevent="on_phrase_submit" class="search-field">
-            <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off" aria-label="search">
-            <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
-            <button aria-label="Search" class="search-icon" type="submit"></button>
-        </form>
+        <template v-if="0">
+            <form @submit.stop.prevent="on_phrase_submit" class="search-field">
+                <input type="text" name="phrase" v-model="meta.query.phrase" autocomplete="off" aria-label="search">
+                <button v-if="meta.query.phrase" class="close-icon" type="reset" @click.stop.prevent="on_phrase_reset"></button>
+                <button aria-label="Search" class="search-icon" type="submit"></button>
+            </form>
+        </template>
 
         <div class="search-summary">
             <template v-for="facet in meta.facets">
@@ -33,7 +35,7 @@
             </template>
         </div>
 
-        <div class="search-filters">
+        <div class="search-filters" v-if="0">
           <div class="filter">
             <input type="checkbox" id="filter-nav" />
             <label aria-label="Filter list" class="filter-label" for="filter-nav">
@@ -87,7 +89,7 @@
             <label :for="view.id"><i :class="view.class"></i> <span>{{ view.label }}</span></label>
         </template>
 
-        <div class="sort">
+        <div class="sort" v-if="0">
             Sort by:
             <select aria-label="Sort by" v-model="meta.query.order">
                 <option value="newest">Newest</option>
@@ -96,7 +98,7 @@
             </select>
         </div>
 
-        <div class="itemsperpage">
+        <div class="itemsperpage" v-if="0">
             Items per page:
             <select aria-label="Items per page" v-model="meta.query.perpage">
                 <option value="12">12</option>

@@ -14,12 +14,14 @@
 {% block main %}
 <main>
 
-    <section id="search" aria-label="search">
-        <form action="/photos/" class="search-field">
-            <input type="text" name="phrase" value="{{ phrase }}" autocomplete="off">
-            <button aria-label="Search" class="search-icon" type="submit"></button>
-        </form>
-    </section> <!-- end .search -->
+    {% if 0 %}
+        <section id="search" aria-label="search">
+            <form action="/photos/" class="search-field">
+                <input type="text" name="phrase" value="{{ phrase }}" autocomplete="off">
+                <button aria-label="Search" class="search-icon" type="submit"></button>
+            </form>
+        </section> <!-- end .search -->
+    {% endif %}
 
     {% if photo_flag %}
         <p class="alert alert-success">
