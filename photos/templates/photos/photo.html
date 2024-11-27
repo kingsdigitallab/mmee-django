@@ -32,22 +32,24 @@
         </p>
     {% else %}
         <!-- The form for a visitor to flag a photo as inappropriate-->
-        <form id="form-flag" class="form-flag" action="" method="POST">
-            {% csrf_token %}
-            {{ form_flag.non_field_errors }}
+        {% if 0 %}
+            <form id="form-flag" class="form-flag" action="" method="POST">
+                {% csrf_token %}
+                {{ form_flag.non_field_errors }}
 
-            {{ form_flag.flagger_comment.errors }}
-            <p>{{ form_flag.flagger_comment.help_text }}
-                {% if moderation_page %}
-                    <a href="{{ moderation_page.get_url }}" target="_blank">Moderation policy</a>
-                {% endif %}
-            </p>
-            {{ form_flag.flagger_comment }}
-            <p>
-                <a href="#" class="form-cancel btn">Cancel</a>
-                <input type="submit" name="submit" value="Submit" class="form-submit btn">
-            </p>
-        </form>
+                {{ form_flag.flagger_comment.errors }}
+                <p>{{ form_flag.flagger_comment.help_text }}
+                    {% if moderation_page %}
+                        <a href="{{ moderation_page.get_url }}" target="_blank">Moderation policy</a>
+                    {% endif %}
+                </p>
+                {{ form_flag.flagger_comment }}
+                <p>
+                    <a href="#" class="form-cancel btn">Cancel</a>
+                    <input type="submit" name="submit" value="Submit" class="form-submit btn">
+                </p>
+            </form>
+        {% endif %}
     {% endif %}
 
     <section id="photo" aria-label="photo">
@@ -56,7 +58,7 @@
         </div> <!-- end #photo -->
 
         <div class="photo-data">
-          {% if not photo_flag %}
+          {% if 0 and not photo_flag %}
               <p>
                   <a class="flag-button" href="#form-flag">
                     Report a problem with this photo
@@ -78,8 +80,8 @@
                 <h3>Date</h3>
                   <ul>
                       {% if photo.taken_year %}
-                              {{ photo.taken_month_name }}
-                              {{ photo.taken_year }}
+                            {{ photo.taken_month_name }}
+                            {{ photo.taken_year }}
                       {% endif %}
                   </ul>
             {% endif %}
