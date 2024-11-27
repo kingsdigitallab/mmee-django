@@ -141,6 +141,9 @@
 {% block footer_scripts %}
 {{ block.super }}
 <script>
+// // no longer maintained
+// TILE_URL = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"
+TILE_URL = "https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png"
 $(function(){
     var map_id = 'map-leaflet';
 
@@ -149,7 +152,9 @@ $(function(){
         var photo_point = [{{ photo.location.y }}, {{ photo.location.x }}];
         var photomap = L.map(map_id).setView(photo_point, 15);
         // Create tilelayer and add to map
-        var tileLayer = L.tileLayer("http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png").addTo(photomap);
+        var tileLayer = L.tileLayer(
+            TILE_URL
+        ).addTo(photomap);
         var sample_markers = [
           {'latlng':photo_point, 'content':"This Photo"}
         ];
