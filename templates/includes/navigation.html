@@ -1,9 +1,11 @@
 {% load menu_tags %}
 
 <nav>
+  {% if 0 %}
     <a aria-label="Upload a picture" href="/photos/create/" class="submit-button">
       <span></span>
     </a>
+  {% endif %}
 
   {% block main_menu %}
     <input type="checkbox" id="menu" />
