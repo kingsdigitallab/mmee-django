@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Photo: "#Bird" | Sensing Place</title>
+  <meta name="author" content="King's Digital Lab">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" type="image/png" href="../../static/images/sensingplace-favicon.png">
+
+
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="../../static/leaflet/dist/leaflet.css">
+
+  <link rel="stylesheet" href="../../static/CACHE/css/236105486c73.css" type="text/css" />
+
+</head>
+<body>
+  <div class="wrapper">
+    <a href="#maincontent" class="accessibility-label">Skip to main content</a>
+    <header>
+	<a href="../../">Sensing Place</a>
+</header>
+
+    
+
+<nav>
+  
+
+  
+    <input type="checkbox" id="menu" />
+    <label aria-label="Menu" class="menu-label" for="menu">
+        <span>
+        </span>
+        <span style="display: none">Menu</span>
+    </label>
+
+    <div class="menu-list">
+      <ul>
+        
+            
+
+    <li class="">
+        <a href="../../">
+            Home
+        </a>
+        
+    </li>
+
+    <li class="">
+        <a href="../../about/">
+            About
+        </a>
+        
+    </li>
+
+    <li class="">
+        <a href="../../meet-team/">
+            Meet the Team
+        </a>
+        
+    </li>
+
+    <li class="">
+        <a href="../../toolkit/">
+            Toolkit
+        </a>
+        
+    </li>
+
+    <li class="">
+        <a href="../../cookie-use/">
+            Cookie Use
+        </a>
+        
+    </li>
+
+    <li class="">
+        <a href="../../accessibility-statement/">
+            Accessibility Statement
+        </a>
+        
+    </li>
+
+
+        
+        
+      </ul>
+    </div>
+
+  
+</nav>
+
+
+    
+
+      <!-- <main> -->
+      <div id="maincontent">
+        <h1>
+  
+    "#Bird"
+  
+</h1>
+        
+<main>
+
+    
+
+    
+        <!-- The form for a visitor to flag a photo as inappropriate-->
+        
+    
+
+    <section id="photo" aria-label="photo">
+        <div class="photo-image">
+          <img alt="53E0DD0E-44BE-4A12-9C8C-805FC402B7B8.jpeg" height="" src="../../media/images/53E0DD0E-44BE-4A12-9C8C-805FC402B7B8.height-700.jpg" width="">
+        </div> <!-- end #photo -->
+
+        <div class="photo-data">
+          
+
+          
+              <div class="photo-description">
+                <h3>Description</h3>
+                <p>
+                  #Bird
+                </p>
+              </div><!-- end #photo-description -->
+          
+
+          <div class="photo-photograph">
+            
+                <h3>Date</h3>
+                  <ul>
+                      
+                            May
+                            2021
+                      
+                  </ul>
+            
+            
+                
+            
+          </div><!-- end .photograph-data -->
+
+          
+            
+          
+
+          
+              <div class="photo-location">
+                <h3>Location Coordinates</h3>
+                <!-- TO: GN, could you add geolocation, lat/long here please -->
+                <p>50.954°N 1.209°W</p>
+
+              </div><!-- end .location -->
+          
+
+        </div><!-- end .photo-data -->
+    </section> <!-- end .photo -->
+
+    <section id="photo-map" aria-label="photo map">
+        <!-- img src="https://images.fineartamerica.com/images-medium-large-5/london-map-art-michael-tompsett.jpg" alt=""/ -->
+
+        <h3>Map</h3>
+        <!-- div instead of img -->
+        
+            <div id="map-leaflet">
+            </div>
+        
+
+    </section> <!-- end #map -->
+
+</main>
+
+
+      </div>
+      <!-- </main> -->
+
+    
+  </div>
+
+  <footer>
+    
+      
+
+<ul class="logo">
+    <li>
+        <a href="//winchester.ac.uk" title="Winchester University">
+            <img src="../../static/images/winchester-logo.jpg" alt="Winchester University">
+        </a>
+</ul>
+<ul>
+    <li>
+        <p>
+            Designed, developed and maintained by <a href="//www.kdl.kcl.ac.uk/" title="King's Digital Lab">King's Digital Lab</a>
+        </p>
+        
+            
+<p>
+    <a href="../../cookie-use">Cookies policy</a> -
+    <a href="../../accessibility-statement">Accessibility statement</a>
+</p>
+
+        
+    </li>
+</ul>
+
+
+    
+  </footer>
+
+  <script type="text/javascript" src="../../static/CACHE/js/62f16206747b.js"></script>
+
+  
+
+  
+
+<script>
+// // no longer maintained
+// TILE_URL = "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"
+TILE_URL = "https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png"
+$(function(){
+    var map_id = 'map-leaflet';
+
+    if (document.getElementById(map_id)) {
+        // Create map and set view
+        var photo_point = [50.954029359805716, -1.2092113494872976];
+        var photomap = L.map(map_id).setView(photo_point, 15);
+        // Create tilelayer and add to map
+        var tileLayer = L.tileLayer(
+            TILE_URL
+        ).addTo(photomap);
+        var sample_markers = [
+          {'latlng':photo_point, 'content':"This Photo"}
+        ];
+        for (i in sample_markers){
+          m = L.marker(sample_markers[i]['latlng']).bindPopup(
+              sample_markers[i]['content']
+          ).addTo(photomap);
+        }
+    }
+
+    function show_form_flag(hide) {
+        var $form_flag = $('#form-flag');
+        $form_flag.toggle(!hide);
+        if (!hide) {
+            $form_flag.find('textarea').focus();
+        }
+    }
+
+    $('.flag-button').on('click', function() {
+        show_form_flag();
+    });
+
+    $('.form-cancel').on('click', function() {
+        show_form_flag(1);
+    });
+
+    
+});
+</script>
+
+
+</body>
+</html>
