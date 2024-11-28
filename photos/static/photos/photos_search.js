@@ -1,5 +1,55 @@
-var photo_search = function(g_initial_query) {
+class StaticAPI {
+    constructor() {
+        this.response = API_PHOTOS
+        // console.log(staticAPI.get_photo_urls())
+    }
+    get_photo_urls() {
+        return this.response.data.map(p => {
+            return `<a href="${p.id}/">${p.id}</a><br>`
+        }).join('\n')
+    }
+    filter(query) {
+        // .page: 1
+        // .perpage: 12
+        console.log(query)
+        // let ret = JSON.parse(JSON.stringify(this.response).replaceAll('height-375', 'height-700'));
+        let ret = JSON.parse(JSON.stringify(this.response));
+        ret.meta.query.view = query.view || 'grid';
+        ret.meta.query.perpage = parseInt(query.perpage || 12);
+        ret.meta.query.page = parseInt(query.page || 1);
+        let start = (ret.meta.query.page - 1) * ret.meta.query.perpage
+        ret.data = ret.data.slice(
+            start, 
+            start + ret.meta.query.perpage
+        )
+        ret.meta.qs = (new URLSearchParams(ret.meta.query)).toString()
+        ret.meta.pagination.per_page = ret.meta.query.perpage
+        ret.meta.pagination.page = ret.meta.query.page
+        ret.meta.pagination.pages = Math.ceil(ret.meta.pagination.count / ret.meta.pagination.per_page)
 
+        let q = {
+            ...ret.meta.query,
+            page: ret.meta.pagination.page + 1
+        }
+        if (q.page <= ret.meta.pagination.pages) {
+            ret.links.next = '?' + (new URLSearchParams(q)).toString()
+        }
+        q.page = ret.meta.pagination.page - 1
+        if (q.page > 0) {
+            ret.links.prev = '?' + (new URLSearchParams(q)).toString()
+        }
+        q.page = ret.meta.pagination.pages
+        ret.links.last = '?' + (new URLSearchParams(q)).toString()
+        q.page = 1
+        ret.links.first = '?' + (new URLSearchParams(q)).toString()
+
+        return ret
+    }
+}
+
+var staticAPI = new StaticAPI();
+
+var photo_search = function(g_initial_query) {
     /*
     notations:
 
@@ -142,7 +192,7 @@ var photo_search = function(g_initial_query) {
                 return false;
             },
             get_html_link_from_api_link: function(link) {
-                return link ? link.replace(/[^?]+[?]?/, '?') : '';
+                return link ? link.replace(/[^?]*[?]?/, '?') : '';
             },
             resize_map: function() {
                 g_leaflet.resize_map();
@@ -154,6 +204,85 @@ var photo_search = function(g_initial_query) {
                 g_leaflet.fit_bounds(bounds);
             },
             call_api: function(aquery, query_string, load_more) {
+                /*
+                Calls the API with parameters found in this.meta.query.
+
+                If aquery is provided, its parameters will override
+                this.meta.query.
+
+                If query_string is provided (?page=1), it will be used instead
+                of this.meta.query and aquery.
+
+                this.data is updated with the API response. Including this.meta.query.
+
+                IMPORTANT: this function makes up to two requests to the API:
+
+                * One request for the showing a paginated list of images
+
+                * Another optional request for showing all (i.e. unpaginated)
+                  photo markers on the map.
+
+                Both are query dependent (i.e. depend on search phrase, facets).
+                */
+
+                // build the query
+                var self = this;
+
+                var query = {};
+                self.searching = 1;
+
+                if (query_string) {
+                    query = mmee.get_dict_from_query_string(query_string);
+                } else {
+                    query_string = '';
+
+                    query = $.extend(
+                        {}, // Important: without this {}, we get all the getters and setters from self.meta.query
+                        self.meta.query,
+                        {
+                            facets: this.get_string_from_selected_facets(),
+                        },
+                        aquery
+                    );
+                }
+
+                query.imgspecs = this.get_image_spec(3, g_image_size_increment);
+
+                // request for the photo result (list of images)
+                let res = staticAPI.filter(query)
+                
+                if (!load_more) {
+                    Vue.set(self, 'photos', []);
+                }
+                Array.prototype.push.apply(self.photos, res.data);
+
+                self.updating_from_response = 1;
+                // console.log('' + query.geo + ' -> ' + data.meta.query.geo);
+                Vue.set(self, 'meta', res.meta);
+                Vue.set(self, 'links', res.links);
+
+                mmee.replace_query_string(res.meta.qs);
+                self.searching = 0;
+
+                self.$nextTick(function () {
+                    self.updating_from_response = 0;
+                });
+
+                // request for the map result (map markers)
+                if (this.is_map_on_page()) {
+                    query.page = 1;
+                    query.perpage = 5000;
+                    query.geo_only = 1;
+                    var geo_query_hash = this.get_hash_from_geo_query(query);
+                    if (geo_query_hash !== self.last_geo_query_hash) {
+                        // console.log('GEO ONLY QUERY ' + geo_query_hash);
+                        let res_geo = staticAPI.filter(query)
+                        self.last_geo_query_hash = self.get_hash_from_geo_query(res.meta.query);
+                        g_leaflet.replace_markers(res.data, 1);
+                    }
+                }
+            },
+            call_api_old: function(aquery, query_string, load_more) {
                 /*
                 Calls the API with parameters found in this.meta.query.
 
