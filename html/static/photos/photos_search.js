@@ -2,6 +2,12 @@ class StaticAPI {
     constructor() {
         this.response = API_PHOTOS
         // console.log(staticAPI.get_photo_urls())
+
+        // turn url to photos relative
+        this.response.data.forEach(photo => {
+            photo.attributes.image = photo.attributes.image.replace('src="/media/', 'src="../media/')
+            photo.attributes.url = photo.attributes.url.replace('/photos/', '')
+        })
     }
     get_photo_urls() {
         return this.response.data.map(p => {
