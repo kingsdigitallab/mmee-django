@@ -21,7 +21,7 @@ var photo_search = function(g_initial_query) {
     var g_leaflet = window.search_map(L, g_map_image_size, function() {
         if (!window.$map) {
             window.$map = $('#map-leaflet').detach();
-            $('#sticky-map').append(window.$map);
+            $('#sticky-map').append(window.$map);    
         }
     });
 
@@ -227,8 +227,8 @@ var photo_search = function(g_initial_query) {
                     if (geo_query_hash !== self.last_geo_query_hash) {
                         // console.log('GEO ONLY QUERY ' + geo_query_hash);
                         let res_geo = staticAPI.filter(query)
-                        self.last_geo_query_hash = self.get_hash_from_geo_query(res.meta.query);
-                        g_leaflet.replace_markers(res.data, 1);
+                        self.last_geo_query_hash = self.get_hash_from_geo_query(res_geo.meta.query);
+                        g_leaflet.replace_markers(res_geo.data, 1);
                     }
                 }
             },

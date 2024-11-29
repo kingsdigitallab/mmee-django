@@ -17,13 +17,16 @@ class StaticAPI {
     filter(query) {
         // .page: 1
         // .perpage: 12
-        console.log(query)
         // let ret = JSON.parse(JSON.stringify(this.response).replaceAll('height-375', 'height-700'));
         let resStr = JSON.stringify(this.response)
         if (query.imgspecs) {
             resStr = resStr.replaceAll('height-375', query.imgspecs)
         }
         let ret = JSON.parse(resStr);
+
+        if (query.id) {
+            ret.data = ret.data.filter(p => p.id == query.id)
+        }
 
         ret.meta.query.view = query.view || 'grid';
         ret.meta.query.perpage = parseInt(query.perpage || 12);
@@ -53,10 +56,6 @@ class StaticAPI {
         ret.links.last = '?' + (new URLSearchParams(q)).toString()
         q.page = 1
         ret.links.first = '?' + (new URLSearchParams(q)).toString()
-
-        if (query.id) {
-            ret.data = ret.data.filter(p => p.id == query.id)
-        }
 
         return ret
     }

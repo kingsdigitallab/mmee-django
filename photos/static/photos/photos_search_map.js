@@ -27,9 +27,17 @@ var search_map = function(L, g_map_image_size, on_map_created) {
             }
         ).addTo(ret);
 
+        var loaded = 0
+
         tile_layer.on('load', function() {
-            $('#initial-map-container').hide();
-            console.log('load')
+            if (!loaded) {
+                $('#initial-map-container').hide();
+                console.log('load')
+                loaded = 1
+                setTimeout(function() {
+                    ns.resize_map()
+                }, 1); 
+            }
         });
 
         return ret;
@@ -58,7 +66,10 @@ var search_map = function(L, g_map_image_size, on_map_created) {
         var marker = e.target;
         var content = '<a href="/photos/'+marker.id+'">Loading image...</a>';
         marker.setPopupContent(content);
-        let query = {'id': marker.id, 'imgspecs': 'height-'+g_map_image_size}
+        let query = {
+            'id': marker.id, 
+            'imgspecs': 'height-'+g_map_image_size
+        }
         if (0) {
             var req = $.getJSON('/api/1.0/photos/', query);
             req.done(function(res) {
