@@ -29,6 +29,7 @@ var search_map = function(L, g_map_image_size, on_map_created) {
 
         tile_layer.on('load', function() {
             $('#initial-map-container').hide();
+            console.log('load')
         });
 
         return ret;
@@ -57,11 +58,19 @@ var search_map = function(L, g_map_image_size, on_map_created) {
         var marker = e.target;
         var content = '<a href="/photos/'+marker.id+'">Loading image...</a>';
         marker.setPopupContent(content);
-        var req = $.getJSON('/api/1.0/photos/', {'id': marker.id, 'imgspecs': 'height-'+g_map_image_size});
-        req.done(function(res) {
-            content = '<a class="map-img" href="/photos/'+marker.id+'">'+res.data[0].attributes.image+'</a>';
+        let query = {'id': marker.id, 'imgspecs': 'height-'+g_map_image_size}
+        if (0) {
+            var req = $.getJSON('/api/1.0/photos/', query);
+            req.done(function(res) {
+                content = '<a class="map-img" href="/photos/'+marker.id+'">'+res.data[0].attributes.image+'</a>';
+                marker.setPopupContent(content);
+            });
+        } else {
+            // static call
+            let res = staticAPI.filter(query)
+            content = '<a class="map-img" href="'+res.data[0].attributes.url+'">'+res.data[0].attributes.image+'</a>';
             marker.setPopupContent(content);
-        });
+        }
     }
 
     ns.fit_bounds = function(bounds) {
@@ -95,6 +104,7 @@ var search_map = function(L, g_map_image_size, on_map_created) {
         if (on_map_created) {
             on_map_created();
         }
+
         ns.resize_map();
 
         if (has_markers && reframe) {

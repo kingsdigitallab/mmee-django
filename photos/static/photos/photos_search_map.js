@@ -29,6 +29,7 @@ var search_map = function(L, g_map_image_size, on_map_created) {
 
         tile_layer.on('load', function() {
             $('#initial-map-container').hide();
+            console.log('load')
         });
 
         return ret;
@@ -103,6 +104,7 @@ var search_map = function(L, g_map_image_size, on_map_created) {
         if (on_map_created) {
             on_map_created();
         }
+
         ns.resize_map();
 
         if (has_markers && reframe) {

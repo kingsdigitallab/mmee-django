@@ -1,60 +1,3 @@
-class StaticAPI {
-    constructor() {
-        this.response = API_PHOTOS
-        // console.log(staticAPI.get_photo_urls())
-
-        // turn url to photos relative
-        this.response.data.forEach(photo => {
-            photo.attributes.image = photo.attributes.image.replace('src="/media/', 'src="../media/')
-            photo.attributes.url = photo.attributes.url.replace('/photos/', '')
-        })
-    }
-    get_photo_urls() {
-        return this.response.data.map(p => {
-            return `<a href="${p.id}/">${p.id}</a><br>`
-        }).join('\n')
-    }
-    filter(query) {
-        // .page: 1
-        // .perpage: 12
-        console.log(query)
-        // let ret = JSON.parse(JSON.stringify(this.response).replaceAll('height-375', 'height-700'));
-        let ret = JSON.parse(JSON.stringify(this.response));
-        ret.meta.query.view = query.view || 'grid';
-        ret.meta.query.perpage = parseInt(query.perpage || 12);
-        ret.meta.query.page = parseInt(query.page || 1);
-        let start = (ret.meta.query.page - 1) * ret.meta.query.perpage
-        ret.data = ret.data.slice(
-            start, 
-            start + ret.meta.query.perpage
-        )
-        ret.meta.qs = (new URLSearchParams(ret.meta.query)).toString()
-        ret.meta.pagination.per_page = ret.meta.query.perpage
-        ret.meta.pagination.page = ret.meta.query.page
-        ret.meta.pagination.pages = Math.ceil(ret.meta.pagination.count / ret.meta.pagination.per_page)
-
-        let q = {
-            ...ret.meta.query,
-            page: ret.meta.pagination.page + 1
-        }
-        if (q.page <= ret.meta.pagination.pages) {
-            ret.links.next = '?' + (new URLSearchParams(q)).toString()
-        }
-        q.page = ret.meta.pagination.page - 1
-        if (q.page > 0) {
-            ret.links.prev = '?' + (new URLSearchParams(q)).toString()
-        }
-        q.page = ret.meta.pagination.pages
-        ret.links.last = '?' + (new URLSearchParams(q)).toString()
-        q.page = 1
-        ret.links.first = '?' + (new URLSearchParams(q)).toString()
-
-        return ret
-    }
-}
-
-var staticAPI = new StaticAPI();
-
 var photo_search = function(g_initial_query) {
     /*
     notations:
@@ -252,7 +195,8 @@ var photo_search = function(g_initial_query) {
                     );
                 }
 
-                query.imgspecs = this.get_image_spec(3, g_image_size_increment);
+                // query.imgspecs = this.get_image_spec(3, g_image_size_increment);
+                query.imgspecs = 'height-375';
 
                 // request for the photo result (list of images)
                 let res = staticAPI.filter(query)
@@ -285,102 +229,6 @@ var photo_search = function(g_initial_query) {
                         let res_geo = staticAPI.filter(query)
                         self.last_geo_query_hash = self.get_hash_from_geo_query(res.meta.query);
                         g_leaflet.replace_markers(res.data, 1);
-                    }
-                }
-            },
-            call_api_old: function(aquery, query_string, load_more) {
-                /*
-                Calls the API with parameters found in this.meta.query.
-
-                If aquery is provided, its parameters will override
-                this.meta.query.
-
-                If query_string is provided (?page=1), it will be used instead
-                of this.meta.query and aquery.
-
-                this.data is updated with the API response. Including this.meta.query.
-
-                IMPORTANT: this function makes up to two requests to the API:
-
-                * One request for the showing a paginated list of images
-
-                * Another optional request for showing all (i.e. unpaginated)
-                  photo markers on the map.
-
-                Both are query dependent (i.e. depend on search phrase, facets).
-                */
-
-                // build the query
-                var self = this;
-
-                if (self.updating_from_response) {
-                    console.log('Skip API call due to changes made in last response.');
-                    return;
-                }
-
-                var query = {};
-                self.searching = 1;
-
-                if (query_string) {
-                    query = mmee.get_dict_from_query_string(query_string);
-                } else {
-                    query_string = '';
-
-                    query = $.extend(
-                        {}, // Important: without this {}, we get all the getters and setters from self.meta.query
-                        self.meta.query,
-                        {
-                            facets: this.get_string_from_selected_facets(),
-                        },
-                        aquery
-                    );
-                }
-
-                query.imgspecs = this.get_image_spec(3, g_image_size_increment);
-
-                if (this.$options.request) {
-                    // In case user paginates or pan maps multiple times quickly
-                    // no need to continue processing last request.
-                    // Also a good way to avoid infinite loops.
-                    // e.g. ?order=nearest&perpage=60&geo=51.524,-0.048,0&page=1&phrase=sign&view=grid
-                    this.$options.request.abort();
-                }
-
-                // request for the photo result (list of images)
-                this.$options.request = $.getJSON('/api/1.0/photos/', query);
-                this.$options.request.done(function(data) {
-                    if (!load_more) {
-                        Vue.set(self, 'photos', []);
-                    }
-                    Array.prototype.push.apply(self.photos, data.data);
-
-                    self.updating_from_response = 1;
-                    // console.log('' + query.geo + ' -> ' + data.meta.query.geo);
-                    Vue.set(self, 'meta', data.meta);
-                    Vue.set(self, 'links', data.links);
-
-                    mmee.replace_query_string(data.meta.qs);
-                    self.searching = 0;
-                });
-                this.$options.request.always(function() {
-                    self.$nextTick(function () {
-                        self.updating_from_response = 0;
-                    });
-                });
-
-                // request for the map result (map markers)
-                if (this.is_map_on_page()) {
-                    query.page = 1;
-                    query.perpage = 5000;
-                    query.geo_only = 1;
-                    var geo_query_hash = this.get_hash_from_geo_query(query);
-                    if (geo_query_hash !== self.last_geo_query_hash) {
-                        // console.log('GEO ONLY QUERY ' + geo_query_hash);
-                        var req_geo_only = $.getJSON('/api/1.0/photos/', query);
-                        req_geo_only.done(function(data) {
-                            self.last_geo_query_hash = self.get_hash_from_geo_query(data.meta.query);
-                            g_leaflet.replace_markers(data.data, 1);
-                        });
                     }
                 }
             },
